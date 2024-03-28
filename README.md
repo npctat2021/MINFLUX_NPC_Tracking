@@ -1,2 +1,2 @@
 # MINFLUX_NPC_Tracking
-The codes are designed for tracking cargo within the nuclear pore complex (NPC) using MINFLUX. For detailed information about scripts, please refer to "Code_Description.pdf." This file provides a comprehensive explanation of the script order.
+The codes are specifically tailored for analyzing two-color data obtained through 3D-MINFLUX. The first color corresponds to the nuclear pore complex (NPC), while the second color represents the 3D tracks of cargo moving through the NPC. For detailed information about the scripts, please consult "Code_Description.pdf." This document offers a thorough explanation of the script order.
