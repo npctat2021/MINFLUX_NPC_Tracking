@@ -1,3 +1,2 @@
 # MINFLUX_NPC_Tracking
-Code for tracking cargo through NPC using MINFLUX.
-Please read "Code_Description.pdf" for script details.The order of the scripts are explained in this file.
+The codes are designed for tracking cargo within the nuclear pore complex (NPC) using MINFLUX. For detailed information about scripts, please refer to "Code_Description.pdf." This file provides a comprehensive explanation of the script order.
