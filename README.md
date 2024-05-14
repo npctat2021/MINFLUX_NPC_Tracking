@@ -3,12 +3,12 @@ The codes are specifically tailored for analyzing two-color data obtained throug
 ## System Requirements
 The analysis requires MATLAB software to run the codes.
 MATLAB>R2021b with Add-On:
-.Statistics and Machine Learning Toolbox
-.Signal Processing Toolbox
-.Optimization Toolbox
-.Mapping Toolbox
-.Image Processing Toolbox
-.Curve Fitting Toolbox
+Statistics and Machine Learning Toolbox
+1. Signal Processing Toolbox
+2. Optimization Toolbox
+3. Mapping Toolbox
+4. Image Processing Toolbox
+5. Curve Fitting Toolbox
 Any standard computer with sufficient RAM to meet MATLAB's requirements can be used for this purpose. The analysis was conducted using MATLAB R2021b on Windows 11 Home version 10.0.22631.
 
 ## Installation Guide
