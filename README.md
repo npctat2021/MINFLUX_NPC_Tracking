@@ -17,14 +17,14 @@ MATLAB software can be installed from [mathworks website](https://www.mathworks.
 ## Instructions for use
 Please refer to "Code_Description.pdf" for explanation and expected output from each script.
 1. Program Name :filterMinfluxData.m
-(a) Input file(s):Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo.
-(b) Output file(s):	Track_data_array, Track_ID, Time, Coordinates
-(c) What it does: Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks.
+(a) **Input file(s)**:Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo.
+(b) **Output file(s)**:	Track_data_array, Track_ID, Time, Coordinates
+(c) **What it does**: Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks.
 
-   1. Program Name :separate_cluster_MINFLUX.m
-2. Input file(s):Scaffold localization.txt.(should contain track ID, timestamp, and XYZ coordinates)
-3. Output file(s):	Invidual cluster with cluster number
-4. What it does:Extracts the ID, timestamp, and coordinates of individual clusters into separate text files.
+2. Program Name :separate_cluster_MINFLUX.m
+(a) **Input file(s)**:Scaffold localization.txt.(should contain track ID, timestamp, and XYZ coordinates)
+(b) **Output file(s)**:	Invidual cluster with cluster number
+(c) **What it does**:Extracts the ID, timestamp, and coordinates of individual clusters into separate text files.
 
    
 ## Demo
