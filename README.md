@@ -16,10 +16,10 @@ MATLAB software can be installed from [mathworks website](https://www.mathworks.
 
 ## Instructions for use
 Please refer to "Code_Description.pdf" for explanation and expected output from each script.
-1. Program Name :filterMinfluxData.m	
-2.Input file(s):Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo.
-3.Output file(s):	Track_data_array, Track_ID, Time, Coordinates
-4.What it does:Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks.
+1. Program Name :filterMinfluxData.m
+2. Input file(s):Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo.
+3. Output file(s):	Track_data_array, Track_ID, Time, Coordinates
+4. What it does:Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks.
 ## Demo
 Sample data has been uploaded on Github. Please refer to "Model NPC Scaffold Data.txt" and "Model Track Data.txt". Detailed explanation on output files has been described in "Code_Description.pdf".  
 
