@@ -24,7 +24,13 @@ Please refer to "Code_Description.pdf" for explanation and expected output from 
 2. **Program Name** :separate_cluster_MINFLUX.m
 (a) **Input file(s)**:Scaffold localization.txt.(should contain track ID, timestamp, and XYZ coordinates)
 (b) **Output file(s)**:	Invidual cluster with cluster number
-(c) **What it does**:Extracts the ID, timestamp, and coordinates of individual clusters into separate text files.
+(c) **What it does**:Extracts the ID, timestamp, and coordinates of individual cluster into separate text files.
+
+3. **Program Name** :estimate_cylinder_MINFLUX.m
+(a) **Input file(s)**:Its take input of clusters information from the output of Program 2
+(b) **Output file(s)**:	Coordrinates of centers of the clusters from double circle fit of two rings and diamters and separation distance between tworings.(Ex- 
+clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.txt, clusterheight.txt)
+(c) **What it does**:Double circle fitting of  two rings from individual cluster.
 
    
 ## Demo
