@@ -38,6 +38,11 @@ clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.t
 (b) **Output file(s)**:	Selected clusters which qualify as pores. ( 1pore.txt, 2pore.txt....porex_center.txt, porey_center.txt, porez_center.txt, porediameter.txt, poreheight.txt)
 (c) **What it does**:Selects those clusters having at least 20 localizations with a fit diameter of 80-135 nm, a height of 40-65 nm, and z-center of 0±200 nm.
 
+5. **Program Name** :circlefit_bisquare_MINFLUX.m
+(a) **Input file(s)**:x, y, z coordrinates from pores, the output of Program 4
+(b) **Output file(s)**:	1porebisquare.txt, 2porebisquare.txt...
+(c) **What it does**:Fits pore localizations to a circle projected into the xy-plane and eliminates localizations whose residual was more than two standard deviations away from the circle.
+
    
 ## Demo
 Sample data has been uploaded on Github. Please refer to "Model NPC Scaffold Data.txt" and "Model Track Data.txt". Detailed explanation on output files has been described in "Code_Description.pdf".  
