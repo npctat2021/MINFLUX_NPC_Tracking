@@ -16,6 +16,7 @@ MATLAB software can be installed from [mathworks website](https://www.mathworks.
 
 ## Instructions for use
 Please refer to "Code_Description.pdf" for explanation and expected output from each script.
+## Filter MINFLUX data
 1. **Program Name** :filterMinfluxData.m
 (a) **Input file(s)**:Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo.
 (b) **Output file(s)**:	Track_data_array, Track_ID, Time, Coordinates
