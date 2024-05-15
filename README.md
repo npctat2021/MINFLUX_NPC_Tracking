@@ -21,17 +21,22 @@ Please refer to "Code_Description.pdf" for explanation and expected output from 
 (a) **Input file(s)**:Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo.
 (b) **Output file(s)**:	Track_data_array, Track_ID, Time, Coordinates
 (c) **What it does**: Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks.
-### Fitting Nuclear Pore localization
+### Fitting Nuclear Pore localizations
 2. **Program Name** :separate_cluster_MINFLUX.m
 (a) **Input file(s)**:Scaffold localization.txt.(should contain track ID, timestamp, and XYZ coordinates)
 (b) **Output file(s)**:	Invidual cluster with cluster number
 (c) **What it does**:Extracts the ID, timestamp, and coordinates of individual cluster into separate text files.
 
 3. **Program Name** :estimate_cylinder_MINFLUX.m
-(a) **Input file(s)**:Its take input of clusters information from the output of Program 2
+(a) **Input file(s)**:It takes input of clusters information from the output of Program 2
 (b) **Output file(s)**:	Coordrinates of centers of the clusters from double circle fit of two rings and diamters and separation distance between tworings.(Ex- 
 clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.txt, clusterheight.txt)
 (c) **What it does**:Double circle fitting of  two rings from individual cluster.
+
+4. **Program Name** :select_pores_MINFLUX.m
+(a) **Input file(s)**:It takes input from fitting parameters (x, y, z coordrinates,diameter, height)from the output of Program 3
+(b) **Output file(s)**:	Selected clusters which qualify as pores. ( 1pore.txt, 2pore.txt....porex_center.txt, porey_center.txt, porez_center.txt, porediameter.txt, poreheight.txt)
+(c) **What it does**:Selects those clusters having at least 20 localizations with a fit diameter of 80-135 nm, a height of 40-65 nm, and z-center of 0±200 nm.
 
    
 ## Demo
