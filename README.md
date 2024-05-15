@@ -16,12 +16,12 @@ MATLAB software can be installed from [mathworks website](https://www.mathworks.
 
 ## Instructions for use
 Please refer to "Code_Description.pdf" for explanation and expected output from each script.
-# Filter MINFLUX data
+### Filter MINFLUX data
 1. **Program Name** :filterMinfluxData.m
 (a) **Input file(s)**:Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo.
 (b) **Output file(s)**:	Track_data_array, Track_ID, Time, Coordinates
 (c) **What it does**: Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks.
-# Fitting Nuclear Pore localization
+### Fitting Nuclear Pore localization
 2. **Program Name** :separate_cluster_MINFLUX.m
 (a) **Input file(s)**:Scaffold localization.txt.(should contain track ID, timestamp, and XYZ coordinates)
 (b) **Output file(s)**:	Invidual cluster with cluster number
