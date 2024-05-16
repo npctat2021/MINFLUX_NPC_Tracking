@@ -77,7 +77,7 @@ clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.t
 (b) **Output file(s)**:1pore_centered.txt, 2pore_centered.txt, etc.
 (c) **What it does**:Rotates every point in a cluster by its phase angle.
 
-#### Reconstruction of Pore localizations.
+#### Merging Pore localizations after rotation.
 12. **Program Name** :merge_after_rotation_MINFLUX _step7.m
 (a) **Input file(s)**:1pore_centered.txt, 2pore_centered.txt, etc. outputs from Program 11.
 (b) **Output file(s)**:pore_merged_rotated.txt
@@ -88,6 +88,11 @@ clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.t
 (b) **Output file(s)**:pore_merged_rotated back.txt
 (c) **What it does**:There is always a 8.4 degree inherent rotation of pore. This step compensates for that inherent rotation of pore.
 
+#### Creating alignment Matrix for two colors.
+12. **Program Name** :green2red_transfer_matrix_MINFLUX.m
+(a) **Input file(s)**: separate text files for two color containing  three columns for x, y,z obtained from beads localization 
+(b) **Output file(s)**:pore_merged_rotated.txt
+(c) **What it does**:Merges all the localizations from all clusters.
 
 ## Demo
 Sample data has been uploaded on Github. Please refer to "Model NPC Scaffold Data.txt" and "Model Track Data.txt". Detailed explanation on output files has been described in "Code_Description.pdf".  
