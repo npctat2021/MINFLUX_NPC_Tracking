@@ -19,6 +19,11 @@ Please refer to "Code_Description.pdf" for explanation and expected output from 
 #### Filter MINFLUX data
 1. **Program Name** :filterMinfluxData.m
 (a) **Input file(s)**:Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo.
+Command after running the script..
+length = cellfun(@(x) size(x, 1), ans.tracks);
+track_data_array = double (repelem(ans.track_ID, length));
+track_data_array(:, 2:5) = vertcat(ans.tracks{:});
+
 (b) **Output file(s)**:	Track_data_array, Track_ID, Time, Coordinates
 (c) **What it does**: Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks.
 #### Fitting Nuclear Pore localizations
