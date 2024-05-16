@@ -42,7 +42,11 @@ clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.t
 (a) **Input file(s)**:x, y, z coordrinates from pores, the output of Program 4
 (b) **Output file(s)**:	1porebisquare.txt, 2porebisquare.txt...
 (c) **What it does**:Fits pore localizations to a circle projected into the xy-plane and eliminates localizations whose residual was more than two standard deviations away from the circle.
-
+### Rotation of NPC Scaffold Localization
+6. **Program Name** :pore_rotation_MINFLUX_step1.m
+(a) **Input file(s)**:porebisquare.txt porex_center.txt porey_center.txt, outputs of Program 5
+(b) **Output file(s)**:	1pore_ninety_normalized.txt 2pore_ninety_normalized.txt etc.
+(c) **What it does**:Finds the angle (0-90º) of each localization in a cluster relative to the centroid.
    
 ## Demo
 Sample data has been uploaded on Github. Please refer to "Model NPC Scaffold Data.txt" and "Model Track Data.txt". Detailed explanation on output files has been described in "Code_Description.pdf".  
