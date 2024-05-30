@@ -90,9 +90,10 @@ clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.t
 
 #### Creating alignment Matrix for two colors.
 12. **Program Name** :green2red_transfer_matrix_MINFLUX.m
-(a) **Input file(s)**: separate text files for two color containing  three columns for x, y,z obtained from beads localization 
-(b) **Output file(s)**:pore_merged_rotated.txt
-(c) **What it does**:Merges all the localizations from all clusters.
+(a) **Input file(s)**: Separate text files for gold/ fluorescent beads localized in two colors containing  three columns for x, y,z obtained from beads localization.(calib-green.txt
+calib-red.txt)
+(b) **Output file(s)**:g2r_transfer_matrix.txt
+(c) **What it does**:Calculates the image alignment matrix to transform green channel coordinates into the red channel coordinate system.
 
 ## Demo
 Sample data has been uploaded on Github. Please refer to "Model NPC Scaffold Data.txt" and "Model Track Data.txt". Detailed explanation on output files has been described in "Code_Description.pdf".  
