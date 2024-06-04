@@ -89,11 +89,36 @@ clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.t
 (c) **What it does**:There is always a 8.4 degree inherent rotation of pore. This step compensates for that inherent rotation of pore.
 
 #### Creating alignment Matrix for two colors.
-12. **Program Name** :green2red_transfer_matrix_MINFLUX.m
+13. **Program Name** :green2red_transfer_matrix_MINFLUX.m
 (a) **Input file(s)**: Separate text files for gold/ fluorescent beads localized in two colors containing  three columns for x, y,z obtained from beads localization.(calib-green.txt
 calib-red.txt)
 (b) **Output file(s)**:g2r_transfer_matrix.txt
 (c) **What it does**:Calculates the image alignment matrix to transform green channel coordinates into the red channel coordinate system.
+#### Alignment of track localization relative to the NPC scaffold.
+14. **Program Name** :green_localization_in_red_channel_MINFLUX.m
+(a) **Input file(s)**: The text file from track localization includes track ID, timestamp, and x, y, z coordinates in the second color obtained from cargo tracking, as well as the 'g2r_transfer_matrix.txt' file, which contains the alignment matrix for the two colors.
+(b) **Output file(s)**:Track localizations in red color which is used for NPC scaffold localizations.(file_name '_calib.txt')
+(c) **What it does**:Transforms the green/yellow channel coordinates of tracks into the red channel coordinate system to correct for chromatic aberration between the two colors.
+
+15. **Program Name** :track_localize_whole_roi_MINFLUX.m
+(a) **Input file(s)**: Track localizations in red color which is used for NPC scaffold localizations (file_name '_calib.txt')
+(b) **Output file(s)**: Tracks associated to each pore.(track to whole1.txt, track to whole2.txt etc.)
+(c) **What it does**:Identifies all cargo complex localizations within a 600 nm cube centered on an NPC centroid.
+
+16. **Program Name** :centering_tracks_wrt_whole_MINFLUX.m
+(a) **Input file(s)**: porex_center.txt; porey_center.txt; porez_center.txt;track to whole1.txt;track to whole2.txt etc. 
+(b) **Output file(s)**: track_cen_wrt_whole1.txt; track_cen_wrt_whole2.txt;etc. 
+(c) **What it does**:Translates cargo complex localizations to the averaged NPC scaffold.
+
+17. **Program Name** :track_rotation_in_whole_MINFLUX.m
+(a) **Input file(s)**: rot_angle.txt; track_cen_wrt_whole1.txt; track_cen_wrt_whole2.txt etc. 
+(b) **Output file(s)**: track to whole rotated1.txt; track to whole rotated2.txt etc. 
+(c) **What it does**:Rotates cargo complex localizations according to the phase angle of their associated pore cluster.
+
+18. **Program Name** :merge_after_rotation_whole_MINFLUX.m
+(a) **Input file(s)**: track to whole rotated1.txt; track to whole rotated2.txt etc.
+(b) **Output file(s)**: track_merged_rotated_whole.txt
+(c) **What it does**: Merge MINFLUX tracks after rotation.
 
 ## Demo
 Sample data has been uploaded on Github. Please refer to "Model NPC Scaffold Data.txt" and "Model Track Data.txt". Detailed explanation on output files has been described in "Code_Description.pdf".  
