@@ -25,6 +25,8 @@ track_data_array = double (repelem(ans.track_ID, length));
 track_data_array(:, 2:5) = vertcat(ans.tracks{:});
 (b) **Output file(s)**:	Track_data_array, Track_ID, Time, Coordinates
 (c) **What it does**: Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks.
+
+Make a text file of pore/track localizations which will contain 5 columns,  track ID, timestamp, and XYZ coordinates. Use the text file as an input for Script 2 for pores (separate_cluster_MINFLUX.m) or Script 15 for tracks (green_localization_in_red_channel_MINFLUX.m).
 #### Fitting Nuclear Pore localizations
 2. **Program Name** :separate_cluster_MINFLUX.m
 (a) **Input file(s)**:Scaffold localization.txt.(should contain track ID, timestamp, and XYZ coordinates)
