@@ -55,22 +55,27 @@ Create a text file of pore/track localizations containing 5 columns: track ID, t
 (a) **Input file(s)**:Scaffold localization.txt.(should contain track ID, timestamp, and XYZ coordinates)
 (b) **Output file(s)**:	Invidual cluster with cluster number
 (c) **What it does**:Extracts the ID, timestamp, and coordinates of individual cluster into separate text files.
+The cluster should be manually selected. Upon running the program, a window with scatter plots will open. The pores should be selected as a rectangle, and double-clicking inside the rectangle will save a cluster. This process should be repeated until all pores are selected. Once done, the clusters should be saved, and then the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
 
-3. **Program Name** :estimate_cylinder_MINFLUX.m
+<a href="https://ibb.co/1zNS9ZY"><img src="https://i.ibb.co/NTq4Lxg/Cluster-fitting-for-model-pore.png" alt="Cluster-fitting-for-model-pore" border="0"></a>
+
+4. **Program Name** :estimate_cylinder_MINFLUX.m
 (a) **Input file(s)**:It takes input of clusters information from the output of Program 2
 (b) **Output file(s)**:	Coordrinates of centers of the clusters from double circle fit of two rings and diamters and separation distance between tworings.(Ex- 
 clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.txt, clusterheight.txt)
-(c) **What it does**:Double circle fitting of  two rings from individual cluster.
+(c) **What it does**:Double circle fitting of  two rings from individual cluster. Image attached.
+<a href="https://ibb.co/T4wDBpY"><img src="https://i.ibb.co/qNDLMX7/Double-circle-Fitting-of-cluster.png" alt="Double-circle-Fitting-of-cluster" border="0"></a>
 
-4. **Program Name** :select_pores_MINFLUX.m
+6. **Program Name** :select_pores_MINFLUX.m
 (a) **Input file(s)**:It takes input from fitting parameters (x, y, z coordrinates,diameter, height)from the output of Program 3
 (b) **Output file(s)**:	Selected clusters which qualify as pores. ( 1pore.txt, 2pore.txt....porex_center.txt, porey_center.txt, porez_center.txt, porediameter.txt, poreheight.txt)
-(c) **What it does**:Selects those clusters having at least 20 localizations with a fit diameter of 80-135 nm, a height of 40-65 nm, and z-center of 0±200 nm.
+(c) **What it does**:Selects those clusters having at least 20 localizations with a fit diameter. For example of diameter of70-150 nm, a height of 25-100 nm, and z-center of 0±200 nm.
 
-5. **Program Name** :circlefit_bisquare_MINFLUX.m
+7. **Program Name** :circlefit_bisquare_MINFLUX.m
 (a) **Input file(s)**:x, y, z coordrinates from pores, the output of Program 4
 (b) **Output file(s)**:	1porebisquare.txt, 2porebisquare.txt...
 (c) **What it does**:Fits pore localizations to a circle projected into the xy-plane and eliminates localizations whose residual was more than two standard deviations away from the circle.
+
 #### Rotation of NPC Scaffold Localization
 6. **Program Name** :pore_rotation_MINFLUX_step1.m
 (a) **Input file(s)**:porebisquare.txt porex_center.txt porey_center.txt, outputs of Program 5
@@ -90,14 +95,16 @@ clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.t
 9. **Program Name** :pore_rotation_MINFLUX_step4_fitting.m
 (a) **Input file(s)**:1phase_norm.txt, 2phase_norm.txt etc.,outputs of Program 8
 (b) **Output file(s)**:rot_angle.txt
-(c) **What it does**:Determines the angle of rotation for the cluster by fitting the angle distribution histogram to a sinusoidal function with a period of 45° and a variable phase.
+(c) **What it does**:Determines the angle of rotation for the cluster by fitting the angle distribution histogram to a sinusoidal function with a period of 45° and a variable phase. Image attached.
 
-10. **Program Name** :centering_pore_MINFLUX _step5.m
+<a href="https://ibb.co/7bXV0Rj"><img src="https://i.ibb.co/Ws6FRPG/Angle-fit.png" alt="Angle-fit" border="0"></a>
+
+11. **Program Name** :centering_pore_MINFLUX _step5.m
 (a) **Input file(s)**:porex_center.txt, porey_center.txt, porez_center.txt ,1porebisquare.txt, 2porebisquare.txt etc, outputs from Program 4
 (b) **Output file(s)**:1pore_centered.txt, 2pore_centered.txt, etc.
 (c) **What it does**:Translates the center of all clusters to (x, y, z) = (0, 0, 0)
 
-11. **Program Name** :pore_rotation_MINFLUX _step6.m
+12. **Program Name** :pore_rotation_MINFLUX _step6.m
 (a) **Input file(s)**:rot_angle.txt, 1pore_centered.txt, 2pore_centered.txt, etc. outputs from Program 10
 (b) **Output file(s)**:1pore_centered.txt, 2pore_centered.txt, etc.
 (c) **What it does**:Rotates every point in a cluster by its phase angle.
@@ -115,18 +122,20 @@ clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.t
 
 #### Creating alignment Matrix for two colors.
 14. **Program Name** :green2red_transfer_matrix_MINFLUX.m
-(a) **Input file(s)**: Separate text files for gold/ fluorescent beads localized in two colors containing  three columns for x, y,z obtained from beads localization.(calib-green.txt
-calib-red.txt)
+(a) **Input file(s)**: Separate text files for gold/ fluorescent beads localized in two colors containing  three columns for x, y,z obtained from beads localization.( use model input , Bead loc_Red.txt" and "Bead loc_Yellow.txt)
 (b) **Output file(s)**:g2r_transfer_matrix.txt
-(c) **What it does**:Calculates the image alignment matrix to transform green channel coordinates into the red channel coordinate system.
+(c) **What it does**:Calculates the image alignment matrix to transform green channel coordinates into the red channel coordinate system. Image attached.
+
+<a href="https://ibb.co/bHn1mcz"><img src="https://i.ibb.co/KNH6hTF/Alignment-Matrix.png" alt="Alignment-Matrix" border="0"></a>
+
 #### Alignment of track localization relative to the NPC scaffold.
 15. **Program Name** :green_localization_in_red_channel_MINFLUX.m
-(a) **Input file(s)**: The text file from track localization includes track ID, timestamp, and x, y, z coordinates in the second color obtained from cargo tracking, as well as the 'g2r_transfer_matrix.txt' file, which contains the alignment matrix for the two colors.
-(b) **Output file(s)**:Track localizations in red color which is used for NPC scaffold localizations.(file_name '_calib.txt')
+(a) **Input file(s)**: The text file from track localization includes track ID, timestamp, and x, y, z coordinates in the second color obtained from cargo tracking (use model data 'Tracks Model Data.txt') , as well as the 'g2r_transfer_matrix.txt' file, which contains the alignment matrix for the two colors.
+(b) **Output file(s)**: Optical abberation corrected track localizations.(file_name 'Tracks Model Data_calib.txt')
 (c) **What it does**:Transforms the green/yellow channel coordinates of tracks into the red channel coordinate system to correct for chromatic aberration between the two colors.
 
 16. **Program Name** :track_localize_whole_roi_MINFLUX.m
-(a) **Input file(s)**: Track localizations in red color which is used for NPC scaffold localizations (file_name '_calib.txt')
+(a) **Input file(s)**: Track localizations in red color which is used for NPC scaffold localizations (Tracks Model Data_calib.txt'). 
 (b) **Output file(s)**: Tracks associated to each pore.(track to whole1.txt, track to whole2.txt etc.)
 (c) **What it does**:Identifies all cargo complex localizations within a 600 nm cube centered on an NPC centroid.
 
@@ -146,6 +155,9 @@ calib-red.txt)
 (c) **What it does**: Merge MINFLUX tracks after rotation.
 
 ## Demo
-Sample data has been uploaded on Github. Please refer to "Model NPC Scaffold Data.txt" and "Model Track Data.txt". Detailed explanation on output files has been described in "Code_Description.pdf".  
-
+Sample data has been uploaded on Github. 
+1. "NPC MINFLUX Data.mat"
+2. "Nuclear Pore Model Data.txt"
+3. "Bead loc_Red.txt" and "Bead loc_Yellow.txt"
+4. "Tracks Model Data.txt"  
 
