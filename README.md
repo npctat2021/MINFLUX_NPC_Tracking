@@ -37,13 +37,13 @@ MATLAB software can be installed from [mathworks website](https://www.mathworks.
 Please refer to "Code_Description.pdf" for explanation and expected output from each script.
 #### Filter MINFLUX data
 1. **Program Name** :filterMinfluxData.m
-(a) **Input file(s)**:Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo.
-Command after running the script..
+(a) **Input file(s)**:Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo. As model data "NPC MINFLUX Data.mat".
+(b) **Output file(s)**:	Track_data_array, Track_ID, Time, Coordinates
+(c) **What it does**: Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks.
+Note:Place the following command in the command box after running this script to obtain the track ID, timestamp, and XYZ coordinates of the filtered tracks as output in "track_data_array".
 length = cellfun(@(x) size(x, 1), ans.tracks);
 track_data_array = double (repelem(ans.track_ID, length));
 track_data_array(:, 2:5) = vertcat(ans.tracks{:});
-(b) **Output file(s)**:	Track_data_array, Track_ID, Time, Coordinates
-(c) **What it does**: Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks.
 
 Make a text file of pore/track localizations which will contain 5 columns,  track ID, timestamp, and XYZ coordinates. Use the text file as an input for Script 2 for pores (separate_cluster_MINFLUX.m) or Script 15 for tracks (green_localization_in_red_channel_MINFLUX.m).
 #### Fitting Nuclear Pore localizations
