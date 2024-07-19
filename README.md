@@ -137,7 +137,7 @@ clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.t
 16. **Program Name** :track_localize_whole_roi_MINFLUX.m
 (a) **Input file(s)**: Track localizations in red color which is used for NPC scaffold localizations (Tracks Model Data_calib.txt'). 
 (b) **Output file(s)**: Tracks associated to each pore.(track to whole1.txt, track to whole2.txt etc.)
-(c) **What it does**:Identifies all cargo complex localizations within a 600 nm cube centered on an NPC centroid.
+(c) **What it does**:Identifies tracks localizations within a 200 nm cube centered on an NPC centroid.
 
 17. **Program Name** :centering_tracks_wrt_whole_MINFLUX.m
 (a) **Input file(s)**: porex_center.txt; porey_center.txt; porez_center.txt;track to whole1.txt;track to whole2.txt etc. 
@@ -147,7 +147,7 @@ clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.t
 18. **Program Name** :track_rotation_in_whole_MINFLUX.m
 (a) **Input file(s)**: rot_angle.txt; track_cen_wrt_whole1.txt; track_cen_wrt_whole2.txt etc. 
 (b) **Output file(s)**: track to whole rotated1.txt; track to whole rotated2.txt etc. 
-(c) **What it does**:Rotates cargo complex localizations according to the phase angle of their associated pore cluster.
+(c) **What it does**:Rotates track localizations according to the phase angle of their associated pore cluster.
 
 19. **Program Name** :merge_after_rotation_whole_MINFLUX.m
 (a) **Input file(s)**: track to whole rotated1.txt; track to whole rotated2.txt etc.
