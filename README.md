@@ -1,7 +1,7 @@
 # MINFLUX_NPC_Tracking
 The codes are specifically designed for analyzing two-color data obtained through 3D-MINFLUX. The 'Red' color corresponds to the nuclear pore complex (NPC), while the 'Green/Yellow' color represents the 3D second color used for tracking cargo moving through the NPC.
 
-A model dataset named "NPC MINFLUX Data.mat" contains the raw data exported from the MINFLUX microscope. Users can filter and isolate the tracks based on EFO, CFR, and track length parameters using the "filterMinfluxData.m" script. The extracted data can then be used for further analysis.
+A model dataset named "Nuclear Pore Model Data.mat" contains the raw data exported from the MINFLUX microscope. Users can filter and isolate the tracks based on EFO, CFR, and track length parameters using the "filterMinfluxData.m" script. The extracted data can then be used for further analysis.
 
 Additionally, four other model datasets are provided for running the two-color colocalization scripts:
 
@@ -13,7 +13,7 @@ The pore data must be analyzed first to obtain the pore centers and other releva
 
 Note: 19 scripts are attached, requiring specific input files:
 
-1. "NPC MINFLUX Data.mat" for Program 1.
+1. "Nuclear Pore Model Data.mat" for Program 1.
 2. "Nuclear Pore Model Data.txt" for Program 2.
 3. "Bead loc_Red.txt" and "Bead loc_Yellow.txt" for Program 14.
 4. "Tracks Model Data.txt" for Program 15.
@@ -37,7 +37,7 @@ MATLAB software can be installed from [mathworks website](https://www.mathworks.
 Please refer to "Code_Description.pdf" for explanation and expected output from each script.
 #### Filter MINFLUX data
 1. **Program Name** :filterMinfluxData.m
-(a) **Input file(s)**:Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo. As model data "NPC MINFLUX Data.mat".
+(a) **Input file(s)**:Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo. As model data "Nuclear Pore Model Data.mat".
 (b) **Output file(s)**:	Track_data_array, Track_ID, Time, Coordinates
 (c) **What it does**: Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks. The following window will pop up, allowing the user to select their filtering criteria.
 
@@ -156,7 +156,7 @@ clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.t
 
 ## Demo
 Sample data has been uploaded on Github. 
-1. "NPC MINFLUX Data.mat"
+1. "Nuclear Pore Model Data.mat"
 2. "Nuclear Pore Model Data.txt"
 3. "Bead loc_Red.txt" and "Bead loc_Yellow.txt"
 4. "Tracks Model Data.txt"  
