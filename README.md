@@ -34,7 +34,7 @@ Any standard computer with sufficient RAM to meet MATLAB's requirements can be u
 MATLAB software can be installed from [mathworks website](https://www.mathworks.com/help/install/install-products.html). A typical installation time is ~15-30 min.
 
 ## Instructions for use
-Please refer to "Code_Description.pdf" for explanation and expected output from each script.
+Detailed explanations are provided at the top of each script and in the following README sections.
 #### Filter MINFLUX data
 1. **Program Name** :filterMinfluxData.m
 (a) **Input file(s)**:Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo. As model data "Nuclear Pore Model Data.mat".
