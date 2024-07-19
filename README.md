@@ -40,6 +40,9 @@ Please refer to "Code_Description.pdf" for explanation and expected output from 
 (a) **Input file(s)**:Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo. As model data "NPC MINFLUX Data.mat".
 (b) **Output file(s)**:	Track_data_array, Track_ID, Time, Coordinates
 (c) **What it does**: Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks.
+
+
+
 Note:Place the following command in the command box after running this script to obtain the track ID, timestamp, and XYZ coordinates of the filtered tracks as output in "track_data_array".
 length = cellfun(@(x) size(x, 1), ans.tracks);
 track_data_array = double (repelem(ans.track_ID, length));
