@@ -1,5 +1,23 @@
 # MINFLUX_NPC_Tracking
-The codes are specifically tailored for analyzing two-color data obtained through 3D-MINFLUX. The first color corresponds to the nuclear pore complex (NPC), while the second color represents the 3D tracks of cargo moving through the NPC. For detailed information about the scripts, please consult "Code_Description.pdf". This document offers a thorough explanation of the script order.
+The codes are specifically designed for analyzing two-color data obtained through 3D-MINFLUX. The 'Red' color corresponds to the nuclear pore complex (NPC), while the 'Green/Yellow' color represents the 3D second color used for tracking cargo moving through the NPC.
+
+A model dataset named "NPC MINFLUX Data.mat" contains the raw data exported from the MINFLUX microscope. Users can filter and isolate the tracks based on EFO, CFR, and track length parameters using the "filterMinfluxData.m" script. The extracted data can then be used for further analysis.
+
+Additionally, four other model datasets are provided for running the two-color colocalization scripts:
+
+"Nuclear Pore Model Data.txt" contains filtered 3D MINFLUX localizations from permeabilized functional NPCs.
+"Tracks Model Data.txt" contains track data with five columns: 'Track Id', 'Time stamp (second)', x (meter), y (meter), and z (meter).
+Typically, MINFLUX data output is in seconds and meters. The following scripts will convert these to milliseconds and nanometers. Data for bead localization in two channels is also attached (Bead loc_Red.txt and Bead loc_Yellow.txt) as model data, which will help generate an alignment matrix to correct the optical aberration between the two colors.
+
+The pore data must be analyzed first to obtain the pore centers and other relevant information. Second, the alignment matrix is required to align the second color, and then the track data must be analyzed to yield individual tracks with respect to each individual pore. Detailed explanations are provided at the top of each script and in the README sections.
+
+Note: 19 scripts are attached, requiring specific input files:
+
+1. "NPC MINFLUX Data.mat" for Program 1.
+2. "Nuclear Pore Model Data.txt" for Program 2.
+3. "Bead loc_Red.txt" and "Bead loc_Yellow.txt" for Program 14.
+4. "Tracks Model Data.txt" for Program 15.
+Common errors may occur from not changing the folder name or not applying the correct pore/cluster numbers.
 ## System Requirements
 The analysis requires MATLAB software to run the codes.
 MATLAB>R2021b with Add-On:
