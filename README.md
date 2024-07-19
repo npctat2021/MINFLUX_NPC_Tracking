@@ -39,16 +39,17 @@ Please refer to "Code_Description.pdf" for explanation and expected output from 
 1. **Program Name** :filterMinfluxData.m
 (a) **Input file(s)**:Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo. As model data "NPC MINFLUX Data.mat".
 (b) **Output file(s)**:	Track_data_array, Track_ID, Time, Coordinates
-(c) **What it does**: Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks.
+(c) **What it does**: Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks. The following window will pop up, allowing the user to select their filtering criteria.
 
+<a href="https://imgbb.com/"><img src="https://i.ibb.co/L5qS5rB/Filter-tracks.png" alt="Filter-tracks" border="0"></a>
 
-
-Note:Place the following command in the command box after running this script to obtain the track ID, timestamp, and XYZ coordinates of the filtered tracks as output in "track_data_array".
+Note: Place the following command in the command box after running this script to obtain the track ID, timestamp, and XYZ coordinates of the filtered tracks as output in "track_data_array".
 length = cellfun(@(x) size(x, 1), ans.tracks);
 track_data_array = double (repelem(ans.track_ID, length));
 track_data_array(:, 2:5) = vertcat(ans.tracks{:});
 
-Make a text file of pore/track localizations which will contain 5 columns,  track ID, timestamp, and XYZ coordinates. Use the text file as an input for Script 2 for pores (separate_cluster_MINFLUX.m) or Script 15 for tracks (green_localization_in_red_channel_MINFLUX.m).
+Create a text file of pore/track localizations containing 5 columns: track ID, timestamp, and XYZ coordinates. For a trial, use the model data "Nuclear Pore Model Data.txt" for pores and "Tracks Model Data.txt" for tracks. Use these text files as input for Script 2 (separate_cluster_MINFLUX.m) for pores or Script 15 (green_localization_in_red_channel_MINFLUX.m) for tracks.
+
 #### Fitting Nuclear Pore localizations
 2. **Program Name** :separate_cluster_MINFLUX.m
 (a) **Input file(s)**:Scaffold localization.txt.(should contain track ID, timestamp, and XYZ coordinates)
