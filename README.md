@@ -234,7 +234,7 @@ clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.t
  
 **Output file(s)**: track_merged_rotated_back.txt
 
-**Note**: The text file "track_merged_rotated_back.txt" contains the track ID, timestamp, and x, y, and z coordinates of tracks that pass or touch the nuclear pore. To isolate individual tracks, it is recommended to place this text file into any plotting software or Excel. It is recommended that the second column of the worksheet be formatted to accommodate up to 9 significant digits after the decimal point, as the timestamps are large. Additionally, it is important to arrange the timestamp column in either ascending or descending order to isolate individual tracks with their track IDs.
+**Note**: The text file "track_merged_rotated_back.txt" contains the track ID, timestamp, and x, y, and z coordinates of tracks that pass or touch the nuclear pore. To isolate individual tracks, it is recommended to place this text file into any plotting software or Excel. It is recommended that the second column of the worksheet be formatted to accommodate up to 9 significant digits after the decimal point, as the timestamps are large. Additionally, it is important to arrange the timestamp column in ascending order to isolate individual tracks with their track IDs.
 
 ## Demo
 Sample data has been uploaded on Github. 
