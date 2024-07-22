@@ -55,7 +55,7 @@ Create a text file of pore/track localizations containing 5 columns: track ID, t
 (a) **Input file(s)**:Scaffold localization.txt.(should contain track ID, timestamp, and XYZ coordinates)
 (b) **Output file(s)**:	Invidual cluster with cluster number
 (c) **What it does**:Extracts the ID, timestamp, and coordinates of individual cluster into separate text files.
-The cluster should be manually selected. Upon running the program, a window with scatter plots will open. The pores should be selected as a rectangle, and double-clicking inside the rectangle will save a cluster. This process should be repeated until all pores are selected. Once done, the clusters should be saved, and then the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
+The cluster should be manually selected. Upon running the program, a window with scatter plots will open. One need to draw a rectangle around the cluster and double-clicking inside the rectangle will save a cluster. This process should be repeated until all pores are selected. Once done, the clusters should be saved, and then the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
 
 <a href="https://ibb.co/1zNS9ZY"><img src="https://i.ibb.co/NTq4Lxg/Cluster-fitting-for-model-pore.png" alt="Cluster-fitting-for-model-pore" border="0"></a>
 
