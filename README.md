@@ -154,10 +154,10 @@ clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.t
 (b) **Output file(s)**: track_merged_rotated_whole.txt
 (c) **What it does**: Merge MINFLUX tracks after rotation.
 
-20. **Program Name** :merge_after_rotation_whole_MINFLUX.m
-(a) **Input file(s)**: track to whole rotated1.txt; track to whole rotated2.txt etc.
-(b) **Output file(s)**: track_merged_rotated_whole.txt
-(c) **What it does**: Merge MINFLUX tracks after rotation.
+20. **Program Name** :Track_rotate_back_MINFLUX_step8.m
+(a) **Input file(s)**: track_merged_rotated_whole.txt
+(b) **Output file(s)**: track_merged_rotated_back.txt
+(c) **What it does**: There is always a 8.4 degree inherent rotation of pore. This script rotate MINFLUX tracks to compensates for that inherent rotation of pore.
 
 ## Demo
 Sample data has been uploaded on Github. 
