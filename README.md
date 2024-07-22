@@ -59,19 +59,19 @@ The cluster should be manually selected. Upon running the program, a window with
 
 <a href="https://ibb.co/1zNS9ZY"><img src="https://i.ibb.co/NTq4Lxg/Cluster-fitting-for-model-pore.png" alt="Cluster-fitting-for-model-pore" border="0"></a>
 
-4. **Program Name** :estimate_cylinder_MINFLUX.m
+3. **Program Name** :estimate_cylinder_MINFLUX.m
 (a) **Input file(s)**:It takes input of clusters information from the output of Program 2
 (b) **Output file(s)**:	Coordrinates of centers of the clusters from double circle fit of two rings and diamters and separation distance between tworings.(Ex- 
 clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.txt, clusterheight.txt)
 (c) **What it does**:Double circle fitting of  two rings from individual cluster. Image attached.
 <a href="https://ibb.co/T4wDBpY"><img src="https://i.ibb.co/qNDLMX7/Double-circle-Fitting-of-cluster.png" alt="Double-circle-Fitting-of-cluster" border="0"></a>
 
-6. **Program Name** :select_pores_MINFLUX.m
+4. **Program Name** :select_pores_MINFLUX.m
 (a) **Input file(s)**:It takes input from fitting parameters (x, y, z coordrinates,diameter, height)from the output of Program 3
 (b) **Output file(s)**:	Selected clusters which qualify as pores. ( 1pore.txt, 2pore.txt....porex_center.txt, porey_center.txt, porez_center.txt, porediameter.txt, poreheight.txt)
 (c) **What it does**:Selects those clusters having at least 20 localizations with a fit diameter. For example of diameter of70-150 nm, a height of 25-100 nm, and z-center of 0±200 nm.
 
-7. **Program Name** :circlefit_bisquare_MINFLUX.m
+5. **Program Name** :circlefit_bisquare_MINFLUX.m
 (a) **Input file(s)**:x, y, z coordrinates from pores, the output of Program 4
 (b) **Output file(s)**:	1porebisquare.txt, 2porebisquare.txt...
 (c) **What it does**:Fits pore localizations to a circle projected into the xy-plane and eliminates localizations whose residual was more than two standard deviations away from the circle.
@@ -99,12 +99,12 @@ clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.t
 
 <a href="https://ibb.co/7bXV0Rj"><img src="https://i.ibb.co/Ws6FRPG/Angle-fit.png" alt="Angle-fit" border="0"></a>
 
-11. **Program Name** :centering_pore_MINFLUX _step5.m
+10. **Program Name** :centering_pore_MINFLUX _step5.m
 (a) **Input file(s)**:porex_center.txt, porey_center.txt, porez_center.txt ,1porebisquare.txt, 2porebisquare.txt etc, outputs from Program 4
 (b) **Output file(s)**:1pore_centered.txt, 2pore_centered.txt, etc.
 (c) **What it does**:Translates the center of all clusters to (x, y, z) = (0, 0, 0)
 
-12. **Program Name** :pore_rotation_MINFLUX _step6.m
+11. **Program Name** :pore_rotation_MINFLUX _step6.m
 (a) **Input file(s)**:rot_angle.txt, 1pore_centered.txt, 2pore_centered.txt, etc. outputs from Program 10
 (b) **Output file(s)**:1pore_centered.txt, 2pore_centered.txt, etc.
 (c) **What it does**:Rotates every point in a cluster by its phase angle.
