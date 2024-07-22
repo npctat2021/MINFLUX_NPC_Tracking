@@ -154,6 +154,11 @@ clusterx_center.txt, clustery_center.txt, clusterz_center.txt, clusterdiameter.t
 (b) **Output file(s)**: track_merged_rotated_whole.txt
 (c) **What it does**: Merge MINFLUX tracks after rotation.
 
+20. **Program Name** :merge_after_rotation_whole_MINFLUX.m
+(a) **Input file(s)**: track to whole rotated1.txt; track to whole rotated2.txt etc.
+(b) **Output file(s)**: track_merged_rotated_whole.txt
+(c) **What it does**: Merge MINFLUX tracks after rotation.
+
 ## Demo
 Sample data has been uploaded on Github. 
 1. "Nuclear Pore Model Data.mat"
