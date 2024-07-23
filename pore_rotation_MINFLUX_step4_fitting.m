@@ -24,7 +24,7 @@ plot(phase,frequency,'or',theo,phase_theo,'b')
 set(gca,'FontSize',20)
 xlabel('angle (degree)','FontSize',20)
 ylabel('frequency','FontSize',20)
-pause(1)
+pause(10)
 close
 end
 rotation=angle';
