@@ -59,7 +59,7 @@ hold on;
 plot3(solution(1) + solution(4) * cos(t), solution(2) + solution(4) * sin(t), ones(1, length(t)) .* solution(3) + solution(5) / 2, 'g-', 'LineWidth', 5);
 hold on;
 plot3(solution(1) + solution(4) * cos(t), solution(2) + solution(4) * sin(t), ones(1, length(t)) .* solution(3) - solution(5) / 2, 'y-', 'LineWidth', 5);
-pause(1)
+pause(10)
 close(gcf)
 end
 
