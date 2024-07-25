@@ -21,7 +21,7 @@ for i=1:1:num_cluster
     cl=load([fold_name num2str(i) file_name '.txt']);
     num_pt=length(cl(:,1));
     if height(i)>25 && height(i)<100 && diameter(i)>70 && diameter(i)<150 && z_center(i)>-300 && z_center(i)<300 && num_pt>20
-       cluster_sel1=i;
+       cluster_sel1=i;% User can change thses parameters based on imaging conditions.
     else
     cluster_sel1=[];
     end
