@@ -13,61 +13,71 @@
 % The loaded data will be stored in a variable called "data" for further
 % analysis and processing.
 
+addpath(genpath(pwd));
 % Clear all variables from the workspace
-clear;
+%clear;
 % Close all open figure windows
-close all;
+%close all;
 % Clear the command window
-clc;
+%clc;
 
 % Specify the path to the .csv file
-%csvFilePath = 'path_to_your_csv_file/your_file_name.csv';
+% csvFilePath = 'path_to_your_csv_file/your_file_name.csv';
 % Load the .csv file into the workspace
 %data = readmatrix(csvFilePath);
 
-% Specify the path to the .mat file
-filePath = "C:\Users\zhuang\Workspace\MINFLUX\TAMU_tracking\MINFLUX_NPC_Tracking-main\Nuclear Pore Model Data.txt";
-
-% Load the .mat file into the workspace
-data = load(filePath);
-
-% Assuming the data is stored under a specific variable name within the .mat file,
-% replace 'variableName' with the actual name of the variable in the .mat file
-%data = loadedData.variableName;
-
-% Ensure that the loaded data is in the correct format
-if ~isequal(size(data, 2), 5)
-    error('Data format is incorrect. Expected a N by 5 array.');
-end
+%% Load MINFLUX .mat format raw data
+% load MINFLUX NPC sample data
+filePath = ".\data\Nuclear Pore Model Data.mat";
+filterResult = filterMinfluxData( ...
+    filePath,...
+    [0, 0.8], ...   % cfr_range
+    [1e4, 1e7], ... % efo_range
+    [0, 1], ...     % dcr_range
+    [1, 350], ...  % trace length range
+    true,...        % compare with trace-wise mean value
+    0.668 );        % referactive index mismatch factor: RIMF
 
 
-% populate trace ID, time stamp, and localization coordinates
-tid = data(:, 1);    % Trace ID
-tim = data(:, 2);    % Time Stamp
-loc = 1e9* data(:, 3:5);  % X, Y, Z coordinates in nm
-uid = unique(tid);
-trace_length = arrayfun(@(x) sum(tid==x), uid);
+%% perform the semi-automated clustering of NPC localization data
+semiAutomatedClustering (filterResult.data_array); 
 
-% get centroid coordinates of each trace
-loc_trace = zeros(length(uid), 3);
-loc_trace(:,1) = arrayfun(@(id) mean( loc(tid==id, 1) ), uid);
-loc_trace(:,2) = arrayfun(@(id) mean( loc(tid==id, 2) ), uid);
-loc_trace(:,3) = arrayfun(@(id) mean( loc(tid==id, 3) ), uid);
-
-% Cluster loc_trace using DBSCAN, set epsilon to 100 and minPts to 30
-cid = dbscan(loc_trace(:, 1:2), 2*50, 30);
-% get unique cluster labels from cid
-ulabel = unique(cid);
-% reconstruct a cid array corresponding to each localization in loc
-cid_all = repelem(cid, trace_length);
+% from this point on, the cluster data should be stored in MATLAB base workspace
+disp("result with name cluster_data should be saved to workspace for further processing, if confirmed, click Enter to continue");
+pause;
+% wait for user input;
 
 
-pointCloud = loc(cid_all==10,:);
+%% fit double-ring model (cylinder) to each cluster
+estimate_cylinder_MINFLUX (cluster_data, true);
+
+%% filter clusters based on the cylinder fit results
+filterCluster (cluster_data,...
+    'new',...
+    'heightMin', 25,...
+    'heightMax', 100,...
+    'diameterMin',70,...
+    'diameterMax', 150,...
+    'zCenterMin', -300,...
+    'zCenterMax', 100,...
+    'nLocMin', 20);
+
+%% fit circle to 2D projection of clusters
+circlefit_bisquare_MINFLUX (cluster_data_filtered, true, 'new');
+
+%% compute 0-45 degree cluster rotation histogram, and align the clusters to same angle
+pore_rotation_MINFLUX (cluster_data_bisquareCircleFitted, true, 'new')
+
+%% merge the clusters together
+pore_merge_MINFLUX (cluster_data_sineFit, true, 'new')
 
 
+%% align track to NPC with beads calibration data
+file_track = ".\data\Tracks Model Data.txt";
+beads_track = ".\data\Bead Track.txt";
+beads_npc = ".\data\Bead NPC.txt";
+track_data = align_track_to_NPC (file_track , beads_track, beads_npc);
+track_data = assign_track_to_cluster (track_data, cluster_data_merged);
 
-
-
-
-% The data is now ready for further processing and analysis
-
+%% The data is now ready for visualization
+NPC_Trafficking_VisualizationUI(cluster_data_merged, track_data);

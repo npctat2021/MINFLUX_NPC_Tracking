@@ -1,23 +1,26 @@
-function filter_result = filterMinfluxData %(data, cfr_range, efo_range, length_range)
+function filter_result = filterMinfluxData (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, RIMF)
     % modified on 2024.07.12
     % <Ziqiang.Hunag@embl.de>
     % Select MINFLUX data and select EFO, CFR, DCR, and track length
     % Write "Yes" or "Y" in the 'filter with tracke-wise mean value' 
     % yield the Track_data_array, Track_ID, Time, Coordinates.
     % Enter this command  in command window [length = cellfun(@(x) size(x, 1), ans.tracks); track_data_array = double (repelem(ans.track_ID, length));track_data_array(:, 2:5) = vertcat(ans.tracks{:});]
-   % Get the 'Track_data_array' in the workspace to extract 'Track_ID, Time, Coordinates (x, y and z)' .
+    % Get the 'Track_data_array' in the workspace to extract 'Track_ID, Time, Coordinates (x, y and z)' .
     
     filter_result = [];
     %% load data file
-    [filename, filepath] = uigetfile({'*.mat'}, 'MINFLUX raw data file');
-    if isequal(filename, 0)
-        return;   
+    if nargin < 1
+        [filename, filepath] = uigetfile({'*.mat'}, 'MINFLUX raw data file');
+        if isequal(filename, 0)
+            return;   
+        end
+        minfluxRawDataPath = fullfile(filepath, filename);
     end
-    
-    data = load(fullfile(filepath, filename));
+    data = load(minfluxRawDataPath);
+
     % check MINFLUX data type, load attribute: loc, cfr, efo
     abberior_format = isempty(find(strcmp(fieldnames(data), 'loc'), 1));
-        % load attribute: vld, tid, tim
+    % load attribute: vld, tid, tim
     vld = data.vld;
     tid = data.tid(vld);
     tim = data.tim(vld);
@@ -35,41 +38,45 @@ function filter_result = filterMinfluxData %(data, cfr_range, efo_range, length_
         dcr = data.dcr(vld, end);
     end
     
-    % in some implementations, cfr and efo values can be expected residue
-    % in earlier iteration, instead of the last iteration.
-    [~, idx] = max(nansum(cfr));
+    % in earlier version of MINFLUX raw data format, cfr and efo values
+    % were not always stored in the last iteration. (before 2024 May)
+    [~, idx] = max(nansum(cfr)); %#ok<NANSUM>
     cfr = cfr(:, idx);
-    [~, idx] = max(nansum(efo));
+    [~, idx] = max(nansum(efo)); %#ok<NANSUM>
     efo = efo(:, idx);
 
-    %% get user input: render pixel size, margin ratio, channel settings
-    prompt = {'cfr min:',...
-        'cfr max:',...
-        'efo min:',... 
-        'efo max:',... 
-        'dcr min:',... 
-        'dcr max:',... 
-        'track length min:',... 
-        'track length max:',... 
-        'filter with tracke-wise mean value:'};
-    dlgtitle = 'Input';
-    dims = [1, 55];
-    definput = {num2str(min(cfr)), num2str(max(cfr)),...
-        num2str(min(efo)), num2str(max(efo)),...
-        num2str(min(dcr)), num2str(max(dcr)),...
-        num2str(min(trace_length)), num2str(max(trace_length)),...
-        'no'};
-    answer = inputdlg(prompt,dlgtitle,dims,definput);
-    if isempty(answer)
-        return;
+    %% create dialog to get user input: range of CFR, EFO, DCR, and track length, whether to compare using trace-wise mean value, and RIMF value
+    if nargin <= 1
+        prompt = {'cfr min:',...
+            'cfr max:',...
+            'efo min:',... 
+            'efo max:',... 
+            'dcr min:',... 
+            'dcr max:',... 
+            'track length min:',... 
+            'track length max:',... 
+            'filter with track-wise mean value:',...
+            'refractive index mismatch factor'};
+        dlgtitle = 'Input';
+        dims = [1, 55];
+        definput = {num2str(min(cfr)), num2str(max(cfr)),...
+            num2str(min(efo)), num2str(max(efo)),...
+            num2str(min(dcr)), num2str(max(dcr)),...
+            num2str(min(trace_length)), num2str(max(trace_length)),...
+            'yes',...
+            '0.668'};
+        answer = inputdlg(prompt,dlgtitle,dims,definput);
+        if isempty(answer)
+            return;
+        end
+        
+        cfr_range =   [str2double(answer{1}) str2double(answer{2})];
+        efo_range =   [str2double(answer{3}) str2double(answer{4})];
+        dcr_range =   [str2double(answer{5}) str2double(answer{6})]; 
+        length_range = [str2double(answer{7}) str2double(answer{8})];
+        do_trace_mean =  ~isequal('n', lower(answer{9}(1))); % filter with track-wise average: if first letter input is n (or N), then No.
+        RIMF = str2double(answer{10}); % refractive index mismatch factor should be measured experimentally
     end
-    
-    cfr_range =   [str2double(answer{1}) str2double(answer{2})];
-    efo_range =   [str2double(answer{3}) str2double(answer{4})];
-    dcr_range =   [str2double(answer{5}) str2double(answer{6})]; 
-    length_range = [str2double(answer{7}) str2double(answer{8})];
-    do_trace_mean =  ~isequal('n', lower(answer{9}(1))); % filter with track-wise average: if first letter input is n (or N), then No.
-
 
     %vld_cfr = cfr>=cfr_range(1) & cfr<=cfr_range(2);
     %vld_efo = efo>=efo_range(1) & efo<=efo_range(2);
@@ -115,27 +122,28 @@ function filter_result = filterMinfluxData %(data, cfr_range, efo_range, length_
     filter_result.track_ID = track_ID;
     N_tracks = size(track_ID, 1);
     
-    filter_result.time = cell(N_tracks, 1);
-    filter_result.coordinates = cell(N_tracks, 1);
-    filter_result.tracks = cell(N_tracks, 1);
+    filter_result.time_stamp = cell(N_tracks, 1);
+    filter_result.loc_nm = cell(N_tracks, 1);
+    filter_result.track_txyz = cell(N_tracks, 1);
     
     for i = 1 : N_tracks
         selected_data = tid==track_ID(i);
-        filter_result.time{i} = tim(selected_data)';
+        filter_result.time_stamp{i} = tim(selected_data)';
         
         %time = filter_result.time{i} - filter_result.time{i}(1);
         %time = time(2:end);
-
-        filter_result.coordinates{i} = loc(selected_data, :);
+        loc_nm = loc(selected_data, :) * 1e9;
+        loc_nm(:, 3) = loc_nm(:, 3) * RIMF;
+        filter_result.loc_nm{i} = loc_nm;
         %dS = vecnorm(diff(filter_result.coordinates{i}), 2, 2);
         %S = cumsum(dS, 1);
 
-        filter_result.tracks{i} = [filter_result.time{i} filter_result.coordinates{i}];
+        filter_result.track_txyz{i} = [filter_result.time_stamp{i} filter_result.loc_nm{i}];
     end
     
     % combine ID, time, x, y, z into one data array
     data_array(:, 1) = double (repelem(filter_result.track_ID, track_length));
-    data_array(:, 2:5) = vertcat(filter_result.tracks{:});
-    filter_result.track_data_array = data_array;
+    data_array(:, 2:5) = vertcat(filter_result.track_txyz{:});
+    filter_result.data_array = data_array;
 end
 

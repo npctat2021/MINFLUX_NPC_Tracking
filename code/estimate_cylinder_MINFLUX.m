@@ -1,89 +1,108 @@
-%Step2: Double circle fitting of the clusters
+function estimate_cylinder_MINFLUX (cluster_data, showFitting)
+    
+    if nargin < 2
+        showFitting = false;
+    end
+    
+    global fig tg;
+    num_pore = length(cluster_data);
 
-clear
-clear global;
+    %theta=0:0.01:2*pi;
+    %pixel_size=1.0; %nm
+    
+    %result = struct;
+    try
+        close(901);  
+    end
 
-%Load data
-%data = dlmread('ideal case.txt');
-fold_name='E:\EMBL 3rd Visit\2nd week\New folder\20240524\20240524\cell1\';
-num_pore=16;% Mention the number of cluster isolated.
-file_name='cluster';
-theta=0:0.01:2*pi;
-pixel_size=1.0; %nm
+    for i = 1 : num_pore %for total how many pores you want
+        cluster = cluster_data(i);
+        P = cluster.loc_nm;
+    
+        global x_noise y_noise z_noise;
+        x_noise = P(:,1)';
+        y_noise = P(:,2)';
+        z_noise = P(:,3)';
+        
+        
+        %Initial guess of the parameters [x_c, y_c, z_c, r, cylinder_height]
+        initialGuess = [mean(x_noise), mean(y_noise), mean(z_noise), ...
+            (max(x_noise) - min(x_noise) + max(y_noise) - min(y_noise)) / 2, ...
+            max(z_noise) - min(z_noise)];
+        
+        
+        %Estimate the parameters
+        [solution, fval, info, ~, ~, ~] = fminunc(@calculateError, initialGuess);
+        
+        
+        %Output the parameter estimates
+        if (showFitting)
+            % disp(["Center x estimate: ", sprintf('%.2f', solution(1))]);
+            % disp(["Center y estimate: ", sprintf('%.2f', solution(2))]);
+            % disp(["Center z estimate: ", sprintf('%.2f', solution(3))]);
+            % disp(["Center radius estimate: ", sprintf('%.2f', solution(4))]);
+            % disp(["Center height estimate: ", sprintf('%.2f', solution(5))]);
+            % disp(["Exit flag: ", sprintf('%d', info)]);
 
+            %Plot the data points
+            if ~ishandle(901)
+                fig = figure(901);
+                fig.NumberTitle = 'off';
+                fig.Name = 'Double ring fit of cluster';
+                tg = uitabgroup(fig);
+            else
+                fig = findobj( 'Type', 'Figure', 'Number', 901);
+            end
 
-for i=1:num_pore %for total how many pores you want
-    P=load([fold_name num2str(i) file_name '.txt']);
+            tab = uitab(tg, 'Title', ""+i);
+            ax = axes('Parent', tab);
+            scatter3(ax, x_noise, y_noise, z_noise,  '*');
+            axis equal;
+            hold on
+            %Plot circles based on parameter estimates
+            t = 0:pi/16:2 * pi;
+            plot3(ax, solution(1) + solution(4) * cos(t), solution(2) + solution(4) * sin(t), ones(1, length(t)) .* solution(3) + solution(5) / 2, 'g-', 'LineWidth', 3);
+            plot3(ax, solution(1) + solution(4) * cos(t), solution(2) + solution(4) * sin(t), ones(1, length(t)) .* solution(3) - solution(5) / 2, 'y-', 'LineWidth', 3);
+            hold off;
 
-global x_noise y_noise z_noise;
-x_noise = P(:,3)';
-y_noise = P(:,4)';
-z_noise = P(:,5)';
+        end
+        
+        cluster_data(i).center = solution(1:3);
+        cluster_data(i).diameter = 2 * solution(4);
+        cluster_data(i).height = solution(5);
+        cluster_data(i).fittingError = fval;
 
+    end
+    
+    % x_center=x_center';
+    % y_center=y_center';
+    % z_center=z_center';
+    % diameter=diameter';
+    % height=height';
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%Initial guess of the parameters [x_c, y_c, z_c, r, cylinder_height]
-initialGuess = [mean(x_noise), mean(y_noise), mean(z_noise), ...
-    (max(x_noise) - min(x_noise) + max(y_noise) - min(y_noise)) / 2, ...
-    max(z_noise) - min(z_noise)];
+    % mean_dev_diameter=mean(diameter-100);
+    % dev_dev_diameter=std(diameter-100);
+    % diameter_error=[mean_dev_diameter,dev_dev_diameter];
+    % mean_dev_height=mean(height-55);
+    % dev_dev_height=std(height-55);
+    % height_error=[mean_dev_height,dev_dev_height];
+    % 
+    % result.center = horzcat( x_center, y_center, z_center );
+    % result.diameter = diameter;
+    % result.height = height;
+    % result.diameter_error = diameter_error;
+    % result.height_error = height_error;
 
-
-%Estimate the parameters
-[solution, fval, info, output, grad, hess] = fminunc(@calculateError, initialGuess);
-
-
-%Output the parameter estimates
-disp(["Center x estimate: ", sprintf('%.2f', solution(1))]);
-disp(["Center y estimate: ", sprintf('%.2f', solution(2))]);
-disp(["Center z estimate: ", sprintf('%.2f', solution(3))]);
-disp(["Center radius estimate: ", sprintf('%.2f', solution(4))]);
-disp(["Center height estimate: ", sprintf('%.2f', solution(5))]);
-disp(["Exit flag: ", sprintf('%d', info)]);
-
-x_center(i)=solution(1);
-y_center(i)=solution(2);
-z_center(i)=solution(3);
-diameter(i)=2*solution(4);
-height(i)=solution(5);
-
-
-%Plot the data points
-figure;
-plot3(x_noise, y_noise, z_noise,  '*');
-set(gca, 'DataAspectRatio', [1 1 1]);
-hold on
-
-
-%Plot circles based on parameter estimates
-t = 0:pi/16:2 * pi;
-hold on;
-plot3(solution(1) + solution(4) * cos(t), solution(2) + solution(4) * sin(t), ones(1, length(t)) .* solution(3) + solution(5) / 2, 'g-', 'LineWidth', 5);
-hold on;
-plot3(solution(1) + solution(4) * cos(t), solution(2) + solution(4) * sin(t), ones(1, length(t)) .* solution(3) - solution(5) / 2, 'y-', 'LineWidth', 5);
-pause(10)
-close(gcf)
+    %save([fold_name file_name 'x_center.txt'],'-ascii','-TABS','x_center');
+    %save([fold_name file_name 'y_center.txt'],'-ascii','-TABS','y_center');
+    %save([fold_name file_name 'z_center.txt'],'-ascii','-TABS','z_center');
+    %save([fold_name file_name 'diameter.txt'],'-ascii','-TABS','diameter');
+    %save([fold_name file_name 'height.txt'],'-ascii','-TABS','height');
+    %save([fold_name file_name 'diameter_error.txt'],'-ascii','-TABS','diameter_error');
+    %save([fold_name file_name 'height_error.txt'],'-ascii','-TABS','height_error');
+    assignin('base', 'cluster_data', cluster_data);
 end
-
-x_center=x_center';
-y_center=y_center';
-z_center=z_center';
-diameter=diameter';
-height=height';
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-mean_dev_diameter=mean(diameter-100);
-dev_dev_diameter=std(diameter-100);
-diameter_error=[mean_dev_diameter,dev_dev_diameter];
-mean_dev_height=mean(height-55);
-dev_dev_height=std(height-55);
-height_error=[mean_dev_height,dev_dev_height];
-
-save([fold_name file_name 'x_center.txt'],'-ascii','-TABS','x_center');
-save([fold_name file_name 'y_center.txt'],'-ascii','-TABS','y_center');
-save([fold_name file_name 'z_center.txt'],'-ascii','-TABS','z_center');
-save([fold_name file_name 'diameter.txt'],'-ascii','-TABS','diameter');
-save([fold_name file_name 'height.txt'],'-ascii','-TABS','height');
-save([fold_name file_name 'diameter_error.txt'],'-ascii','-TABS','diameter_error');
-save([fold_name file_name 'height_error.txt'],'-ascii','-TABS','height_error');
-
 
 %Error function that is minimized
 function err = calculateError(theta)
@@ -104,4 +123,17 @@ function err = calculateError(theta)
   
   err = sum([xyDistError zDistError]);
 
+end
+
+
+% Function to compute the squared distance to a circle in 3D given a point and the circle's parameters
+function d_sq = distanceToRing(point, center, radius)
+    % Project the point onto the XY plane of the ring
+    projectedPoint = [point(1), point(2), center(3)];
+    % Compute the distance to the center of the circle
+    distToCenter = norm(projectedPoint - center);
+    % Compute the radial distance to the circle's edge in the XY plane
+    radialDist = max(distToCenter - radius, 0);
+    % Squared distance is the sum of the squared radial distance and the squared Z-axis difference
+    d_sq = radialDist^2 + (point(3) - center(3))^2;
 end
