@@ -35,17 +35,28 @@ function result = assign_track_to_cluster (track_data, npc_cluster_data)
         center_norm = cluster_center( I(i), : );
         rot = cluster_rotation( I(i) );
         
+        loc_norm{i} = track_data.loc_nm{i} - center_norm;
 
-        loci = track_data.loc_nm{i} - center_norm;
+        
 
+
+        cluster = cluster_data(i);
+        loc_nm = cluster.loc_nm;
+        % translate origin to the center of this cluster
+        loc_norm = loc_nm - cluster.center;
         % rotate around the center by the angle(+45°) computed from previous sinusoidal fitting steps
-        rot_rad = deg2rad( rot + 45 );
+        rot_rad = deg2rad( cluster.rotation + 45 );
         rotation_matrix = [ cos(rot_rad), -sin(rot_rad) ;
                             sin(rot_rad),  cos(rot_rad) ];
         
-        loci(:, 1:2) = loci(:, 1:2) * rotation_matrix;
+        loc_norm(:, 1:2) = loc_norm(:, 1:2) * rotation_matrix;
 
-        loc_norm{i} = loci;
+        cluster_data(i).loc_norm = loc_norm;
+
+
+
+
+
 
     end
     

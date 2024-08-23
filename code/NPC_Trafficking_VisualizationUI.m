@@ -48,7 +48,7 @@ function NPC_Trafficking_VisualizationUI(npc_cluster_data_merged, track_data_ali
     %plotTracks = cell(nTracks, 1);
     
     scatterTrack = [];
-    splineTrack = [];
+    %splineTrack = [];
     plotTrackHead = [];
     loc_norm = [];
     nLoc = 100;
@@ -133,17 +133,22 @@ function NPC_Trafficking_VisualizationUI(npc_cluster_data_merged, track_data_ali
     
     function plotTrack (idx_trk)
         loc_norm = [];
-        delete( [scatterTrack, splineTrack] );
+        delete( scatterTrack);
+        slider.Value = 0;
         
+        if (track_data.cluster_ID(idx_trk) == -1)
+            disp("selected track is not assigned to any NPC cluster!");
+            return;
+        end
 
         loc_norm = track_data_aligned.loc_norm{idx_trk};
         %tim = txyz(:,1);
         nLoc = size(loc_norm, 1);
         
-        points = fnplt( cscvn( loc_norm' ) );
+        %points = fnplt( cscvn( loc_norm' ) );
 
-        scatterTrack = scatter3(ax, loc_norm(:,1), loc_norm(:,2), loc_norm(:,3), 'b.')';
-        splineTrack = plot3(ax, points(1, :), points(2, :), points(3, :), '-m');
+        scatterTrack = plot3(ax, loc_norm(:,1), loc_norm(:,2), loc_norm(:,3), '-b', 'LineWidth', 2);
+        %splineTrack = plot3(ax, points(1, :), points(2, :), points(3, :), '-m');
         %app.highlight_head = plot3(app.ax_scatter, app.xyz_trace(1,1), app.xyz_trace(1,2), app.xyz_trace(1,3), '-pentagram');
         
         if ~isempty(plotTrackHead)
@@ -205,7 +210,7 @@ function NPC_Trafficking_VisualizationUI(npc_cluster_data_merged, track_data_ali
 
         if isempty(plotTrackHead)
             plotTrackHead = plot3(ax, loc_norm(idx, 1), loc_norm(idx, 2), loc_norm(idx, 3),...
-                'Marker', 'pentagram', 'MarkerSize', 12, 'MarkerEdgeColor', 'yellow', 'MarkerFaceColor', 'yellow');
+                'Marker', 'pentagram', 'MarkerSize', 18, 'MarkerEdgeColor', 'yellow', 'MarkerFaceColor', 'yellow');
         else
             plotTrackHead.Visible = 'on';
             plotTrackHead.XData = loc_norm(idx, 1);

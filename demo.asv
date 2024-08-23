@@ -28,19 +28,19 @@ addpath(genpath(pwd));
 
 %% Load MINFLUX .mat format raw data
 % load MINFLUX NPC sample data
-%filePath = ".\data\Nuclear Pore Model Data.mat";
+
 
 [file, dir] = uigetfile('*.*', 'select nuclear pore data, either MINFLUX raw data in mat format, or filtered data in txt format.');
-if ( file == 0 )
+if ( isempty(files) || length(files) ~= 3)
     return;
 end
 
 data_array = [];
-npcFilePath = fullfile( dir, file );
+if endsWith(file, ".mat")
 
-if endsWith(npcFilePath, ".mat")
+    filePath = ".\data\Nuclear Pore Model Data.mat";
     filterResult = filterMinfluxData( ...
-        npcFilePath,...
+        filePath,...
         [0, 0.8], ...   % cfr_range
         [1e4, 1e7], ... % efo_range
         [0, 1], ...     % dcr_range
@@ -49,11 +49,11 @@ if endsWith(npcFilePath, ".mat")
         0.668 );        % referactive index mismatch factor: RIMF
     data_array = filterResult.data_array;
 else
-    data_array = load (npcFilePath);
+    
 end
 
 %% perform the semi-automated clustering of NPC localization data
-semiAutomatedClustering (data_array); 
+semiAutomatedClustering (filterResult.data_array); 
 
 % from this point on, the cluster data should be stored in MATLAB base workspace
 disp("result with name cluster_data should be saved to workspace for further processing, if confirmed, click Enter to continue");
