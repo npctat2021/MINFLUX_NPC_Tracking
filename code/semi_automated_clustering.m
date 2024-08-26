@@ -1,4 +1,4 @@
-function semi_automated_clustering(data, dbscan_eps, dbscan_minPts)
+function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
     % Semi-automated clustering with interactive UI controls in MATLAB
     % 
     % Inputs:
@@ -9,11 +9,14 @@ function semi_automated_clustering(data, dbscan_eps, dbscan_minPts)
     %   timestamps - Time stamps corresponding to the loc.
     
     %% input argument control
-    if nargin < 3
+    if nargin < 4
         dbscan_minPts = 30; % by default expect 10 traces in a NPC
     end
-    if nargin < 2
+    if nargin < 3
         dbscan_eps = 100;   % by default expect NPC diameter to be 100 nm
+    end
+    if nargin < 2
+        RIMF = 0.668;
     end
     
     %% get MINFLUX data properties
@@ -117,7 +120,6 @@ function semi_automated_clustering(data, dbscan_eps, dbscan_minPts)
                     beads_npc = fullfile(dir, filename);
             end    
         end
-        RIMF = 0.668;
         track_data = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF);
         scatter3(ax, track_data.data_array(:, 3), track_data.data_array(:, 4), track_data.data_array(:, 5), 'r.');
 
@@ -136,7 +138,7 @@ function semi_automated_clustering(data, dbscan_eps, dbscan_minPts)
             'edgecolor','g', 'StripeColor','g', 'FaceAlpha', 0.1,...
             'Label', ""+newClusterID, 'LabelTextColor', 'r');
         % Append new cluster data
-        cluster_data(end+1).ClusterID = newClusterID; %#ok<AGROW>
+        cluster_data(end+1).ClusterID = newClusterID; 
         cluster_data(end).Rectangle = roi_manual;
         % Append loc inside the drawn ROI to form a new cluster
         tf = inROI( roi_manual, loc(:,1), loc(:,2) );

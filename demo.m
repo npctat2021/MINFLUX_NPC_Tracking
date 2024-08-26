@@ -66,7 +66,7 @@ else
 end
 
 %% perform the semi-automated clustering on NPC localization data (2D)
-semi_automated_clustering (data_array); 
+semi_automated_clustering (data_array, RIMF); 
 disp("   Use 'Save' button on 'Interactive Clustering...' figure to save clustering result");
 disp("   A variable with name 'cluster_data' should be saved to workspace for further processing");
 disp("   Once finished, click 'Enter' in the Command Window to continue.");
@@ -134,7 +134,7 @@ if ~track_data_exist
     file_track =    fullfile(datafolder, "Tracks Model Data.txt");
     beads_track =   fullfile(datafolder, "Bead Track.txt");
     beads_npc =     fullfile(datafolder, "Bead NPC.txt");
-    track_data = align_track_to_NPC (file_track, beads_track, beads_npc);
+    track_data = align_track_to_NPC (file_track, beads_track, beads_npc, RIMF);
 end
 track_data = assign_track_to_cluster (track_data, cluster_data);
 
