@@ -5,7 +5,7 @@ function result = assign_track_to_cluster (track_data, npc_cluster_data)
     cluster_center = vertcat(npc_cluster_data.center);
     cluster_rotation = vertcat(npc_cluster_data.rotation);
     
-
+    track_ID = vertcat(track_data.track_ID);
     track_center = cellfun(@(x) mean(x), track_data.loc_nm, 'UniformOutput', false);
     track_center = cell2mat(track_center);
     nTracks = size(track_center, 1);
@@ -28,10 +28,13 @@ function result = assign_track_to_cluster (track_data, npc_cluster_data)
     result.cluster_ID = track_cluster_ID;
     
     loc_norm = cell(nTracks, 1);
+    tid_array = track_data.data_array(:,1);
+
     for i = 1 : nTracks
         if (track_cluster_ID(i) == -1) 
             continue;
         end
+        tid = track_ID(i);
         center_norm = cluster_center( I(i), : );
         rot = cluster_rotation( I(i) );
         
@@ -46,18 +49,18 @@ function result = assign_track_to_cluster (track_data, npc_cluster_data)
         loci(:, 1:2) = loci(:, 1:2) * rotation_matrix;
 
         loc_norm{i} = loci;
+        result.data_array(tid_array==tid, 3:5) = loci;
+
 
     end
-    
+   
     result.loc_norm = loc_norm;
-
-    assignin('base', 'track_data', result);
-
-
+    
     % filter data array
-    data_array = track_data.data_array;
     exclude_array = repelem(exclude, track_length);
-    data_array(exclude_array, :) = [];
+    result.data_array(exclude_array, :) = [];
+    assignin('base', 'track_data', result);
+    data_array = result.data_array;
     save([pwd, '/',  'tracks_aligned_filtered.txt'], '-ascii', '-TABS', 'data_array');
 
 end

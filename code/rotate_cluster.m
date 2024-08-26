@@ -1,4 +1,4 @@
-function pore_rotation_MINFLUX (cluster_data, showFitting, save_mode)
+function rotate_cluster (cluster_data, showFitting, save_mode)
     
     if nargin < 3
         save_mode = 'overwrite';
@@ -76,7 +76,7 @@ function pore_rotation_MINFLUX (cluster_data, showFitting, save_mode)
         case 'overwrite'
             assignin('base', 'cluster_data', cluster_data);
         case 'new'
-            assignin('base', 'cluster_data_sineFit', cluster_data);
+            assignin('base', 'cluster_data_rotated', cluster_data);
         otherwise
             % do nothing
     end

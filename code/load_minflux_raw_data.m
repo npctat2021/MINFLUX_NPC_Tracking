@@ -1,4 +1,4 @@
-function filter_result = filterMinfluxData (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, RIMF)
+function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, RIMF)
     % modified on 2024.07.12
     % <Ziqiang.Hunag@embl.de>
     % Select MINFLUX data and select EFO, CFR, DCR, and track length

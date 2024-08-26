@@ -26,73 +26,118 @@ addpath(genpath(pwd));
 % Load the .csv file into the workspace
 %data = readmatrix(csvFilePath);
 
-%% Load MINFLUX .mat format raw data
+%% Load MINFLUX NPC data
+
 % load MINFLUX NPC sample data
 %filePath = ".\data\Nuclear Pore Model Data.mat";
-
-[file, dir] = uigetfile('*.*', 'select nuclear pore data, either MINFLUX raw data in mat format, or filtered data in txt format.');
-if ( file == 0 )
+[file_npc, data_folder] = uigetfile('*.*',...
+    'select nuclear pore data, either MINFLUX raw data in mat format, or sorted data in txt format.');
+if ( file_npc == 0 )
     return;
 end
+npcFilePath = fullfile( data_folder, file_npc );
 
-data_array = [];
-npcFilePath = fullfile( dir, file );
+% referactive index mismatch factor, as measured experimentally
+RIMF = 0.668;
+% whether to save intermediate results or not
+saveResultofEachStep = true;
+%data_array = [];
 
+% in case the loaded file is .mat format MINFLUX raw data, 
 if endsWith(npcFilePath, ".mat")
-    filterResult = filterMinfluxData( ...
+    % load MINFLUX raw data, filter by cfr, efo, dcr, and trace length
+    % arrange data into N by 5 data array, store to MATLAB base workspace
+    % sort MINFLUX mat raw data into N by 5 data array
+    % columns are: trace ID, time stamp, X, Y, and Z coordinates in nanometer
+    filterResult = load_minflux_raw_data ( ...
         npcFilePath,...
         [0, 0.8], ...   % cfr_range
         [1e4, 1e7], ... % efo_range
         [0, 1], ...     % dcr_range
-        [1, 350], ...  % trace length range
-        true,...        % compare with trace-wise mean value
-        0.668 );        % referactive index mismatch factor: RIMF
+        [1, 350], ...   % trace length range
+        true,...        % filter with trace-wise mean value
+        RIMF );         % referactive index mismatch factor, to be applied on Z coordinates
     data_array = filterResult.data_array;
 else
+    % load 
     data_array = load (npcFilePath);
+    % In case the data array loaded from txt file is not RIMF corrected
+    data_array(:, 5) = data_array(:, 5) * RIMF;
 end
 
-%% perform the semi-automated clustering of NPC localization data
-semiAutomatedClustering (data_array); 
+%% perform the semi-automated clustering on NPC localization data (2D)
+semi_automated_clustering (data_array); 
+disp("   Use 'Save' button on 'Interactive Clustering...' figure to save clustering result");
+disp("   A variable with name 'cluster_data' should be saved to workspace for further processing");
+disp("   Once finished, click 'Enter' in the Command Window to continue.");
+pause; % wait for user press 'Enter' to continue;
 
+%%
 % from this point on, the cluster data should be stored in MATLAB base workspace
-disp("result with name cluster_data should be saved to workspace for further processing, if confirmed, click Enter to continue");
-pause;
-% wait for user input;
+% each step will modify the result variable "cluster_data",
+% if saveResultofEachStep is true, then a new result variable will be created
+% instead. The intermediate results will be named with the operation and save
+% to MATLAB base workspace next to "cluster_data"
+%%
+
+% parse save_mode for the following steps
+save_mode = 'overwrite';    %#ok<NASGU>
+if (saveResultofEachStep)
+    save_mode = 'new';
+end
 
 %% fit double-ring model (cylinder) to each cluster
-estimate_cylinder_MINFLUX (cluster_data, true);
+fit_cylinder_to_cluster (cluster_data, true, save_mode);
+if (saveResultofEachStep)
+    cluster_data = cluster_data_cylinderFitted;
+end
 
 %% filter clusters based on the cylinder fit results
-filterCluster (cluster_data,...
-    'new',...
-    'heightMin', 25,...
-    'heightMax', 100,...
-    'diameterMin',70,...
-    'diameterMax', 150,...
-    'zCenterMin', -300,...
-    'zCenterMax', 100,...
-    'nLocMin', 20);
+filter_NPC_cluster (cluster_data,...
+    save_mode,...
+    'heightMin', 25,...     % minimum inter-ring height
+    'heightMax', 100,...    % maximum inter-ring height
+    'diameterMin',70,...    % minimum ring diameter
+    'diameterMax', 150,...  % maximum ring diameter
+    'zCenterMin', -300,...  % z center location
+    'zCenterMax', 100,...   %
+    'nLocMin', 20);         % minimum data point in cluster
+if (saveResultofEachStep)
+    cluster_data = cluster_data_filtered;
+end
 
 %% fit circle to 2D projection of clusters
-circlefit_bisquare_MINFLUX (cluster_data_filtered, true, 'new');
+fit_circle_to_cluster (cluster_data, true, save_mode);
+if (saveResultofEachStep)
+    cluster_data = cluster_data_circleFitted;                              
+end
 
 %% compute 0-45 degree cluster rotation histogram, and align the clusters to same angle
-pore_rotation_MINFLUX (cluster_data_bisquareCircleFitted, true, 'new')
+rotate_cluster (cluster_data, true, save_mode)
+if (saveResultofEachStep)
+    cluster_data = cluster_data_rotated;
+end
 
 %% merge the clusters together
-pore_merge_MINFLUX (cluster_data_sineFit, true, 'new')
+merge_cluster (cluster_data, true, save_mode);
+if (saveResultofEachStep)
+    cluster_data = cluster_data_merged;
+end
 
-
-%% align track to NPC with beads calibration data
+%% align and assign track to NPC with beads calibration data
+%  the alignment can also be done with semi-automated clustering step,
+%  with button function 'Load track data', as a result, a variable
+%  'track_data' would have been saved to MATLAB base Workspace.
+%  In this case, the demo script will directly go to assignemnt step.
 track_data_exist = evalin( 'base', 'exist(''track_data'',''var'') == 1' );
 if ~track_data_exist
-    file_track = ".\data\Tracks Model Data.txt";
-    beads_track = ".\data\Bead Track.txt";
-    beads_npc = ".\data\Bead NPC.txt";
-    track_data = align_track_to_NPC (file_track , beads_track, beads_npc);
+    file_track =    fullfile(datafolder, "Tracks Model Data.txt");
+    beads_track =   fullfile(datafolder, "Bead Track.txt");
+    beads_npc =     fullfile(datafolder, "Bead NPC.txt");
+    track_data = align_track_to_NPC (file_track, beads_track, beads_npc);
 end
-track_data = assign_track_to_cluster (track_data, cluster_data_merged);
+track_data = assign_track_to_cluster (track_data, cluster_data);
 
-%% The data is now ready for visualization
-NPC_Trafficking_VisualizationUI(cluster_data_merged, track_data);
+%% A visualziation UI which facilitate qualitative check on the result
+NPC_trafficking_visualizationUI(cluster_data, track_data);
+

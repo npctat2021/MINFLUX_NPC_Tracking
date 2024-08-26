@@ -1,4 +1,4 @@
-function pore_merge_MINFLUX (cluster_data, showResult, save_mode)
+function merge_cluster (cluster_data, showResult, save_mode)
     
     if nargin < 3
         save_mode = 'overwrite';
@@ -67,6 +67,6 @@ function pore_merge_MINFLUX (cluster_data, showResult, save_mode)
     
 
 
-    save([pwd, '/',  'pore_merged_rotated.txt'],'-ascii','-TABS','pore_merged');
+    save([pwd, '/',  'pore_rotated_merged.txt'],'-ascii','-TABS','pore_merged');
 
 end

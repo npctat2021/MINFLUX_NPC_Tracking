@@ -1,4 +1,4 @@
-function filterCluster (cluster_data, save_mode, varargin) %height_range, diameter_range, zCenter_range, minPts)
+function filter_NPC_cluster (cluster_data, save_mode, varargin)
 % templateFunction - A template function demonstrating fixed and optional inputs
 %
 % Syntax:

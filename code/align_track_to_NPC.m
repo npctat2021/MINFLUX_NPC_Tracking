@@ -78,6 +78,6 @@ function result = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF)
     result.data_array = data_array;
 
     assignin('base', 'track_data', result);
-    save([pwd, '/',  'tracks_aligned.txt'], '-ascii', '-TABS', 'data_array');
+    %save([pwd, '/',  'tracks_aligned.txt'], '-ascii', '-TABS', 'data_array');
 
 end

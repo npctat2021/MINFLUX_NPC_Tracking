@@ -1,4 +1,4 @@
-function NPC_Trafficking_VisualizationUI(npc_cluster_data_merged, track_data_aligned)
+function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_aligned)
 
     % Create a new figure for the UI
     if ishandle(905)
@@ -136,8 +136,8 @@ function NPC_Trafficking_VisualizationUI(npc_cluster_data_merged, track_data_ali
         delete( scatterTrack);
         slider.Value = 0;
         
-        if (track_data.cluster_ID(idx_trk) == -1)
-            disp("selected track is not assigned to any NPC cluster!");
+        if (track_data_aligned.cluster_ID(idx_trk) == -1)
+            disp(["selected track:", track_data_aligned.track_ID(idx_trk) ," is not assigned to any NPC cluster!"]);
             return;
         end
 
@@ -183,7 +183,7 @@ function NPC_Trafficking_VisualizationUI(npc_cluster_data_merged, track_data_ali
 
             slider.Value = slider.Value + 0.01;
             plotHead(slider.Value);
-            
+            java.lang.Thread.sleep(50); % by default pause for 50 ms betweem every 1% increment
             drawnow;
             %count = count + 1;
         end
@@ -250,7 +250,7 @@ function NPC_Trafficking_VisualizationUI(npc_cluster_data_merged, track_data_ali
         NPCpointCloud = pointCloud(allPoints(:,1:3), 'Intensity', 1e2*allPoints(:,4));
         %pointCloudPlot = scatter3(ax, allPoints(:,1), allPoints(:,2), allPoints(:,3), ...
         %     20, [0.5 0.5 0.5], 'filled', 'Visible', 'off');
-        axes_pcshow = pcshow(NPCpointCloud, 'ColorSource', 'Intensity', 'MarkerSize', 0.55, 'BackgroundColor', [1 1 1]);
+        pcshow(NPCpointCloud, 'ColorSource', 'Intensity', 'MarkerSize', 0.55, 'BackgroundColor', [1 1 1]);
         plotPtCloud = findobj('Tag', 'pcviewer');
         plotPtCloud.Visible = 'off';
         colormap(flipud(hot));

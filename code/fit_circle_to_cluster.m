@@ -1,4 +1,4 @@
-function circlefit_bisquare_MINFLUX (cluster_data, showFitting, save_mode)
+function fit_circle_to_cluster (cluster_data, showFitting, save_mode)
     
     %fold_name='C:\Users\zhuang\Workspace\MINFLUX\TAMU_tracking\MINFLUX_NPC_Tracking-main\';
     %file_name='pore';
@@ -108,7 +108,7 @@ function circlefit_bisquare_MINFLUX (cluster_data, showFitting, save_mode)
         case 'overwrite'
             assignin('base', 'cluster_data', cluster_data);
         case 'new'
-            assignin('base', 'cluster_data_bisquareCircleFitted', cluster_data);
+            assignin('base', 'cluster_data_circleFitted', cluster_data);
         otherwise
             % do nothing
     end

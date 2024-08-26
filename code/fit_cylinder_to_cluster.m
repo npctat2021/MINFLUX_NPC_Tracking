@@ -1,5 +1,8 @@
-function estimate_cylinder_MINFLUX (cluster_data, showFitting)
+function fit_cylinder_to_cluster (cluster_data, showFitting, save_mode)
     
+    if nargin < 3
+        save_mode = 'overwrite';
+    end
     if nargin < 2
         showFitting = false;
     end
@@ -32,7 +35,7 @@ function estimate_cylinder_MINFLUX (cluster_data, showFitting)
         
         
         %Estimate the parameters
-        [solution, fval, info, ~, ~, ~] = fminunc(@calculateError, initialGuess);
+        [solution, fval, ~, ~, ~, ~] = fminunc(@calculateError, initialGuess);
         
         
         %Output the parameter estimates
@@ -81,26 +84,14 @@ function estimate_cylinder_MINFLUX (cluster_data, showFitting)
     % height=height';
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    % mean_dev_diameter=mean(diameter-100);
-    % dev_dev_diameter=std(diameter-100);
-    % diameter_error=[mean_dev_diameter,dev_dev_diameter];
-    % mean_dev_height=mean(height-55);
-    % dev_dev_height=std(height-55);
-    % height_error=[mean_dev_height,dev_dev_height];
-    % 
-    % result.center = horzcat( x_center, y_center, z_center );
-    % result.diameter = diameter;
-    % result.height = height;
-    % result.diameter_error = diameter_error;
-    % result.height_error = height_error;
-
-    %save([fold_name file_name 'x_center.txt'],'-ascii','-TABS','x_center');
-    %save([fold_name file_name 'y_center.txt'],'-ascii','-TABS','y_center');
-    %save([fold_name file_name 'z_center.txt'],'-ascii','-TABS','z_center');
-    %save([fold_name file_name 'diameter.txt'],'-ascii','-TABS','diameter');
-    %save([fold_name file_name 'height.txt'],'-ascii','-TABS','height');
-    %save([fold_name file_name 'diameter_error.txt'],'-ascii','-TABS','diameter_error');
-    %save([fold_name file_name 'height_error.txt'],'-ascii','-TABS','height_error');
+    switch save_mode
+        case 'overwrite'
+            assignin('base', 'cluster_data', cluster_data);
+        case 'new'
+            assignin('base', 'cluster_data_cylinderFitted', cluster_data);
+        otherwise
+            % do nothing
+    end
     assignin('base', 'cluster_data', cluster_data);
 end
 

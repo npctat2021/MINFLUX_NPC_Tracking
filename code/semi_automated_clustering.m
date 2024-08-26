@@ -1,4 +1,4 @@
-function semiAutomatedClustering(data, dbscan_eps, dbscan_minPts)
+function semi_automated_clustering(data, dbscan_eps, dbscan_minPts)
     % Semi-automated clustering with interactive UI controls in MATLAB
     % 
     % Inputs:
