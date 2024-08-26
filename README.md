@@ -1,4 +1,4 @@
-# MINFLUX_NPC_Tracking
+# MINFLUX NPC Trafficking data processing and visualization
 The codes are specifically designed for analyzing two-color data obtained through 3D-MINFLUX. The 'Red' color corresponds to the nuclear pore complex (NPC), while the 'Green/Yellow' color represents the 3D second color used for tracking cargo moving through the NPC.
 
 A model dataset named "Nuclear Pore Model Data.mat" contains the raw data exported from the MINFLUX microscope. Users can filter and isolate the tracks based on EFO, CFR, and track length parameters using the "filterMinfluxData.m" script. The extracted data can then be used for further analysis.
