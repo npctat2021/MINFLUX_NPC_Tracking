@@ -38,6 +38,17 @@ MATLAB software can be installed from [mathworks website](https://www.mathworks.
 All MATLAB functions and scripts are commented and explained.
 For a quick demo of the workflow, run the demo.m script and follow the instruction below:
 
+The script will ask to load the sample NPC scaffold data. The data can be either the .mat format which can be the MINFLUX exported raw data, or alternatively it can be the .txt format data that being pre-processed with filterMinfluxData.m script. The pre-processing can filter the MINFLUX raw data by several attributes, and correct for refractive index mismatch-factor (RIMF).
+
+When the NPC data is successfully loaded. The demo script will perform a semi-automated clustering based on density-based scan. This is implemented via a MATLAB figure. Several buttons are created to facilitate additional functions such as manaul draw cluster that not correctly detected by density-based scan. It is essential to save the clustering result to MATLAB base workspace (by clicking on the "SAVE" button) for further steps.
+
+Then for each cluster, we run a set of the following steps:
+ - fit cylinder;
+ - fitler cluster;
+ - fit circle and remove outlier;
+ - analyzing corner angles and rotate clusters to reference axis;
+ - merge the clusters together, to create a final NPC template;
+
 
 
 
