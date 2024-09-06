@@ -17,19 +17,19 @@ function result = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF)
     input_points = bead_data_trk(:, 1:2);
     
     % compute translational transform of X, and Y axis
-    fit_arg_x = polyfit(base_points(:,1), input_points(:,1), 1); % 1st order polynomial fit (y=a1*x+a2) of top channel x-pixels (x) & bottom channel x-pixels (y), output is [a1, a2] 
-    fit_arg_y = polyfit(base_points(:,2), input_points(:,2), 1); % 1st order polynomial fit (y=b1*x+b2) of top channel y-pixels (x) & bottom channel y-pixels (y), output is [b1, b2]
+    fit_arg_x = polyfit(input_points(:,1), base_points(:,1), 1); % 1st order polynomial fit (y=a1*x+a2) of top channel x-pixels (x) & bottom channel x-pixels (y), output is [a1, a2]
+    fit_arg_y = polyfit(input_points(:,2), base_points(:,2), 1); % 1st order polynomial fit (y=b1*x+b2) of top channel y-pixels (x) & bottom channel y-pixels (y), output is [b1, b2]
     map_func = inline('fit_arg(1)*xdata(:,1)+fit_arg(2)*xdata(:,2)+fit_arg(3)','fit_arg','xdata'); % defining a 1st order polynomial function
-    xdata=base_points;
-    fit_arg=[fit_arg_x(1) 0 fit_arg_x(2)]; % fit_arg_x(1) is a1, fit_arg_x(2) is b1 
+    xdata=input_points;
+    fit_arg=[fit_arg_x(1) 0 fit_arg_x(2)]; % fit_arg_x(1) is a1, fit_arg_x(2) is b1
     options=optimset('lsqcurvefit');
     options=optimset(options,'display','off');
-    px = lsqcurvefit(map_func,fit_arg,xdata,input_points(:,1),[],[],options); % expressing bottom channel x-pixel in terms of top channel x-pixel and y-pixel, px=[px1,px2,px3]
+    px = lsqcurvefit(map_func,fit_arg,xdata,base_points(:,1),[],[],options); % expressing bottom channel x-pixel in terms of top channel x-pixel and y-pixel, px=[px1,px2,px3]
     fit_arg = [0 fit_arg_y(1) fit_arg_y(2)];
-    py = lsqcurvefit(map_func,fit_arg,xdata,input_points(:,2),[],[],options); % expressing bottom channel x-pixel in terms of top channel x-pixel and y-pixel, py=[py1,py2,py3]
+    py = lsqcurvefit(map_func,fit_arg,xdata,base_points(:,2),[],[],options); % expressing bottom channel x-pixel in terms of top channel x-pixel and y-pixel, py=[py1,py2,py3]
     %pxy=[px', py']; % this is the alignment matrix 
     pz = mean(bead_data_npc(:,3) - mean(bead_data_trk(:,3)));
-
+    
     % plot alignment figure
     figure("Name", "Track data and NPC data alignment with beads" );
     hold on;

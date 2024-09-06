@@ -1,4 +1,14 @@
 function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_aligned)
+    
+    % debug mode to visualize only NPC cluster without tracks
+    if nargin < 2
+        track_data_aligned = struct();
+        track_data_aligned.track_ID = 0;
+        track_data_aligned.time_stamp = {0};
+        track_data_aligned.loc_nm = {[0, 0, 0]};
+        track_data_aligned.track_txyz = {[0, 0, 0, 0]};
+        track_data_aligned.cluster_ID = -1;
+    end
 
     % Create a new figure for the UI
     if ishandle(905)

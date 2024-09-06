@@ -131,10 +131,10 @@ end
 %  In this case, the demo script will directly go to assignemnt step.
 track_data_exist = evalin( 'base', 'exist(''track_data'',''var'') == 1' );
 if ~track_data_exist
-    file_track =    fullfile(datafolder, "Tracks Model Data.txt");
-    beads_track =   fullfile(datafolder, "Bead Track.txt");
-    beads_npc =     fullfile(datafolder, "Bead NPC.txt");
-    track_data = align_track_to_NPC (file_track, beads_track, beads_npc, RIMF);
+    file_track =    fullfile(data_folder, "Tracks Model Data.txt");
+    beads_track =   fullfile(data_folder, "Bead Track.txt");
+    beads_npc =     fullfile(data_folder, "Bead NPC.txt");
+    track_data =    align_track_to_NPC (file_track, beads_track, beads_npc, RIMF);
 end
 track_data = assign_track_to_cluster (track_data, cluster_data);
 
