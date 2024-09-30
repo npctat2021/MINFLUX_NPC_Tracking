@@ -41,10 +41,10 @@ Detailed explanations are provided at the top of each script and in the followin
 
 
 
--  [filter MINFLUX data](/img/filterMInfluxData.png).  
+-  
 note: this preview image was coverted to PNG format to be visible on Webpage. To run the script, both TIFF and PNG format works but we always use TIFF format as our input.  
     <p align="center">
-    <img src="/preview/sample_data_preview.png" width="800" height=auto>
+    <img src="/img/filterMInfluxData.png" width="800" height=auto>
     </p>
 
  <br />
