@@ -135,7 +135,7 @@ end
 %  'track_data' would have been saved to MATLAB base Workspace.
 %  In this case, the demo script will directly go to assignemnt step.
 track_data_exist = evalin( 'base', 'exist(''track_data'',''var'') == 1' );
-if ~track_data_exist
+if ~track_data_exist || isempty(track_data)
     file_track =    fullfile(data_folder, "Tracks Model Data.txt");
     beads_track =   fullfile(data_folder, "Bead Track.txt");
     beads_npc =     fullfile(data_folder, "Bead NPC.txt");
