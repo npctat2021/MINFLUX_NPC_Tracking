@@ -43,16 +43,13 @@ Detailed explanations are provided at the top of each script and in the followin
 
 -  
 note: this preview image was coverted to PNG format to be visible on Webpage. To run the script, both TIFF and PNG format works but we always use TIFF format as our input.  
-    <p align="center">
-    <img src="/img/filterMInfluxData.png" width="800" height=auto>
+    <p align="left">
+    <img src="/img/filterMInfluxData.png" width="400" height=auto>
     </p>
-
  <br />
 
  
 **What it does**: Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks. The following window will pop up, allowing the user to select their filtering criteria.
-
-<a href="https://imgbb.com/"><img src="https://i.ibb.co/L5qS5rB/Filter-tracks.png" alt="Filter-tracks" border="0"></a>
 
  **Input file(s)**: Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo. As model data "Nuclear Pore Model Data.mat".
  
@@ -71,8 +68,9 @@ Create a text file of pore/track localizations containing 5 columns: track ID, t
 **What it does**: Extracts the ID, timestamp, and coordinates of individual cluster into separate text files.
 The cluster should be manually selected. Upon running the program, a window with scatter plots will open. User will need to draw a rectangular selection box around each cluster.  Once selected, double-clicking the rectangle will save the cluster. Repeat this process until all pore clusters are selected.  Once complete, save clusters and the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
 
-<a href="https://ibb.co/1zNS9ZY"><img src="https://i.ibb.co/NTq4Lxg/Cluster-fitting-for-model-pore.png" alt="Cluster-fitting-for-model-pore" border="0"></a>
-
+    <p align="left">
+    <img src="/img/doubleRingFitting.png" width="400" height=auto>
+    </p>
 **Input file(s)**: Scaffold localization.txt.(should contain track ID, timestamp, and XYZ coordinates)
 
 **Output file(s)**:	Invidual cluster with cluster number
