@@ -68,9 +68,13 @@ Create a text file of pore/track localizations containing 5 columns: track ID, t
 **What it does**: Extracts the ID, timestamp, and coordinates of individual cluster into separate text files.
 The cluster should be manually selected. Upon running the program, a window with scatter plots will open. User will need to draw a rectangular selection box around each cluster.  Once selected, double-clicking the rectangle will save the cluster. Repeat this process until all pore clusters are selected.  Once complete, save clusters and the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
 
+note: this preview image was coverted to PNG format to be visible on Webpage. To run the script, both TIFF and PNG format works but we always use TIFF format as our input.  
     <p align="left">
     <img src="/img/doubleRingFitting.png" width="400" height=auto>
     </p>
+ <br />
+
+ 
 **Input file(s)**: Scaffold localization.txt.(should contain track ID, timestamp, and XYZ coordinates)
 
 **Output file(s)**:	Invidual cluster with cluster number
@@ -80,8 +84,19 @@ The cluster should be manually selected. Upon running the program, a window with
    
 **What it does**: Double circle fitting of  two rings from individual cluster. Image attached.
 
-<a href="https://ibb.co/T4wDBpY"><img src="https://i.ibb.co/qNDLMX7/Double-circle-Fitting-of-cluster.png" alt="Double-circle-Fitting-of-cluster" border="0"></a>
 
+note: this preview image was coverted to PNG format to be visible on Webpage. To run the script, both TIFF and PNG format works but we always use TIFF format as our input.  
+    <p align="left">
+    <img src="/img/lsqCircleFitting.png" width="400" height=auto>
+    </p>
+ <br />
+
+
+
+
+
+
+ 
 **Input file(s)**: It takes input of clusters information from the output of Program 2
 
 **Output file(s)**:	Coordrinates of centers of the clusters from double circle fit of two rings and diamters and separation distance between two rings.
@@ -91,6 +106,14 @@ The cluster should be manually selected. Upon running the program, a window with
 4. **Program Name** : select_pores_MINFLUX.m
    
 **What it does**: Selects those clusters having at least 20 localizations with a fit diameter. For example of diameter: 70-150 nm, height: 25-100 nm, and z-center: 0±200 nm. User can change these parameters as per their interest.
+
+
+ note: this preview image was coverted to PNG format to be visible on Webpage. To run the script, both TIFF and PNG format works but we always use TIFF format as our input.  
+    <p align="left">
+    <img src="/img/sinusoidalFit.png" width="400" height=auto>
+    </p>
+ <br />
+
  
 
 **Input file(s)**: It takes input from fitting parameters (x, y, z coordrinates,diameter, height)from the output of Program 3 
