@@ -103,7 +103,7 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
 
 
  note: this preview image was coverted to PNG format to be visible on Webpage. To run the script, both TIFF and PNG format works but we always use TIFF format as our input.  
-    <p align="center">
+    <p align="left">
     <img src="/img/sinusoidalFit.png" width="600" height=auto>
     </p>
  <br />
@@ -116,7 +116,7 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
 
 
  note: this preview image was coverted to PNG format to be visible on Webpage. To run the script, both TIFF and PNG format works but we always use TIFF format as our input.  
-    <p align="center">
+    <p align="left">
     <img src="/img/mergedClusterScatterPlott.png" width="600" height=auto>
     </p>
  <br />
@@ -128,7 +128,7 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
 
 
  note: this preview image was coverted to PNG format to be visible on Webpage. To run the script, both TIFF and PNG format works but we always use TIFF format as our input.  
-    <p align="center">
+    <p align="left">
     <img src="/img/beads_alignment.png" width="800" height=auto>
     </p>
  <br />
@@ -139,7 +139,7 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
 
 
  note: this preview image was coverted to PNG format to be visible on Webpage. To run the script, both TIFF and PNG format works but we always use TIFF format as our input.  
-    <p align="center">
+    <p align="left">
     <img src="/img/visualizationUI.png" width="800" height=auto>
     </p>
  <br />
