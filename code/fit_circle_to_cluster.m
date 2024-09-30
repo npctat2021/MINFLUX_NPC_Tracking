@@ -25,8 +25,14 @@ function fit_circle_to_cluster (cluster_data, showFitting, save_mode)
     x2hat = zeros(num_cluster, 1);
     y2hat = zeros(num_cluster, 1);
     r2hat = zeros(num_cluster, 1);
-
+    
+    progress = 0;
+    fprintf(1,'       progress: %3d%%\n', progress);
     for i = 1 : num_cluster
+        % report progress
+        progress = ( 100*(i/num_cluster) );
+        fprintf(1,'\b\b\b\b%3.0f%%', progress); % Deleting 4 characters (The three digits and the % symbol)
+
         cluster = cluster_data(i);
 
         %P=load([fold_name num2str(i) file_name '.txt']);
@@ -103,6 +109,7 @@ function fit_circle_to_cluster (cluster_data, showFitting, save_mode)
         
         
     end
+    fprintf('\n'); % To go to a new line after reaching 100% progress
 
     switch save_mode
         case 'overwrite'

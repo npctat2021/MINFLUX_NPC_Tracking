@@ -101,9 +101,18 @@ function filter_NPC_cluster (cluster_data, save_mode, varargin)
     num_cluster = length(cluster_data);
 
     passFilter = false(num_cluster, 1);
-
+    
+    progress = 0;
+    fprintf(1,'       progress: %3d%%\n', progress);
     for i = 1 : 1:num_cluster
+        % report progress
+        progress = ( 100*(i/num_cluster) );
+        fprintf(1,'\b\b\b\b%3.0f%%', progress); % Deleting 4 characters (The three digits and the % symbol)
+        
         cluster = cluster_data(i);
+        if isempty(cluster.loc_nm)
+            continue;
+        end
         height = cluster.height;
         diameter = cluster.diameter;
         zCenter = cluster.center(:, 3);
@@ -117,6 +126,7 @@ function filter_NPC_cluster (cluster_data, save_mode, varargin)
                         zCenter <= zCenter_range(2) &&...
                         numPts >= minPts;
     end
+    fprintf('\n'); % To go to a new line after reaching 100% progress
 
     cluster_data( ~passFilter ) = [];
 

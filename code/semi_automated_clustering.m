@@ -2,18 +2,18 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
     % Semi-automated clustering with interactive UI controls in MATLAB
     % 
     % Inputs:
-    %   loc - Nx3 matrix of 3D loc [x, y, z].
-    %   dbscan_eps - Epsilon parameter for the DBSCAN clustering.
-    %   dbscan_minPts - Minimum loc parameter for the DBSCAN clustering.
-    %   tid - Trace IDs corresponding to the loc.
-    %   timestamps - Time stamps corresponding to the loc.
+    %   data - Nx5 matrix of input localization data: ID, tim, x,y,z
+    %   RIMF - refractive index mismatch factor, as to scale Z axis value: z(physical) = z(data) * RIMF;
+    %   dbscan_eps - maximum distance between points to be reconginzed as belonging to one cluster, for the DBSCAN clustering.
+    %   dbscan_minPts - minimum number of points in a DBSCAN cluster
+
     
     %% input argument control
     if nargin < 4
-        dbscan_minPts = 30; % by default expect 10 traces in a NPC
+        dbscan_minPts = 5; % by default expect at least 5 traces in a NPC
     end
     if nargin < 3
-        dbscan_eps = 100;   % by default expect NPC diameter to be 100 nm
+        dbscan_eps = 55;   % by default expect NPC radius to be 55 nm
     end
     if nargin < 2
         RIMF = 0.668;
@@ -174,7 +174,7 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
         cluster_data(empty_cluster) = [];
         
         assignin('base', 'cluster_data', cluster_data);
-        disp('Clusters saved to workspace as "cluster_data".');
+        disp('   Clusters saved to workspace as "cluster_data".');
     end
-    
+    fprintf('\n');
 end

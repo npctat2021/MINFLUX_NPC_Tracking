@@ -1,7 +1,7 @@
 function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_aligned)
     
     % debug mode to visualize only NPC cluster without tracks
-    if nargin < 2
+    if ( nargin < 2 || isempty(track_data_aligned) )
         track_data_aligned = struct();
         track_data_aligned.track_ID = 0;
         track_data_aligned.time_stamp = {0};
@@ -147,7 +147,7 @@ function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_ali
         slider.Value = 0;
         
         if (track_data_aligned.cluster_ID(idx_trk) == -1)
-            disp(["selected track:", track_data_aligned.track_ID(idx_trk) ," is not assigned to any NPC cluster!"]);
+            disp( strcat('selected track: ',  num2str(track_data_aligned.track_ID(idx_trk)), ', is not assigned to any NPC cluster!') );
             return;
         end
 

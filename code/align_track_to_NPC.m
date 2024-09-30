@@ -64,13 +64,11 @@ function result = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF)
         y_calib = loc_nm(:,1).* py(1) + loc_nm(:,2).* py(2) + py(3);
         z_calib = loc_nm(:,3) + pz;
         
-
         result.loc_nm{i} = horzcat(x_calib, y_calib, z_calib);
         result.track_txyz{i} = [result.time_stamp{i} result.loc_nm{i}];
     end
     
     
-
 
     % combine ID, time, x, y, z into one data array
     data_array(:, 1) = double (repelem(result.track_ID, track_length));

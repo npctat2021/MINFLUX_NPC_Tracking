@@ -87,12 +87,14 @@ if (saveResultofEachStep)
 end
 
 %% fit double-ring model (cylinder) to each cluster
+disp( "  - fitting cycliner to clusters..." );
 fit_cylinder_to_cluster (cluster_data, true, save_mode);
 if (saveResultofEachStep)
     cluster_data = cluster_data_cylinderFitted;
 end
 
 %% filter clusters based on the cylinder fit results
+disp( "  - filtering clusters..." );
 filter_NPC_cluster (cluster_data,...
     save_mode,...
     'heightMin', 25,...     % minimum inter-ring height
@@ -107,18 +109,21 @@ if (saveResultofEachStep)
 end
 
 %% fit circle to 2D projection of clusters
+disp( "  - fitting circle to clusters..." );
 fit_circle_to_cluster (cluster_data, true, save_mode);
 if (saveResultofEachStep)
     cluster_data = cluster_data_circleFitted;                              
 end
 
 %% compute 0-45 degree cluster rotation histogram, and align the clusters to same angle
+disp( "  - computing rotation phase angle of each cluster..." );
 rotate_cluster (cluster_data, true, save_mode)
 if (saveResultofEachStep)
     cluster_data = cluster_data_rotated;
 end
 
 %% merge the clusters together
+disp( "  - transform and merging clusters together..." );
 merge_cluster (cluster_data, true, save_mode);
 if (saveResultofEachStep)
     cluster_data = cluster_data_merged;
@@ -134,10 +139,20 @@ if ~track_data_exist
     file_track =    fullfile(data_folder, "Tracks Model Data.txt");
     beads_track =   fullfile(data_folder, "Bead Track.txt");
     beads_npc =     fullfile(data_folder, "Bead NPC.txt");
-    track_data = align_track_to_NPC (file_track, beads_track, beads_npc, RIMF);
+    if ( ~isfile(file_track) || ~isfile(beads_track) || ~isfile(beads_npc))
+        track_data_exist = false;
+    else
+        track_data = align_track_to_NPC (file_track, beads_track, beads_npc, RIMF);
+    end
 end
-track_data = assign_track_to_cluster (track_data, cluster_data);
+if track_data_exist
+    track_data = assign_track_to_cluster (track_data, cluster_data);
+else
+    track_data = [];
+end
 
 %% A visualziation UI which facilitate qualitative check on the result
+disp( "  - display the final merged NPC cluster with NPC visualization GUI..." );
+fprintf('\n');
 NPC_trafficking_visualizationUI(cluster_data, track_data);
 

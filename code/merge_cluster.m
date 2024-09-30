@@ -9,13 +9,20 @@ function merge_cluster (cluster_data, showResult, save_mode)
 
     num_cluster = length(cluster_data);
     
+    progress = 0;
+    fprintf(1,'       progress: %3d%%\n', progress);
     for i = 1 : 1:num_cluster
+        % report progress
+        progress = ( 100*(i/num_cluster) );
+        fprintf(1,'\b\b\b\b%3.0f%%', progress); % Deleting 4 characters (The three digits and the % symbol)
+
+
         cluster = cluster_data(i);
         loc_nm = cluster.loc_nm;
         % translate origin to the center of this cluster
         loc_norm = loc_nm - cluster.center;
-        % rotate around the center by the angle(+45°) computed from previous sinusoidal fitting steps
-        rot_rad = deg2rad( cluster.rotation + 45 );
+        % rotate around the center by the angle(+22.5°) computed from previous sinusoidal fitting steps
+        rot_rad = deg2rad( cluster.rotation + 22.5 );
         rotation_matrix = [ cos(rot_rad), -sin(rot_rad) ;
                             sin(rot_rad),  cos(rot_rad) ];
         
@@ -24,7 +31,7 @@ function merge_cluster (cluster_data, showResult, save_mode)
         cluster_data(i).loc_norm = loc_norm;
 
     end
-    
+    fprintf('\n'); % To go to a new line after reaching 100% progress
 
     assignin('base', 'cluster_data', cluster_data);
 
@@ -51,16 +58,22 @@ function merge_cluster (cluster_data, showResult, save_mode)
         else
             fig = findobj( 'Type', 'Figure', 'Number', 904);
         end
+        
         ax1 = subplot(1,2,1, 'Parent', fig);
+
+        alphaLevel = 3e3 / length(loc_norm);
+        alphaLevel = min(0.5, alphaLevel);
+
         scatter(ax1,...
             loc_norm(:,1), loc_norm(:,2), 'ro',...
-            'SizeData', 5.5,'MarkerEdgeAlpha', 0.1, 'MarkerFaceColor', [.55, 0, 0], 'MarkerFaceAlpha', 0.15);
+            'SizeData', 0.3,'MarkerEdgeAlpha', alphaLevel, 'MarkerFaceColor', [.55, 0, 0], 'MarkerFaceAlpha', alphaLevel);
         xlabel("x (nm)"); ylabel("y (nm)"); axis equal; 
         title("X-Y view");
         ax2 = subplot(1,2,2, 'Parent', fig);
+        
         scatter(ax2,...
             loc_norm(:,1), loc_norm(:,3), 'ro',...
-            'SizeData', 5.5,'MarkerEdgeAlpha', 0.1, 'MarkerFaceColor', [.55, 0, 0], 'MarkerFaceAlpha', 0.15);
+            'SizeData', 0.3,'MarkerEdgeAlpha', alphaLevel, 'MarkerFaceColor', [.55, 0, 0], 'MarkerFaceAlpha', alphaLevel);
         xlabel("x (nm)"); ylabel("z (nm)"); axis equal; 
         title("X-Z view");
     end

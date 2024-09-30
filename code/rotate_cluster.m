@@ -7,12 +7,17 @@ function rotate_cluster (cluster_data, showFitting, save_mode)
         showFitting = false;
     end
     
-    global fig tg;
+    global fig tg; %#ok<GVMIS>
 
     num_cluster = length(cluster_data);
 
-
+    progress = 0;
+    fprintf(1,'       progress: %3d%%\n', progress);
     for i = 1 : 1:num_cluster
+        % report progress
+        progress = ( 100*(i/num_cluster) );
+        fprintf(1,'\b\b\b\b%3.0f%%', progress); % Deleting 4 characters (The three digits and the % symbol)
+
         % get current cluster data
         cluster = cluster_data(i);
         % get loclization coordinates of XY and XY center
@@ -26,30 +31,37 @@ function rotate_cluster (cluster_data, showFitting, save_mode)
         ynorm = y - center(2);
         
         % STEP 1
-        % mapping localizations to [-90° 90°] range in the X-Y plane (mirror along Y axis)
-        rot_90 = atand( xnorm ./ ynorm );
+        % compute rotation angle in XY plane in the range between
+        % [-180°, 180°] of each localization
+        rot = atan2d(xnorm, ynorm);
     
         % STEP 2
-        % mapping localizations to [-90° 90°] range in the X-Y plane (mirror along Y axis)
-        rot_45 = mod(rot_90 + 90, 45);
-
-        % STEP 3
-        % create a angle distribution histogram in the range of [0° 45°] with bin size of 5°
-        [phase_norm, edges] = histcounts(rot_45, 9, 'Normalization','probability');
-        phase_norm = phase_norm';
-        bin_center = (edges(1:end-1) + 2.5)';
-
-        % STEP 4
-        % fitting angle distribution to a sinusoidal function to determine
-        % the rotation angle (in XY plane) of the cluster
-        func = inline('9^(-1)+20.6^(-1)*cosd(8*(x-8.4-p))','p','x'); % HERE!!! 
-        theo = 0 : 0.1 : 45;
-        angle =lsqcurvefit( func, 10, bin_center, phase_norm);
-        if angle < 0
-            angle = angle + 45;
-        end
+        % mapping rotation angle to the range of [0°, 45°] to account for
+        % 8-fold symmetry of the NPC sub-unit
+        rot_45 = mod(rot, 45);
         
-        
+        % STEP 3 - modified as of 2024.09.17
+        % fit a full cycle of sinusoidal to the histogram of the 45° angle
+        % mapping histogram, to estimate the final rotation angle in XY plane
+        rot_angle_360 = rot_45 * 8;   % re-scale back to 0 - 360° for full cycle sinusoidal fit !!! not to be confused with the original rotation angle !!!
+        edges = 0 : 1 : 360;                % use 1 degree precision
+        binCount_360 = histcounts(rot_angle_360, edges, 'Normalization','probability');
+        % smooth the histogram with RMS filter, window size = 9 bins
+        binCount_RMS = sqrt(movmean(binCount_360 .^ 2, 9));
+
+        [~, maxIndex] = max(binCount_RMS);
+        % Define x scale to cover [0, 360] degrees for a complete cycle
+        XdataDegree = 1 : 1 : 360;
+        % Define the sine function model
+        sineModel = @(sineFunc, x) 1/360 * sind( x + sineFunc(1)) + 1 / 360;
+        % Perform the fitting using nonlinear least squares
+        options = optimset('Display','off');
+        sineParams = lsqcurvefit(sineModel, maxIndex - 90, edges(2:end), binCount_RMS, [], [], options);
+    
+        % extract phase shift degree from fitted sine function
+        phaseShiftDegrees = mod( 90 - sineParams(1), 360 ) / 8;
+
+
         if (showFitting)
             if ~ishandle(903)
                 fig = figure(903);
@@ -61,16 +73,26 @@ function rotate_cluster (cluster_data, showFitting, save_mode)
             end
             tab = uitab(tg, 'title', ""+i);
             ax = axes('Parent', tab);
-            phase = func(angle, theo);
-            plot(ax, bin_center, phase_norm,'ro', theo, phase, 'b');
+            hold on;
+            histogram(rot_45, edges/8, 'Normalization', 'probability');
+            plot(XdataDegree/8, binCount_RMS, 'g', 'LineWidth', 2);
+            % Overlay the fitted sine function
+            fittedCurve = sineModel(sineParams, XdataDegree);
+            plot(XdataDegree/8, fittedCurve, 'r-', 'LineWidth', 2);
+            xline(phaseShiftDegrees, '--r', 'LineWidth', 2);
+            %title('Histogram with Fitted Sine Function');
+            legend('normalized angle histogram', 'RMS smoothed bin counts', 'fitted sine curve', strcat("phase angle = ", num2str(phaseShiftDegrees), "°"), 'Location', 'Best');
+            grid on;
+            xlim([0, 45]);
             set(ax,'FontSize', 12)
             xlabel('angle (degree)','FontSize',20);
-            ylabel('frequency','FontSize',20);
+            ylabel('normalized frequency','FontSize',20);
         end
         
-        cluster_data(i).rotation = angle;
+        cluster_data(i).rotation = 45 - phaseShiftDegrees;
 
     end
+    fprintf('\n'); % To go to a new line after reaching 100% progress
 
     switch save_mode
         case 'overwrite'

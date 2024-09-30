@@ -1,6 +1,12 @@
 function result = assign_track_to_cluster (track_data, npc_cluster_data)
     
     
+    result = track_data;
+
+    if isempty(track_data)
+        return;
+    end
+
     cluster_ID = vertcat(npc_cluster_data.ClusterID);
     cluster_center = vertcat(npc_cluster_data.center);
     cluster_rotation = vertcat(npc_cluster_data.rotation);
@@ -24,7 +30,6 @@ function result = assign_track_to_cluster (track_data, npc_cluster_data)
     track_cluster_ID(exclude, :) = -1;
     
     % prepare result track_data
-    result = track_data;
     result.cluster_ID = track_cluster_ID;
     
     loc_norm = cell(nTracks, 1);
@@ -42,7 +47,7 @@ function result = assign_track_to_cluster (track_data, npc_cluster_data)
         loci = track_data.loc_nm{i} - center_norm;
 
         % rotate around the center by the angle(+45°) computed from previous sinusoidal fitting steps
-        rot_rad = deg2rad( rot + 45 );
+        rot_rad = deg2rad( rot + 22.5 );
         rotation_matrix = [ cos(rot_rad), -sin(rot_rad) ;
                             sin(rot_rad),  cos(rot_rad) ];
         

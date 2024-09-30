@@ -17,9 +17,18 @@ function fit_cylinder_to_cluster (cluster_data, showFitting, save_mode)
     try
         close(901);  
     end
-
+    
+    progress = 0;
+    fprintf(1,'       progress: %3d%%\n', progress);
     for i = 1 : num_pore %for total how many pores you want
+        % report progress
+        progress = ( 100*(i/num_pore) );
+        fprintf(1,'\b\b\b\b%3.0f%%', progress); % Deleting 4 characters (The three digits and the % symbol)
+
         cluster = cluster_data(i);
+        if isempty(cluster.loc_nm)
+            continue;
+        end
         P = cluster.loc_nm;
     
         global x_noise y_noise z_noise;
@@ -35,7 +44,8 @@ function fit_cylinder_to_cluster (cluster_data, showFitting, save_mode)
         
         
         %Estimate the parameters
-        [solution, fval, ~, ~, ~, ~] = fminunc(@calculateError, initialGuess);
+        options = optimoptions(@fminunc,'Display', 'off');
+        [solution, fval, ~, ~, ~, ~] = fminunc(@calculateError, initialGuess, options);
         
         
         %Output the parameter estimates
@@ -76,7 +86,8 @@ function fit_cylinder_to_cluster (cluster_data, showFitting, save_mode)
         cluster_data(i).fittingError = fval;
 
     end
-    
+    fprintf('\n'); % To go to a new line after reaching 100% progress
+
     % x_center=x_center';
     % y_center=y_center';
     % z_center=z_center';
