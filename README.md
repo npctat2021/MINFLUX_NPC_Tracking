@@ -38,7 +38,18 @@ MATLAB software can be installed from [mathworks website](https://www.mathworks.
 Detailed explanations are provided at the top of each script and in the following README sections.
 #### Filter MINFLUX data
 1. **Program Name** : filterMinfluxData.m
-   
+
+
+
+-  [filter MINFLUX data](/img/filterMInfluxData.png).  
+note: this preview image was coverted to PNG format to be visible on Webpage. To run the script, both TIFF and PNG format works but we always use TIFF format as our input.  
+    <p align="center">
+    <img src="/preview/sample_data_preview.png" width="800" height=auto>
+    </p>
+
+ <br />
+
+ 
 **What it does**: Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks. The following window will pop up, allowing the user to select their filtering criteria.
 
 <a href="https://imgbb.com/"><img src="https://i.ibb.co/L5qS5rB/Filter-tracks.png" alt="Filter-tracks" border="0"></a>
