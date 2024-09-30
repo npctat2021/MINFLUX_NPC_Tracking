@@ -70,7 +70,7 @@ The cluster should be manually selected. Upon running the program, a window with
 
 note: this preview image was coverted to PNG format to be visible on Webpage. To run the script, both TIFF and PNG format works but we always use TIFF format as our input.  
     <p align="left">
-    <img src="/img/doubleRingFitting.png" width="400" height=auto>
+    <img src="/img/doubleRingFitting.png" width="600" height=auto>
     </p>
  <br />
 
@@ -87,7 +87,7 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
 
 note: this preview image was coverted to PNG format to be visible on Webpage. To run the script, both TIFF and PNG format works but we always use TIFF format as our input.  
     <p align="left">
-    <img src="/img/lsqCircleFitting.png" width="400" height=auto>
+    <img src="/img/lsqCircleFitting.png" width="600" height=auto>
     </p>
  <br />
 
