@@ -13,7 +13,7 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
         dbscan_minPts = 5; % by default expect at least 5 traces in a NPC
     end
     if nargin < 3
-        dbscan_eps = 55;   % by default expect NPC radius to be 55 nm
+        dbscan_eps = 110;   % by default expect NPC radius to be 55 nm
     end
     if nargin < 2
         RIMF = 0.668;
@@ -49,8 +49,11 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
     else
         fig = findobj( 'Type', 'Figure', 'Number', 900);
     end
+
+    %ax = findall(fig,'type','axes');
+    %cla(ax);
     ax = gca;
-   
+    
     % Plot initial clustering
     scatter3(ax, loc(:, 1), loc(:, 2), loc(:, 3), [], cid_all, '.');
     axis equal;

@@ -59,23 +59,45 @@ function merge_cluster (cluster_data, showResult, save_mode)
             fig = findobj( 'Type', 'Figure', 'Number', 904);
         end
         
+
+        x = loc_norm(:, 1); y = loc_norm(:, 2); z = loc_norm(:, 3);
+        densityMap_xy = renderNPC2D ([x, y]);
+        densityMap_xz = renderNPC2D ([x, z]);
+
+        img_xy = imgaussfilt(densityMap_xy, 5);
+        img_xz = imgaussfilt(densityMap_xz, 5);
+        max_xy = max(max(img_xy));
+        max_xz = max(max(img_xz));
+
         ax1 = subplot(1,2,1, 'Parent', fig);
-
-        alphaLevel = 3e3 / length(loc_norm);
-        alphaLevel = min(0.5, alphaLevel);
-
-        scatter(ax1,...
-            loc_norm(:,1), loc_norm(:,2), 'ro',...
-            'SizeData', 0.3,'MarkerEdgeAlpha', alphaLevel, 'MarkerFaceColor', [.55, 0, 0], 'MarkerFaceAlpha', alphaLevel);
-        xlabel("x (nm)"); ylabel("y (nm)"); axis equal; 
+        imshow(img_xy, 'Parent', ax1);
+        colormap(ax1, 'hot');
+        clim(ax1, [0, max_xy]);
         title("X-Y view");
+
         ax2 = subplot(1,2,2, 'Parent', fig);
-        
-        scatter(ax2,...
-            loc_norm(:,1), loc_norm(:,3), 'ro',...
-            'SizeData', 0.3,'MarkerEdgeAlpha', alphaLevel, 'MarkerFaceColor', [.55, 0, 0], 'MarkerFaceAlpha', alphaLevel);
-        xlabel("x (nm)"); ylabel("z (nm)"); axis equal; 
+        imshow(flipud(img_xz'), 'Parent', ax2);
+        colormap(ax2, 'hot');
+        clim(ax2, [0, max_xz]);
         title("X-Z view");
+
+
+        % alphaLevel = 3e3 / length(loc_norm);
+        % alphaLevel = min(0.5, alphaLevel);
+        % 
+        % scatter(ax1,...
+        %     loc_norm(:,1), loc_norm(:,2), 'ro',...
+        %     'SizeData', 0.3,'MarkerEdgeAlpha', alphaLevel, 'MarkerFaceColor', [.55, 0, 0], 'MarkerFaceAlpha', alphaLevel);
+        % xlabel("x (nm)"); ylabel("y (nm)"); axis equal; 
+        % title("X-Y view");
+        % ax2 = subplot(1,2,2, 'Parent', fig);
+        % 
+        % scatter(ax2,...
+        %     loc_norm(:,1), loc_norm(:,3), 'ro',...
+        %     'SizeData', 0.3,'MarkerEdgeAlpha', alphaLevel, 'MarkerFaceColor', [.55, 0, 0], 'MarkerFaceAlpha', alphaLevel);
+        % xlabel("x (nm)"); ylabel("z (nm)"); axis equal; 
+        % title("X-Z view");
+
     end
     
 

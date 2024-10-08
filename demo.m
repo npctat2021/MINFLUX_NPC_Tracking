@@ -66,7 +66,7 @@ else
 end
 
 %% perform the semi-automated clustering on NPC localization data (2D)
-semi_automated_clustering (data_array, RIMF); 
+semi_automated_clustering (data_array, RIMF, 55); 
 disp("   Use 'Save' button on 'Interactive Clustering...' figure to save clustering result");
 disp("   A variable with name 'cluster_data' should be saved to workspace for further processing");
 disp("   Once finished, click 'Enter' in the Command Window to continue.");
