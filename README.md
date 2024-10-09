@@ -87,9 +87,15 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
 **What it does**: .
 
  
+<<<<<<< HEAD
 **Input(s)**:
 
 **Output(s)**:
+=======
+**Input(s)**: Scaffold localization.txt.(should contain track ID, timestamp, and XYZ coordinates)
+
+**Output(s)**:	Invidual cluster with cluster number
+>>>>>>> b98eacde47ad781df1adb14e1efbfdb16dca7b18
 
 
 #### Fitting Nuclear Pore localizations
@@ -112,7 +118,11 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
 #### Fitting Nuclear Pore localizations
 6.  **Program Name** : rotate_cluster.m
    
+<<<<<<< HEAD
 **What it does**: 
+=======
+**What it does**: Double circle fitting of  two rings from individual cluster. Image attached.
+>>>>>>> b98eacde47ad781df1adb14e1efbfdb16dca7b18
 
     <p align="left">
     <img src="/img/sinusoidalFit.png" width="600" height=auto>
@@ -140,9 +150,29 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
 
 
  8. **Program Name** : align_track_to_NPC.m
+<<<<<<< HEAD
+=======
    
 **What it does**: 
 
+    <p align="left">
+    <img src="/img/mergedClusterScatterPlott.png" width="600" height=auto>
+    </p>
+ <br />
+
+**Input(s)**: 
+
+**Output(s)**:	
+
+9. **Program Name** : assign_track_to_cluster.m
+>>>>>>> b98eacde47ad781df1adb14e1efbfdb16dca7b18
+   
+**What it does**: 
+
+<<<<<<< HEAD
+=======
+
+>>>>>>> b98eacde47ad781df1adb14e1efbfdb16dca7b18
     <p align="left">
     <img src="/img/beads_alignment.png" width="600" height=auto>
     </p>
@@ -152,6 +182,7 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
 
 **Output(s)**:	
 
+<<<<<<< HEAD
 9. **Program Name** : assign_track_to_cluster.m
    
 **What it does**: 
@@ -164,6 +195,12 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
    
 **What it does**: 
 
+=======
+10. **Program Name** : NPC_trafficking_visualizationUI.m
+   
+**What it does**: 
+
+>>>>>>> b98eacde47ad781df1adb14e1efbfdb16dca7b18
     <p align="left">
     <img src="/img/visualizationUI.png" width="600" height=auto>
     </p>
@@ -176,6 +213,17 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
 
 ## Demo
 We made a script that demo the whole workflow with our uploaded sample data (in the data folder) and default parameters.
+<<<<<<< HEAD
+=======
+
+**Program Name** : demo.m
+   
+**What it does**: 
+
+**Input(s)**: 
+
+**Output(s)**:
+>>>>>>> b98eacde47ad781df1adb14e1efbfdb16dca7b18
 
 **Program Name** : demo.m
    
