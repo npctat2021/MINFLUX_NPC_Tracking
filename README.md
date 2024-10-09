@@ -1,4 +1,19 @@
 # MINFLUX_NPC_Tracking
+Study of nuclear transport with two-color MINFLUX
+
+This workflow reconstruct nuclear pore complex (NPC) and associated cargo transport trajectories from two-color MINFLUX data. 
+
+A example dataset can be found in the data folder, and can be used for demo purposes. it consist of the following files:
+ - Nuclear Pore Model Data.mat : MINFLUX raw data of NPC in MATLAB data format;
+ - Nuclear Pore Model Data.txt : filtered and converted NPC data with 5 columns: trace-ID, time stamp, x, y, and z coordinates;
+ - Tracks Model Data.txt : coverted MINFLUX data of cargo trajectories;
+ - Bead NPC.txt : beads coordinates from the NPC dataset, each row is a different bead, and columns are x, y, and z coordinates (in nm);
+ - Bead Cargo.txt : beads coordinates from the Cargo dataset, each row is the same bead as corresponding row in the bead NPC.txt file;
+
+
+The pore data must be analyzed first to obtain the pore centers and other relevant information. Second, the alignment transformation is calculated from the beads datasets and used to align the track data to the NPC data. The track data must then be analyzed to yield individual tracks with respect to the corresponding pore. Detailed explanations are provided at the top of each script and in the respective README sections.
+
+"Overlapping nuclear import and export paths unveiled by two-color MINFLUX" 
 The codes are specifically designed for analyzing two-color data obtained through 3D-MINFLUX. The 'Red' color corresponds to the nuclear pore complex (NPC), while the 'Green/Yellow' color represents the 3D second color used for tracking cargo moving through the NPC.
 
 A model dataset named "Nuclear Pore Model Data.mat" contains the raw data exported from the MINFLUX microscope. Users can filter and isolate the tracks based on EFO, CFR, and track length parameters using the "filterMinfluxData.m" script. The extracted data can then be used for further analysis.
