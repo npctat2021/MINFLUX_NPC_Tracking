@@ -32,19 +32,13 @@ Detailed explanations are provided at the top of each script and in the followin
 #### Filter MINFLUX data
 1. **Program Name** : load_minflux_raw_data.m
 
-
-
--  
-note: this preview image was coverted to PNG format to be visible on Webpage. To run the script, both TIFF and PNG format works but we always use TIFF format as our input.  
+**What it does**: Load MINFLUX MATLAB format raw data, and applying filters on EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the filtering criteria for EFO, CFR, and DCR. Prepare data as tab-separated values with 5 columns: track ID, timestamp, X, Y, and Z coordinates. The following window will pop up, allowing the user to select their filtering criteria.
     <p align="left">
     <img src="/img/filterMInfluxData.png" width="400" height=auto>
     </p>
  <br />
-
  
-**What it does**: Refine MINFLUX data by applying filters for EFO, CFR, DCR, and track length parameters to separate individual localizations or tracks whose localizations meet the average criteria for EFO, CFR, and DCR. Include track ID, timestamp, and XYZ coordinates for valid tracks. The following window will pop up, allowing the user to select their filtering criteria.
-
- **Input file(s)**: Matlab version (.mat) of MINFLUX raw data file for pore scaffold and cargo. As model data "Nuclear Pore Model Data.mat".
+ **Input file(s)**: MATLAB format (.mat) of MINFLUX raw data file for pore scaffold and cargo. e.g.: model data "Nuclear Pore Model Data.mat".
  
  **Output file(s)**:	Track_data_array, Track_ID, Time, Coordinates
 
