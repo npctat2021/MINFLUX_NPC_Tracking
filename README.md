@@ -3,37 +3,17 @@ Study of nuclear transport with two-color MINFLUX
 
 This workflow reconstruct nuclear pore complex (NPC) and associated cargo transport trajectories from two-color MINFLUX data. 
 
-A example dataset can be found in the data folder, and can be used for demo purposes. it consist of the following files:
+An example dataset can be found inside the data folder, and can be used for demo purposes. it consist of the following files:
  - Nuclear Pore Model Data.mat : MINFLUX raw data of NPC in MATLAB data format;
  - Nuclear Pore Model Data.txt : filtered and converted NPC data with 5 columns: trace-ID, time stamp, x, y, and z coordinates;
  - Tracks Model Data.txt : coverted MINFLUX data of cargo trajectories;
  - Bead NPC.txt : beads coordinates from the NPC dataset, each row is a different bead, and columns are x, y, and z coordinates (in nm);
  - Bead Cargo.txt : beads coordinates from the Cargo dataset, each row is the same bead as corresponding row in the bead NPC.txt file;
 
+(note: The time stamp is values with unit second, and localizations are values with unit meter. This is how MINFLUX raw data is being recorded, and kept the same in this workflow if not specified otherwise)
 
-The pore data must be analyzed first to obtain the pore centers and other relevant information. Second, the alignment transformation is calculated from the beads datasets and used to align the track data to the NPC data. The track data must then be analyzed to yield individual tracks with respect to the corresponding pore. Detailed explanations are provided at the top of each script and in the respective README sections.
+The pore data must be analyzed first to obtain the pore centers and other relevant information. Second, the alignment transformation is calculated from the beads datasets and used to align the track data to the NPC data. The track data must then be analyzed to yield individual tracks with respect to the corresponding pore. Detailed explanations are provided in the respective README sections and in the comments of the code.
 
-"Overlapping nuclear import and export paths unveiled by two-color MINFLUX" 
-The codes are specifically designed for analyzing two-color data obtained through 3D-MINFLUX. The 'Red' color corresponds to the nuclear pore complex (NPC), while the 'Green/Yellow' color represents the 3D second color used for tracking cargo moving through the NPC.
-
-A model dataset named "Nuclear Pore Model Data.mat" contains the raw data exported from the MINFLUX microscope. Users can filter and isolate the tracks based on EFO, CFR, and track length parameters using the "filterMinfluxData.m" script. The extracted data can then be used for further analysis.
-
-Additionally, four other model datasets are provided for running the two-color colocalization scripts:
-
-"Nuclear Pore Model Data.txt" contains filtered 3D MINFLUX localizations from permeabilized functional NPCs.
-"Tracks Model Data.txt" contains track data with five columns: 'Track Id', 'Time stamp (second)', x (meter), y (meter), and z (meter).
-Typically, MINFLUX data output is in seconds and meters. The following scripts will convert these to milliseconds and nanometers. Data for bead localization in two channels is also attached (Bead loc_Red.txt and Bead loc_Yellow.txt) as model data, which will help generate an alignment matrix to correct the optical aberration between the two colors.
-
-The pore data must be analyzed first to obtain the pore centers and other relevant information. Second, the alignment matrix is required to align the second color. The track data must then be analyzed to yield individual tracks with respect to the corresponding pore. Detailed explanations are provided at the top of each script and in the respective README sections.
-
-Note: 20 scripts are attached, requiring specific input files:
-
-1. "Nuclear Pore Model Data.mat" for Program 1.
-2. "Nuclear Pore Model Data.txt" for Program 2.
-3. "Bead loc_Red.txt" and "Bead loc_Yellow.txt" for Program 14.
-4. "Tracks Model Data.txt" for Program 15.
-
-Common errors may occur from not changing the folder name or not applying the correct pore/cluster numbers.
 
 ## System Requirements
 MATLAB 2021b and newer. with toolboxes:
@@ -47,13 +27,10 @@ This workflow doesn't have high computation requirement nor special hardwares. i
 
 This workflow was developed with Windows 10 Pro 22H2 Version and tested on Windows 11 Home version 10.0.22631.
 
-## Installation Guide
-MATLAB software can be installed from [mathworks website](https://www.mathworks.com/help/install/install-products.html). A typical installation time is ~15-30 min.
-
 ## Instructions for use
 Detailed explanations are provided at the top of each script and in the following README sections.
 #### Filter MINFLUX data
-1. **Program Name** : filterMinfluxData.m
+1. **Program Name** : load_minflux_raw_data.m
 
 
 
