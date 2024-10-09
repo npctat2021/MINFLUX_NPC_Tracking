@@ -21,15 +21,16 @@ Note: 20 scripts are attached, requiring specific input files:
 Common errors may occur from not changing the folder name or not applying the correct pore/cluster numbers.
 
 ## System Requirements
-The analysis requires MATLAB software to run the codes.
-MATLAB>R2021b with Add-On:
-1. Statistics and Machine Learning Toolbox
-2. Signal Processing Toolbox
-3. Optimization Toolbox
-4. Mapping Toolbox
-5. Image Processing Toolbox
-6. Curve Fitting Toolbox
-Any standard computer with sufficient RAM to meet MATLAB's requirements can be used for this purpose. The analysis was conducted using a Windows 11 Home version 10.0.22631.
+MATLAB 2021b and newer. with toolboxes:
+- Statistics and Machine Learning
+- Signal Processing
+- Optimization
+- Image processing
+- Curve fitting
+
+This workflow doesn't have high computation requirement nor special hardwares. it should work just fine on a laptop PC with nowadays regular CPU and RAM. It developed with Win 10, but should work also on other OS with MATLAB and toolboxes installed. 
+
+This workflow was developed with Windows 10 Pro 22H2 Version and tested on Windows 11 Home version 10.0.22631.
 
 ## Installation Guide
 MATLAB software can be installed from [mathworks website](https://www.mathworks.com/help/install/install-products.html). A typical installation time is ~15-30 min.
