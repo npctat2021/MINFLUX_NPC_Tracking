@@ -54,7 +54,7 @@ function merge_cluster (cluster_data, showResult, save_mode)
         if ~ishandle(904)
             fig = figure(904);
             fig.NumberTitle = 'off';
-            fig.Name = 'scatter plot of merged cluster';
+            fig.Name = '2D rendering of merged cluster';
         else
             fig = findobj( 'Type', 'Figure', 'Number', 904);
         end
