@@ -32,22 +32,22 @@ Detailed explanations are provided at the top of each script and in the followin
 #### Filter MINFLUX data
 1. **Program Name** : load_minflux_raw_data.m
 
-**What it does**: Load MINFLUX MATLAB format raw data, and applying filters on EFO, CFR, DCR, and track length parameters to separate individual localizations or traces whose localizations meet the filtering criteria for EFO, CFR, and DCR. Prepare data as tab-separated values with 5 columns: track ID, timestamp, X, Y, and Z coordinates. The following window will pop up, allowing the user to select their filtering criteria.
+   **What it does**: Load MINFLUX MATLAB format raw data, and applying filters on EFO, CFR, DCR, and track length parameters to separate individual localizations or traces whose localizations meet the filtering criteria for EFO, CFR, and DCR. Prepare data as tab-separated values with 5 columns: track ID, timestamp, X, Y, and Z coordinates. The following window will pop up, allowing the user to select their filtering criteria.
     <p align="left">
     <img src="/img/filterMInfluxData.png" width="400" height=auto>
     </p>
- <br />
- 
- **Input(s)**: MATLAB format (.mat) of MINFLUX raw data file for pore scaffold and cargo. e.g.: model data "Nuclear Pore Model Data.mat".
- 
- **Output(s)**: A variable with name "filter_result" in MATLAB base workspace.  Track_data_array, Track_ID, Time, Coordinates
+    
+    **Input(s)**: MATLAB format (.mat) of MINFLUX raw data file for pore scaffold and cargo. e.g.: model data "Nuclear Pore Model Data.mat".
+    
+    **Output(s)**: A variable with name "filter_result" in MATLAB base workspace.  Track_data_array, Track_ID, Time, Coordinates
 
-Note: Place the following command in the command box after running this script to obtain the track ID, timestamp, and XYZ coordinates of the filtered tracks as output in "track_data_array".
-length = cellfun(@(x) size(x, 1), ans.tracks);
-track_data_array = double (repelem(ans.track_ID, length));
-track_data_array(:, 2:5) = vertcat(ans.tracks{:});
+    Note: Place the following command in the command box after running this script to obtain the track ID, timestamp, and XYZ coordinates of the filtered tracks as output in "track_data_array".
+    
+        length = cellfun(@(x) size(x, 1), ans.tracks);
+        track_data_array = double (repelem(ans.track_ID, length));
+        track_data_array(:, 2:5) = vertcat(ans.tracks{:}); 
 
-Create a text file of pore/track localizations containing 5 columns: track ID, timestamp, and XYZ coordinates. For a trial, use the model data "Nuclear Pore Model Data.txt" for pores and "Tracks Model Data.txt" for tracks. Use these text files as input for Script 2 (separate_cluster_MINFLUX.m) for pores or Script 15 (green_localization_in_red_channel_MINFLUX.m) for tracks.
+    Create a text file of pore/track localizations containing 5 columns: track ID, timestamp, and XYZ coordinates. For a trial, use the model data "Nuclear Pore Model Data.txt" for pores and "Tracks Model Data.txt" for tracks. Use these text files as input for Script 2 (separate_cluster_MINFLUX.m) for pores or Script 15 (green_localization_in_red_channel_MINFLUX.m) for tracks.
 
 #### Fitting Nuclear Pore localizations
 2. **Program Name** : semi_automated_clustering.m
