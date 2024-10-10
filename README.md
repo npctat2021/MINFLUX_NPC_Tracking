@@ -29,7 +29,7 @@ The codes was developed with Windows 10 Pro 22H2 Version and tested on Windows 1
 
 ## Instructions for use
 Detailed explanations are provided at the top of each script and in the following README sections.
-### Filter MINFLUX data
+### Load and Pre-processing of MINFLUX data
 1. **Program Name** : load_minflux_raw_data.m
 
    **What it does**: Load MINFLUX MATLAB format raw data, and applying filters on EFO, CFR, DCR, and track length parameters to separate individual localizations or traces whose localizations meet the filtering criteria for EFO, CFR, and DCR. Prepare data as tab-separated values with 5 columns: track ID, timestamp, X, Y, and Z coordinates. The following window will pop up, allowing the user to select their filtering criteria.
@@ -46,19 +46,13 @@ Detailed explanations are provided at the top of each script and in the followin
     - trace_txyz : N by 4 array of filtered localization data with 4 columns:time, x, y, and z coordinates, that can be used in other applications, e.g.: [msdanalyzer](https://tinevez.github.io/msdanalyzer/)
     - data_array : N by 5 array of filtered data with 5 columns: trace ID, time, x, y, and z coordinates. This is the type of data mainly used in our workflow. One can save it to a tabular format file onto disk, e.g.: tab-separated value as txt file 
 
-    Note: Place the following command in the command box after running this script to obtain the track ID, timestamp, and XYZ coordinates of the filtered tracks as output in "track_data_array".
-    
-        length = cellfun(@(x) size(x, 1), ans.tracks);
-        track_data_array = double (repelem(ans.track_ID, length));
-        track_data_array(:, 2:5) = vertcat(ans.tracks{:}); 
+    Note: This program is modified so that upon successful execution it will also export the data_array to a text file that saved to folder where the input file residue. The name will be the same as the MATLAB format data file, but with .txt extension. It stores the trace ID, time stamp, x, y, and z coordinates in nm as 5 column tab-separated values. This text file can be used as input for program 2 (semi_automated_clustering.m). Or if the input is the cargo tracking data, it can be used in program 8 and 9, align and assign tracks to NPC.
 
-    Create a text file of pore/track localizations containing 5 columns: track ID, timestamp, and XYZ coordinates. For a trial, use the model data "Nuclear Pore Model Data.txt" for pores and "Tracks Model Data.txt" for tracks. Use these text files as input for Script 2 (separate_cluster_MINFLUX.m) for pores or Script 15 (green_localization_in_red_channel_MINFLUX.m) for tracks.
-
-### Fitting Nuclear Pore localizations
+### Reconstruction of Nuclear Pore Localization Data
 2. **Program Name** : semi_automated_clustering.m
    
-**What it does**: Extracts the ID, timestamp, and coordinates of individual cluster into separate text files.
-The cluster should be manually selected. Upon running the program, a window with scatter plots will open. User will need to draw a rectangular selection box around each cluster.  Once selected, double-clicking the rectangle will save the cluster. Repeat this process until all pore clusters are selected.  Once complete, save clusters and the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
+    **What it does**: Spatial clustering of localization data. Upon running the program, a figure window with 2D scatter plot of the localizations will show. 
+User will need to draw a rectangular selection box around each cluster.  Once selected, double-clicking the rectangle will save the cluster. Repeat this process until all pore clusters are selected.  Once complete, save clusters and the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
 
 note: this preview image was coverted to PNG format to be visible on Webpage. To run the script, both TIFF and PNG format works but we always use TIFF format as our input.  
     <p align="left">
@@ -67,9 +61,9 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
  <br />
 
  
-**Input(s)**: 
+    **Input(s)**: 
 
-**Output(s)**:	
+    **Output(s)**:	
 
 ### Fitting Nuclear Pore localizations
 3. **Program Name** : fit_cylinder_to_cluster.m
