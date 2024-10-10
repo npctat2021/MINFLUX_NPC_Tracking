@@ -56,13 +56,9 @@ Detailed explanations are provided at the top of each script and in the followin
     <img src="/img/semiAutomatedClustering.png" width="600" height=auto>
     </p>
     
-    **Input(s)**:
-    - data 
-    - RIMF
-    - dbscan_eps
-    - dbscan_minPts
+    **Input(s)**: The N by 5 data array from filtered MINFLUX NPC data, containing in order values of: trace ID, time stamp, X, Y, and Z coordinates of localizations in nm. Optional paramters are the RIMF and epsilon and minPts of MATLAB density-base scan function.
     
-    **Output(s)**:	
+    **Output(s)**: A struct type variable with name "cluster_data" in MATLAB base workspace. It contains the following fields:
 
 ### Fitting Nuclear Pore localizations
 3. **Program Name** : fit_cylinder_to_cluster.m
