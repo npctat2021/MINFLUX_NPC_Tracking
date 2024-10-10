@@ -29,7 +29,7 @@ The codes was developed with Windows 10 Pro 22H2 Version and tested on Windows 1
 
 ## Instructions for use
 Detailed explanations are provided at the top of each script and in the following README sections.
-#### Filter MINFLUX data
+### Filter MINFLUX data
 1. **Program Name** : load_minflux_raw_data.m
 
    **What it does**: Load MINFLUX MATLAB format raw data, and applying filters on EFO, CFR, DCR, and track length parameters to separate individual localizations or traces whose localizations meet the filtering criteria for EFO, CFR, and DCR. Prepare data as tab-separated values with 5 columns: track ID, timestamp, X, Y, and Z coordinates. The following window will pop up, allowing the user to select their filtering criteria.
@@ -54,7 +54,7 @@ Detailed explanations are provided at the top of each script and in the followin
 
     Create a text file of pore/track localizations containing 5 columns: track ID, timestamp, and XYZ coordinates. For a trial, use the model data "Nuclear Pore Model Data.txt" for pores and "Tracks Model Data.txt" for tracks. Use these text files as input for Script 2 (separate_cluster_MINFLUX.m) for pores or Script 15 (green_localization_in_red_channel_MINFLUX.m) for tracks.
 
-#### Fitting Nuclear Pore localizations
+### Fitting Nuclear Pore localizations
 2. **Program Name** : semi_automated_clustering.m
    
 **What it does**: Extracts the ID, timestamp, and coordinates of individual cluster into separate text files.
@@ -71,7 +71,7 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
 
 **Output(s)**:	
 
-#### Fitting Nuclear Pore localizations
+### Fitting Nuclear Pore localizations
 3. **Program Name** : fit_cylinder_to_cluster.m
    
 **What it does**: Double circle fitting of  two rings from individual cluster. Image attached.
@@ -85,7 +85,7 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
 
 **Output(s)**:
 
-#### Fitting Nuclear Pore localizations
+### Fitting Nuclear Pore localizations
 4. **Program Name** : filter_NPC_cluster.m
    
 **What it does**: .
@@ -96,7 +96,7 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
 **Output(s)**:
 
 
-#### Fitting Nuclear Pore localizations
+### Fitting Nuclear Pore localizations
 5. **Program Name** : fit_circle_to_cluster.m
    
 **What it does**: .
@@ -112,7 +112,7 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
 
 
 
-#### Fitting Nuclear Pore localizations
+### Fitting Nuclear Pore localizations
 6.  **Program Name** : rotate_cluster.m
    
 **What it does**: 
@@ -126,7 +126,7 @@ note: this preview image was coverted to PNG format to be visible on Webpage. To
 **Output(s)**:	
 
 
-#### Fitting Nuclear Pore localizations
+### Fitting Nuclear Pore localizations
 7. **Program Name** : merge_cluster.m
    
 **What it does**:
