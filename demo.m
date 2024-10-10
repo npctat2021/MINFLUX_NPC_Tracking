@@ -87,14 +87,14 @@ if (saveResultofEachStep)
 end
 
 %% fit double-ring model (cylinder) to each cluster
-disp( "  - fitting cycliner to clusters..." );
+disp( "  - fitting cylinder to cluster..." );
 fit_cylinder_to_cluster (cluster_data, true, save_mode);
 if (saveResultofEachStep)
     cluster_data = cluster_data_cylinderFitted;
 end
 
 %% filter clusters based on the cylinder fit results
-disp( "  - filtering clusters..." );
+disp( "  - filtering cluster..." );
 filter_NPC_cluster (cluster_data,...
     save_mode,...
     'heightMin', 25,...     % minimum inter-ring height
@@ -109,7 +109,7 @@ if (saveResultofEachStep)
 end
 
 %% fit circle to 2D projection of clusters
-disp( "  - fitting circle to clusters..." );
+disp( "  - fitting circle to cluster..." );
 fit_circle_to_cluster (cluster_data, true, save_mode);
 if (saveResultofEachStep)
     cluster_data = cluster_data_circleFitted;                              
@@ -123,7 +123,7 @@ if (saveResultofEachStep)
 end
 
 %% merge the clusters together
-disp( "  - transform and merging clusters together..." );
+disp( "  - transform and merge clusters together..." );
 merge_cluster (cluster_data, true, save_mode);
 if (saveResultofEachStep)
     cluster_data = cluster_data_merged;

@@ -24,8 +24,8 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
     vld = data.vld;
     tid = data.tid(vld);
     tim = data.tim(vld);
-    track_ID = unique(tid);
-    trace_length = arrayfun(@(x) sum(tid==x), track_ID);
+    trace_ID = unique(tid);
+    trace_length = arrayfun(@(x) sum(tid==x), trace_ID);
     if abberior_format
         loc = squeeze(data.itr.loc(vld, end, :));
         cfr = data.itr.cfr(vld, :);
@@ -90,9 +90,9 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
     %filter_trace_mean = true;
     if do_trace_mean
         % filter entire trace by trace-wise mean value: cfr, efo
-        cfr_mean = arrayfun(@(x) mean(cfr(tid==x,:)), track_ID);
-        efo_mean = arrayfun(@(x) mean(efo(tid==x,:)), track_ID);
-        dcr_mean = arrayfun(@(x) mean(dcr(tid==x,:)), track_ID);
+        cfr_mean = arrayfun(@(x) mean(cfr(tid==x,:)), trace_ID);
+        efo_mean = arrayfun(@(x) mean(efo(tid==x,:)), trace_ID);
+        dcr_mean = arrayfun(@(x) mean(dcr(tid==x,:)), trace_ID);
         TF_trace_cfr = cfr_mean>=cfr_range(1) & cfr_mean<=cfr_range(2);
         TF_trace_efo = efo_mean>=efo_range(1) & efo_mean<=efo_range(2);
         TF_trace_dcr = dcr_mean>=dcr_range(1) & dcr_mean<=dcr_range(2);
@@ -100,12 +100,12 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
         %vld_trace = repelem(TF_trace, trace_length);
     else    
         % filter entire trace by min & max value: cfr, efo
-        cfr_min = arrayfun(@(x) min(cfr(tid==x,:)), track_ID);
-        cfr_max = arrayfun(@(x) max(cfr(tid==x,:)), track_ID);
-        efo_min = arrayfun(@(x) min(efo(tid==x,:)), track_ID);
-        efo_max = arrayfun(@(x) max(efo(tid==x,:)), track_ID);
-        dcr_min = arrayfun(@(x) min(dcr(tid==x,:)), track_ID);
-        dcr_max = arrayfun(@(x) max(dcr(tid==x,:)), track_ID);        
+        cfr_min = arrayfun(@(x) min(cfr(tid==x,:)), trace_ID);
+        cfr_max = arrayfun(@(x) max(cfr(tid==x,:)), trace_ID);
+        efo_min = arrayfun(@(x) min(efo(tid==x,:)), trace_ID);
+        efo_max = arrayfun(@(x) max(efo(tid==x,:)), trace_ID);
+        dcr_min = arrayfun(@(x) min(dcr(tid==x,:)), trace_ID);
+        dcr_max = arrayfun(@(x) max(dcr(tid==x,:)), trace_ID);        
         TF_trace_cfr = cfr_min>=cfr_range(1) & cfr_max<=cfr_range(2);
         TF_trace_efo = efo_min>=efo_range(1) & efo_max<=efo_range(2);
         TF_trace_dcr = dcr_min>=dcr_range(1) & dcr_max<=dcr_range(2);
@@ -113,21 +113,21 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
         %vld_trace = repelem(TF_trace, trace_length);
     end
     
-    track_ID = track_ID(TF_length & TF_trace)';
+    trace_ID = trace_ID(TF_length & TF_trace)';
     track_length = trace_length(TF_length & TF_trace);
     %vld = vld & vld_length & vld_trace;
     
     % prepare filtered result
     filter_result = struct();
-    filter_result.track_ID = track_ID;
-    N_tracks = size(track_ID, 1);
+    filter_result.trace_ID = trace_ID;
+    N_traces = size(trace_ID, 1);
     
-    filter_result.time_stamp = cell(N_tracks, 1);
-    filter_result.loc_nm = cell(N_tracks, 1);
-    filter_result.track_txyz = cell(N_tracks, 1);
+    filter_result.time_stamp = cell(N_traces, 1);
+    filter_result.loc_nm = cell(N_traces, 1);
+    filter_result.trace_txyz = cell(N_traces, 1);
     
-    for i = 1 : N_tracks
-        selected_data = tid==track_ID(i);
+    for i = 1 : N_traces
+        selected_data = tid==trace_ID(i);
         filter_result.time_stamp{i} = tim(selected_data)';
         
         %time = filter_result.time{i} - filter_result.time{i}(1);
@@ -138,12 +138,15 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
         %dS = vecnorm(diff(filter_result.coordinates{i}), 2, 2);
         %S = cumsum(dS, 1);
 
-        filter_result.track_txyz{i} = [filter_result.time_stamp{i} filter_result.loc_nm{i}];
+        filter_result.trace_txyz{i} = [filter_result.time_stamp{i} filter_result.loc_nm{i}];
     end
     
     % combine ID, time, x, y, z into one data array
     data_array(:, 1) = double (repelem(filter_result.track_ID, track_length));
-    data_array(:, 2:5) = vertcat(filter_result.track_txyz{:});
+    data_array(:, 2:5) = vertcat(filter_result.trace_txyz{:});
     filter_result.data_array = data_array;
+    data_path_txt = minfluxRawDataPath(1:end-4) + ".txt";
+    save(data_path_txt, '-ascii', '-TABS', 'data_array');
+
 end
 
