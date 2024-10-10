@@ -39,7 +39,12 @@ Detailed explanations are provided at the top of each script and in the followin
     
     **Input(s)**: MATLAB format (.mat) of MINFLUX raw data file for pore scaffold and cargo. e.g.: model data "Nuclear Pore Model Data.mat".
     
-    **Output(s)**: A variable with name "filter_result" in MATLAB base workspace.  Track_data_array, Track_ID, Time, Coordinates
+    **Output(s)**: A struct type variable with name "filterResult" in MATLAB base workspace. It contains the following fields: 
+    - trace_ID : array of trace ID (tid attribute of MINFLUX raw data)
+    - time_stamp : array of time stamp, in seconds
+    - loc_nm : array of the 3D localization coordinates, in nanometers
+    - trace_txyz : N by 4 array of filtered localization data with 4 columns:time, x, y, and z coordinates, that can be used in other applications, e.g.: [msdanalyzer](https://tinevez.github.io/msdanalyzer/)
+    - data_array : N by 5 array of filtered data with 5 columns: trace ID, time, x, y, and z coordinates. This is the type of data mainly used in our workflow. One can save it to a tabular format file onto disk, e.g.: tab-separated value as txt file 
 
     Note: Place the following command in the command box after running this script to obtain the track ID, timestamp, and XYZ coordinates of the filtered tracks as output in "track_data_array".
     
