@@ -37,9 +37,9 @@ Detailed explanations are provided at the top of each script and in the followin
     <img src="/img/filterMInfluxData.png" width="400" height=auto>
     </p>
     
-    **Input(s)**: MATLAB format (.mat) of MINFLUX raw data file for pore scaffold and cargo. e.g.: model data "Nuclear Pore Model Data.mat".
+    **Input(s)**: It need the MATLAB format (.mat) of MINFLUX raw data file for pore scaffold and cargo. e.g.: model data "Nuclear Pore Model Data.mat". It will also ask for the filtering criterion on several properties of the data: cfr, efo, dcr, trace length and whether to filter with trace-level mean value, and refractive index mismatch factor (RIMF). For more detailed explanation on these parameters, please refer to the manuscript, or the comment section in the script. If one or more input is not yet defined during running, it will prompt a user input dialog to ask the user to provide them.
     
-    **Output(s)**: A struct type variable with name "filterResult" in MATLAB base workspace. It contains the following fields: 
+    **Output(s)**: A struct type variable with name "filterResult" in MATLAB base workspace. It contains the following fields:
     - trace_ID : array of trace ID (tid attribute of MINFLUX raw data)
     - time_stamp : array of time stamp, in seconds
     - loc_nm : array of the 3D localization coordinates, in nanometers
@@ -50,19 +50,18 @@ Detailed explanations are provided at the top of each script and in the followin
 
 ### Reconstruction of Nuclear Pore Localization Data
 2. **Program Name** : semi_automated_clustering.m
-   
-    **What it does**: Spatial clustering of localization data. Upon running the program, a figure window with 2D scatter plot of the localizations will show. 
-User will need to draw a rectangular selection box around each cluster.  Once selected, double-clicking the rectangle will save the cluster. Repeat this process until all pore clusters are selected.  Once complete, save clusters and the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
 
-note: this preview image was coverted to PNG format to be visible on Webpage. To run the script, both TIFF and PNG format works but we always use TIFF format as our input.  
+    **What it does**: Spatial clustering of localization data. Upon running the program, a figure window with 2D scatter plot of the localizations will show. A initial User will need to draw a rectangular selection box around each cluster.  Once selected, double-clicking the rectangle will save the cluster. Repeat this process until all pore clusters are selected.  Once complete, save clusters and the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
     <p align="left">
     <img src="/img/semiAutomatedClustering.png" width="600" height=auto>
     </p>
- <br />
-
- 
-    **Input(s)**: 
-
+    
+    **Input(s)**:
+    - data 
+    - RIMF
+    - dbscan_eps
+    - dbscan_minPts
+    
     **Output(s)**:	
 
 ### Fitting Nuclear Pore localizations
