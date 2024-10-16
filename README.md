@@ -123,7 +123,6 @@ Double circle fitting of  two rings from individual cluster.
     - **height** - height  of the fitted cylinder
     - **fittingError** - sum of XY and Z fitting error of all localizations in a cluster to the fitted double-ring model
 
-### Fitting Nuclear Pore localizations
 
 #### 4. Program: filter_NPC_cluster.m
    
@@ -150,7 +149,6 @@ Selects those clusters having at least 20 localizations with a fit diameter. For
 **Output:**
  - **cluster_data** - filtered
 
-### Fitting Nuclear Pore localizations
 
 #### 5. Program: fit_circle_to_cluster.m
    
@@ -177,7 +175,7 @@ Fits pore localizations to a circle projected into the xy-plane and eliminates l
     - **loc_norm** (N-by-3 data array) <br> normalized localizations of each cluster, by translate the center of the fitted circle to coordinate origin.
 
 
-### Fitting Nuclear Pore localizations
+### Transform and merge clustered data to reconstruct NPC
 
 #### 6. Program: rotate_cluster.m
    
@@ -204,7 +202,6 @@ Rotates every point in a cluster by its phase angle.
  - **cluster_data** (struct array) - append field **rotation**
     - **rotation** (numeric value between 0 and 45) <br> the phase angle (in degree) computed from the sinusoidal fit, as the rotation angle of the current cluster to the template.
 
-### Fitting Nuclear Pore localizations
 
 #### 7. Program: merge_cluster.m
    
@@ -229,6 +226,8 @@ Merges all the localizations from all clusters.
  - **cluster_data** (struct array) - field **loc_norm** updated
     - **loc_norm** - the normalized localizations are now rotated by the angle computed from [rotate cluster](#6-program-rotate_clusterm)
  - **merged NPC** (N-by-5 data array) saved as tab-separated values to a text file ***pore_merged.txt*** in the root folder 
+
+### Align and assign cargo data to NPC data
 
 #### 8. Program: align_track_to_NPC.m
    
@@ -263,6 +262,8 @@ Description:
  - **npc_cluster_data**
 
 **Output:**
+
+### Visualize NPC transport
 
 #### 10. Program: NPC_trafficking_visualizationUI.m
    
