@@ -32,7 +32,7 @@ Detailed explanations are provided at the top of each script and in the followin
 
 ### Load and Pre-processing of MINFLUX data
 
-#### 1. Program : load_minflux_raw_data.m
+#### 1. Program: load_minflux_raw_data.m
 
 Load MINFLUX MATLAB (.mat) format raw data. Apply filters on localizations so that noise and low quality data can be removed. It requires the MATLAB format (.mat) of MINFLUX raw data file for pore scaffold or cargo, e.g.: [Nuclear Pore Model Data.mat](/data/Nuclear%20Pore%20Model%20Data.mat). The filtered result will be saved to MATLAB base workspace. And a tab-separated value format result stores trace ID, time stamp, x, y, and z coordinate in nanometer of the filtered data, will be saved to a text file on disk next to the input raw data, e.g.: [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt).
     
@@ -62,11 +62,11 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
     - **time_stamp** : array of time stamp, in seconds
     - **loc_nm** : array of the 3D localization coordinates, in nanometer
     - **trace_txyz** : N by 4 array of filtered localization data with 4 columns: time stamp, x, y, and z coordinates. This format can be used in diffusion behavior analysis, e.g.: [msdanalyzer](https://tinevez.github.io/msdanalyzer/)
-    - **data_array** : N by 5 array of filtered data with 5 columns: trace ID, time stamp, x, y, and z coordinates. This is the same as [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt), which is the type of data mainly used in this workflow. For instance: It can be used as input for program 2 [semi_automated_clustering.m](#2). Or if the input is the cargo tracking data, it can be used in program 8 and 9, [align](#8) and [assign tracks to NPC](#9).
+    - **data_array** : N by 5 array of filtered data with 5 columns: trace ID, time stamp, x, y, and z coordinates. This is the same as [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt), which is the type of data mainly used in this workflow. For instance: It can be used as input for program 2 [semi_automated_clustering.m](#2.-program:-semi_automated_clustering.m). Or if the input is the cargo tracking data, it can be used in program 8 and 9, [align](#8.-program:-align_track_to_npc.m) and [assign tracks to NPC](#9.-program:-assign_track_to_cluster.m).
 
 ### Reconstruction of Nuclear Pore Localization Data
 
-#### 2. **Program Name** : semi_automated_clustering.m
+#### 2. Program: semi_automated_clustering.m
 
     **What it does**: Spatial clustering of localization data. Upon running the program, a figure window with 2D scatter plot of the localizations will show. A initial User will need to draw a rectangular selection box around each cluster.  Once selected, double-clicking the rectangle will save the cluster. Repeat this process until all pore clusters are selected.  Once complete, save clusters and the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
     <p align="left">
@@ -79,7 +79,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 
 ### Fitting Nuclear Pore localizations
 
-#### 3. **Program Name** : fit_cylinder_to_cluster.m
+#### 3. Program: fit_cylinder_to_cluster.m
    
 **What it does**: Double circle fitting of  two rings from individual cluster. Image attached.
     <p align="left">
@@ -94,7 +94,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 
 ### Fitting Nuclear Pore localizations
 
-#### 4. **Program Name** : filter_NPC_cluster.m
+#### 4. Program: filter_NPC_cluster.m
    
 **What it does**: .
 
@@ -106,7 +106,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 
 ### Fitting Nuclear Pore localizations
 
-#### 5. **Program Name** : fit_circle_to_cluster.m
+#### 5. Program: fit_circle_to_cluster.m
    
 **What it does**: .
     <p align="left">
@@ -123,7 +123,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 
 ### Fitting Nuclear Pore localizations
 
-#### 6.  **Program Name** : rotate_cluster.m
+#### 6. Program: rotate_cluster.m
    
 **What it does**: 
     <p align="left">
@@ -138,7 +138,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 
 ### Fitting Nuclear Pore localizations
 
-#### 7. **Program Name** : merge_cluster.m
+#### 7. Program: merge_cluster.m
    
 **What it does**:
     <p align="left">
@@ -151,7 +151,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 **Output(s)**:	
 
 
-#### 8. **Program Name** : align_track_to_NPC.m
+#### 8. Program: align_track_to_NPC.m
    
 **What it does**: 
     <p align="left">
@@ -163,7 +163,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 
 **Output(s)**:	
 
-#### 9. **Program Name** : assign_track_to_cluster.m
+#### 9. Program: assign_track_to_cluster.m
    
 **What it does**: 
 
@@ -171,7 +171,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 
 **Output(s)**:	
 
-#### 10. **Program Name** : NPC_trafficking_visualizationUI.m
+#### 10. Program: NPC_trafficking_visualizationUI.m
    
 **What it does**: 
     <p align="left">
