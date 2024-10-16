@@ -39,7 +39,7 @@ Load MINFLUX MATLAB (.mat) format raw data. Apply filters on localizations so th
     
 It requires the filtering criterion on several properties of the data: cfr, efo, dcr, trace length and whether to filter with trace-level mean value, and refractive index mismatch factor (RIMF). For more detailed explanation on these parameters, please refer to the manuscript, or the comment section in the script. If one or more input is not provided as function inputs, a dialog window will pop up, allowing the user to set up the filtering parameters on the run.
 
-<p align="left">
+<p align="center">
 <img src="/img/filterMInfluxData.png" width="300" height=auto>
 </p>
     
@@ -73,7 +73,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 
 Spatial clustering of localization data. Upon running the program, a figure window with 2D scatter plot of the localizations will show. A initial User will need to draw a rectangular selection box around each cluster.  Once selected, double-clicking the rectangle will save the cluster. Repeat this process until all pore clusters are selected.  Once complete, save clusters and the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
 
-<p align="left">
+<p align="center">
 <img src="/img/semiAutomatedClustering.png" width="700" height=auto>
 </p>
 
@@ -97,7 +97,7 @@ The N by 5 data array from filtered MINFLUX NPC data, containing in order values
 
 Double circle fitting of  two rings from individual cluster. Image attached.
 
-<p align="left">
+<p align="center">
 <img src="/img/doubleRingFitting.png" width="600" height=auto>
 </p>
 
@@ -255,7 +255,7 @@ Description:
 
 
 ## Demo
-We made a script that demo the whole workflow with our uploaded sample data (in the data folder) and default parameters.
+We made a script that demo the whole workflow on the sample dataset (in the data folder) and with default parameters.
 
 #### Program: demo.m
 
