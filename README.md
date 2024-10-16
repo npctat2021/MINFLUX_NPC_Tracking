@@ -42,7 +42,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 <img src="/img/filterMInfluxData.png" width="400" height=auto>
 </p>
     
-**Usage**:
+**Usage:**
 
     filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, RIMF);
 
@@ -63,136 +63,155 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
     - **loc_nm** : array of the 3D localization coordinates, in nanometer
     - **trace_txyz** : N by 4 array of filtered localization data with 4 columns: time stamp, x, y, and z coordinates. This format can be used in diffusion behavior analysis, e.g.: [msdanalyzer](https://tinevez.github.io/msdanalyzer/)
     - **data_array** : N by 5 array of filtered data with 5 columns: trace ID, time stamp, x, y, and z coordinates. This is the same as [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt), which is the type of data mainly used in this workflow. For instance: It can be used as input for program 2 [semi_automated_clustering.m](#2-program-semi_automated_clusteringm). Or if the input is the cargo tracking data, it can be used in program 8 and 9, [align](#8-program-align_track_to_npcm) and [assign tracks to NPC](#9-program-assign_track_to_clusterm).
+<br>
+<br>
 
 ### Reconstruction of Nuclear Pore Localization Data
 
 #### 2. Program: semi_automated_clustering.m
 
-    **What it does**: Spatial clustering of localization data. Upon running the program, a figure window with 2D scatter plot of the localizations will show. A initial User will need to draw a rectangular selection box around each cluster.  Once selected, double-clicking the rectangle will save the cluster. Repeat this process until all pore clusters are selected.  Once complete, save clusters and the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
-    <p align="left">
-    <img src="/img/semiAutomatedClustering.png" width="600" height=auto>
-    </p>
+Spatial clustering of localization data. Upon running the program, a figure window with 2D scatter plot of the localizations will show. A initial User will need to draw a rectangular selection box around each cluster.  Once selected, double-clicking the rectangle will save the cluster. Repeat this process until all pore clusters are selected.  Once complete, save clusters and the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
+
+<p align="left">
+<img src="/img/semiAutomatedClustering.png" width="600" height=auto>
+</p>
+
+**Usage:**
     
-    **Input(s)**: The N by 5 data array from filtered MINFLUX NPC data, containing in order values of: trace ID, time stamp, X, Y, and Z coordinates of localizations in nm. Optional paramters are the RIMF and epsilon and minPts of MATLAB density-base scan function.
-    
-    **Output(s)**: A struct type variable with name "cluster_data" in MATLAB base workspace. It contains the following fields:
+**Input:** The N by 5 data array from filtered MINFLUX NPC data, containing in order values of: trace ID, time stamp, X, Y, and Z coordinates of localizations in nm. Optional paramters are the RIMF and epsilon and minPts of MATLAB density-base scan function.
+
+**Output:** A struct type variable with name "cluster_data" in MATLAB base workspace. It contains the following fields:
 
 ### Fitting Nuclear Pore localizations
 
 #### 3. Program: fit_cylinder_to_cluster.m
-   
-**What it does**: Double circle fitting of  two rings from individual cluster. Image attached.
-    <p align="left">
-    <img src="/img/doubleRingFitting.png" width="600" height=auto>
-    </p>
- <br />
 
- 
-**Input(s)**: 
+Double circle fitting of  two rings from individual cluster. Image attached.
 
-**Output(s)**:
+<p align="left">
+<img src="/img/doubleRingFitting.png" width="600" height=auto>
+</p>
+
+**Usage:**
+
+**Input:** 
+
+**Output:**
 
 ### Fitting Nuclear Pore localizations
 
 #### 4. Program: filter_NPC_cluster.m
    
-**What it does**: .
+Description:
 
- 
-**Input(s)**:
+**Usage:**
 
-**Output(s)**:
+**Input:**
 
+**Output:**
 
 ### Fitting Nuclear Pore localizations
 
 #### 5. Program: fit_circle_to_cluster.m
    
-**What it does**: .
-    <p align="left">
-    <img src="/img/lsqCircleFitting.png" width="600" height=auto>
-    </p>
- <br />
+Description:
 
- 
-**Input(s)**: 
+<p align="left">
+<img src="/img/lsqCircleFitting.png" width="600" height=auto>
+</p>
 
-**Output(s)**:
+**Usage:**
 
+**Input:**
+
+**Output:**
 
 
 ### Fitting Nuclear Pore localizations
 
 #### 6. Program: rotate_cluster.m
    
-**What it does**: 
-    <p align="left">
-    <img src="/img/sinusoidalFit.png" width="600" height=auto>
-    </p>
- <br />
+Description:
 
-**Input(s)**: 
+<p align="left">
+<img src="/img/sinusoidalFit.png" width="600" height=auto>
+</p>
 
-**Output(s)**:	
+
+**Usage:**
+
+**Input:**
+
+**Output:**	
 
 
 ### Fitting Nuclear Pore localizations
 
 #### 7. Program: merge_cluster.m
    
-**What it does**:
-    <p align="left">
-    <img src="/img/mergedCluster.png" width="600" height=auto>
-    </p>
- <br />
+Description:
 
-**Input(s)**: 
+<p align="left">
+<img src="/img/mergedCluster.png" width="600" height=auto>
+</p>
 
-**Output(s)**:	
+**Usage:**
+
+**Input:**
+
+**Output:**
 
 
 #### 8. Program: align_track_to_NPC.m
    
-**What it does**: 
-    <p align="left">
-    <img src="/img/beads_alignment.png" width="600" height=auto>
-    </p>
- <br />
+Description:
 
-**Input(s)**: 
+<p align="left">
+<img src="/img/beads_alignment.png" width="600" height=auto>
+</p>
 
-**Output(s)**:	
+**Usage:**
+
+**Input:**
+
+**Output:**
 
 #### 9. Program: assign_track_to_cluster.m
-   
-**What it does**: 
+ 
+Description: 
 
-**Input(s)**: 
+**Usage:**
 
-**Output(s)**:	
+**Input:**
+
+**Output:**
 
 #### 10. Program: NPC_trafficking_visualizationUI.m
    
-**What it does**: 
-    <p align="left">
-    <img src="/img/visualizationUI.png" width="600" height=auto>
-    </p>
- <br />
+Description:
 
-**Input(s)**: 
+<p align="left">
+<img src="/img/visualizationUI.png" width="600" height=auto>
+</p>
 
-**Output(s)**:
+**Usage:**
+
+**Input:**
+
+**Output:**
 
 
 ## Demo
 We made a script that demo the whole workflow with our uploaded sample data (in the data folder) and default parameters.
 
-**Program Name** : demo.m
-   
-**What it does**: 
+#### Program: demo.m
 
-**Input(s)**: 
+Description:
 
-**Output(s)**:
+**Usage:**
+
+**Input:**
+
+**Output:**
 
 Note: The "Nuclear Pore Model Data.txt/.mat" represents experimental measurements of Anti-GFP Nanobody HMSiR from a permeabilized cell. In contrast, "Tracks Model Data.txt" consists of example tracks derived from multiple experimental datasets, artificially aligned to the nuclear pore model for illustrative purposes, demonstrating the functionality of the fitting and alignment routine. "Bead loc_Red/NPC" provides synthetic coordinates from two channels, based on the average positional differences obtained in bead measurements. While efforts were made to preserve experimental resemblance during artificial alignment, these model tracks should not be used for drawing biological conclusions.
