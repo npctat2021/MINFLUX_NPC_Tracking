@@ -63,7 +63,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
     - **time_stamp** : array of time stamp, in seconds
     - **loc_nm** : array of the 3D localization coordinates, in nanometer
     - **trace_txyz** : N by 4 array of filtered localization data with 4 columns: time stamp, x, y, and z coordinates. This format can be used in diffusion behavior analysis, e.g.: [msdanalyzer](https://tinevez.github.io/msdanalyzer/)
-    - **data_array** : N by 5 array of filtered data with 5 columns: trace ID, time stamp, x, y, and z coordinates. This is the same as [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt), which is the type of data mainly used in this workflow. For instance: It can be used as input for program 2 [semi_automated_clustering.m](#2-program-semi_automated_clusteringm). Or if the input is the cargo tracking data, it can be used in program 8 and 9, [align](#8-program-align_track_to_npcm) and [assign tracks to NPC](#9-program-assign_track_to_clusterm).
+    - **data_array** : N-by-5 array of filtered data with 5 columns: trace ID, time stamp, x, y, and z coordinates. This is the same as [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt), which is the type of data mainly used in this workflow. For instance: It can be used as input for program 2 [semi_automated_clustering.m](#2-program-semi_automated_clusteringm). Or if the input is the cargo tracking data, it can be used in program 8 and 9, [align](#8-program-align_track_to_npcm) and [assign tracks to NPC](#9-program-assign_track_to_clusterm).
 <br>
 <br>
 
@@ -82,20 +82,24 @@ Spatial clustering of localization data. Upon running the program, a figure wind
     semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts);
     
 **Input:** 
- - **data** - 
- - **RIMF** - 
- - **dbscan_eps** - 
- - **dbscan_minPts** - 
+ - **data** (N-by-5 data array) - *data_array* as output of [program 1](#1-program-load_minflux_raw_datam)
+ - **RIMF** (numeric) - refractive index mismatch factor
+ - **dbscan_eps** (numeric) - neighborhood search radius  
+ - **dbscan_minPts** (numeric) - minimum number of points in cluster 
 
-The N by 5 data array from filtered MINFLUX NPC data, containing in order values of: trace ID, time stamp, X, Y, and Z coordinates of localizations in nm. Optional paramters are the RIMF and epsilon and minPts of MATLAB density-base scan function.
-
-**Output:** A struct type variable with name "cluster_data" in MATLAB base workspace. It contains the following fields:
+**Output:**
+ - **cluster_data** (struct array) stores data of the resulted NPC clusters:
+    - **Rectangle** - 2D rectangle that defines the X-Y bounds of each cluster 
+    - **Cluster_ID** - unique numeric ID of each cluster
+    - **loc_nm** (N-by-3 array) - x, y, and z coordinates of localizations, in nanometer, of each cluster
+    - **tid** - trace ID associated with each localization
+    - **tim** - time stamp associated with each localization, in  second.
 
 ### Fitting Nuclear Pore localizations
 
 #### 3. Program: fit_cylinder_to_cluster.m
 
-Double circle fitting of  two rings from individual cluster. Image attached.
+Double circle fitting of  two rings from individual cluster.
 
 <p align="center">
 <img src="/img/doubleRingFitting.png" width="600" height=auto>
@@ -107,33 +111,50 @@ Double circle fitting of  two rings from individual cluster. Image attached.
     
 **Input:** 
  - **cluster_data** - 
- - **showFitting** -
- - **save_mode** - 
+ - **showFitting** (boolean) - whether to show the fitting result or not
+ - **save_mode** (string):
+    - **overwrite:** overwrite on base workspace variable *cluster_data*
+    - **new:** create new variable *cluster_data_cylinderFitted*
 
 **Output:**
+ - **cluster_data** appended field **center**, **diameter**, **height**, **fittingError**
+    - **center** - x,y,z center of the fitted cylinder
+    - **diameter** - diameter of the fitted cylinder
+    - **height** - height  of the fitted cylinder
+    - **fittingError** - sum of XY and Z fitting error of all localizations in a cluster to the fitted double-ring model
 
 ### Fitting Nuclear Pore localizations
 
 #### 4. Program: filter_NPC_cluster.m
    
-Description:
+Selects those clusters having at least 20 localizations with a fit diameter. For example of diameter: 70-150 nm, height: 25-100 nm, and z-center: 0±200 nm. User can change these parameters as per their interest.
 
 **Usage:**
 
-    filter_NPC_cluster (cluster_data, save_mode, varargin)
+    filter_NPC_cluster (cluster_data, save_mode, Name, Value);
     
 **Input:**
- - **cluster_data** -
- - **save_mode** -
- - **varargin** -
+ - **cluster_data**
+ - **save_mode** (string):
+    - **overwrite:** overwrite on base workspace variable *cluster_data*
+    - **new:** create new variable *cluster_data_filtered*
+ - **Name-Value Arguments:**
+    - 'heightMin', minimum inter-ring height, e.g.: 25
+    - 'heightMax', maximum inter-ring height, e.g.: 100
+    - 'diameterMin', minimum ring diameter, e.g.: 70
+    - 'diameterMax', maximum ring diameter, e.g.: 150
+    - 'zCenterMin', lowest z center location, e.g.: -300
+    - 'zCenterMax', highest z center location, e.g.: 100
+    - 'nLocMin', minimum data point in cluster, e.g.: 20
 
 **Output:**
+ - **cluster_data** - filtered
 
 ### Fitting Nuclear Pore localizations
 
 #### 5. Program: fit_circle_to_cluster.m
    
-Description:
+Fits pore localizations to a circle projected into the xy-plane and eliminates localizations whose residual was more than two standard deviations away from the circle.
 
 <p align="left">
 <img src="/img/lsqCircleFitting.png" width="600" height=auto>
@@ -144,18 +165,23 @@ Description:
     fit_circle_to_cluster (cluster_data, showFitting, save_mode);
 
 **Input:**
- - **cluster_data** -
- - **showFitting** -
- - **save_mode** -
+ - **cluster_data**
+ - **showFitting** (boolean) - whether to show the fitting result or not
+ - **save_mode** (string):
+    - **overwrite:** overwrite on base workspace variable *cluster_data*
+    - **new:** create new variable *cluster_data_circleFitted* 
 
 **Output:**
+ - **cluster_data** - updated fields **loc_nm**, **tid**, **tim**, appended field **loc_norm**
+    - further filter on data, so that localizations located 2 standard deviation away from the fitted circle are removed. loc_nm, tid, and tim are updated accordingly. 
+    - **loc_norm** (N-by-3 data array) <br> normalized localizations of each cluster, by translate the center of the fitted circle to coordinate origin.
 
 
 ### Fitting Nuclear Pore localizations
 
 #### 6. Program: rotate_cluster.m
    
-Description:
+Rotates every point in a cluster by its phase angle.
 
 <p align="left">
 <img src="/img/sinusoidalFit.png" width="600" height=auto>
@@ -170,18 +196,19 @@ Description:
  - **cluster_data** (structure array) - result from [least square circle fit](#5-program-fit_circle_to_clusterm)
  - **showFitting** (boolean) - whether to show the fitting result or not
  - **save_mode** (string):
-    - **overwrite:** overwrite on base workspace variable cluster_data
-    - **new:** create new variable "cluster_data_circleFitted" 
+    - **overwrite:** overwrite on base workspace variable *cluster_data*
+    - **new:** create new variable *cluster_data_rotated* 
  
 
-**Output:**	
-
+**Output:**
+ - **cluster_data** (struct array) - append field **rotation**
+    - **rotation** (numeric value between 0 and 45) <br> the phase angle (in degree) computed from the sinusoidal fit, as the rotation angle of the current cluster to the template.
 
 ### Fitting Nuclear Pore localizations
 
 #### 7. Program: merge_cluster.m
    
-Description:
+Merges all the localizations from all clusters.
 
 <p align="left">
 <img src="/img/mergedCluster.png" width="600" height=auto>
@@ -189,17 +216,19 @@ Description:
 
 **Usage:**
 
-    merge_cluster (cluster_data, showResult, save_mode)
+    merge_cluster (cluster_data, showResult, save_mode);
 
 **Input:**
  - **cluster_data** (structure array) - result from [rotate cluster](#6-program-rotate_clusterm)
  - **showResult** (boolean) - whether to show the merged cluster or not
  - **save_mode** (string):
-    - **overwrite:** overwrite on base workspace variable cluster_data
-    - **new:** create new variable "cluster_data_circleFitted"
+    - **overwrite:** overwrite on base workspace variable *cluster_data*
+    - **new:** create new variable *cluster_data_merged*
 
 **Output:**
-
+ - **cluster_data** (struct array) - field **loc_norm** updated
+    - **loc_norm** - the normalized localizations are now rotated by the angle computed from [rotate cluster](#6-program-rotate_clusterm)
+ - **merged NPC** (N-by-5 data array) saved as tab-separated values to a text file ***pore_merged.txt*** in the root folder 
 
 #### 8. Program: align_track_to_NPC.m
    
