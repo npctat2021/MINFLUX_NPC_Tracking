@@ -62,7 +62,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
     - **time_stamp** : array of time stamp, in seconds
     - **loc_nm** : array of the 3D localization coordinates, in nanometer
     - **trace_txyz** : N by 4 array of filtered localization data with 4 columns: time stamp, x, y, and z coordinates. This format can be used in diffusion behavior analysis, e.g.: [msdanalyzer](https://tinevez.github.io/msdanalyzer/)
-    - **data_array** : N by 5 array of filtered data with 5 columns: trace ID, time stamp, x, y, and z coordinates. This is the same as [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt), which is the type of data mainly used in this workflow. For instance: It can be used as input for program 2 [semi_automated_clustering.m](#2.-program:-semi_automated_clustering.m). Or if the input is the cargo tracking data, it can be used in program 8 and 9, [align](#8.-program:-align_track_to_npc.m) and [assign tracks to NPC](#9.-program:-assign_track_to_cluster.m).
+    - **data_array** : N by 5 array of filtered data with 5 columns: trace ID, time stamp, x, y, and z coordinates. This is the same as [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt), which is the type of data mainly used in this workflow. For instance: It can be used as input for program 2 [semi_automated_clustering.m](#2-program-semi_automated_clusteringm). Or if the input is the cargo tracking data, it can be used in program 8 and 9, [align](#8-program-align_track_to_npcm) and [assign tracks to NPC](#9-program-assign_track_to_clusterm).
 
 ### Reconstruction of Nuclear Pore Localization Data
 
