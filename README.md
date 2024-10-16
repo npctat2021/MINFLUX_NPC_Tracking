@@ -39,7 +39,7 @@ Load MINFLUX MATLAB (.mat) format raw data. Apply filters on localizations so th
 It requires the filtering criterion on several properties of the data: cfr, efo, dcr, trace length and whether to filter with trace-level mean value, and refractive index mismatch factor (RIMF). For more detailed explanation on these parameters, please refer to the manuscript, or the comment section in the script. If one or more input is not provided as function inputs, a dialog window will pop up, allowing the user to set up the filtering parameters on the run.
 
 <p align="left">
-<img src="/img/filterMInfluxData.png" width="400" height=auto>
+<img src="/img/filterMInfluxData.png" width="200" height=auto>
 </p>
     
 **Usage:**
@@ -73,7 +73,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 Spatial clustering of localization data. Upon running the program, a figure window with 2D scatter plot of the localizations will show. A initial User will need to draw a rectangular selection box around each cluster.  Once selected, double-clicking the rectangle will save the cluster. Repeat this process until all pore clusters are selected.  Once complete, save clusters and the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
 
 <p align="left">
-<img src="/img/semiAutomatedClustering.png" width="600" height=auto>
+<img src="/img/semiAutomatedClustering.png" width="800" height=auto>
 </p>
 
 **Usage:**
