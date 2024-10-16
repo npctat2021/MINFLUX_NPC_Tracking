@@ -29,44 +29,44 @@ The codes was developed with Windows 10 Pro 22H2 Version and tested on Windows 1
 
 ## Instructions for use
 Detailed explanations are provided at the top of each script and in the following README sections.
+
 ### Load and Pre-processing of MINFLUX data
-1. **Program** : load_minflux_raw_data.m
 
-    Load MINFLUX MATLAB (.mat) format raw data. Apply filters on localizations so that noise and low quality data can be removed. It requires the MATLAB format (.mat) of MINFLUX raw data file for pore scaffold or cargo, e.g.: [Nuclear Pore Model Data.mat](/data/Nuclear%20Pore%20Model%20Data.mat). The filtered result will be saved to MATLAB base workspace. And a tab-separated value format result stores trace ID, time stamp, x, y, and z coordinate in nanometer of the filtered data, will be saved to a text file on disk next to the input raw data, e.g.: [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt).
-    
-    It requires the filtering criterion on several properties of the data: cfr, efo, dcr, trace length and whether to filter with trace-level mean value, and refractive index mismatch factor (RIMF). For more detailed explanation on these parameters, please refer to the manuscript, or the comment section in the script. If one or more input is not provided as function inputs, a dialog window will pop up, allowing the user to set up the filtering parameters on the run.
+#### 1. Program : load_minflux_raw_data.m
 
-    <p align="left">
-    <img src="/img/filterMInfluxData.png" width="400" height=auto>
-    </p>
+Load MINFLUX MATLAB (.mat) format raw data. Apply filters on localizations so that noise and low quality data can be removed. It requires the MATLAB format (.mat) of MINFLUX raw data file for pore scaffold or cargo, e.g.: [Nuclear Pore Model Data.mat](/data/Nuclear%20Pore%20Model%20Data.mat). The filtered result will be saved to MATLAB base workspace. And a tab-separated value format result stores trace ID, time stamp, x, y, and z coordinate in nanometer of the filtered data, will be saved to a text file on disk next to the input raw data, e.g.: [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt).
     
-    **Usage**:
+It requires the filtering criterion on several properties of the data: cfr, efo, dcr, trace length and whether to filter with trace-level mean value, and refractive index mismatch factor (RIMF). For more detailed explanation on these parameters, please refer to the manuscript, or the comment section in the script. If one or more input is not provided as function inputs, a dialog window will pop up, allowing the user to set up the filtering parameters on the run.
+
+<p align="left">
+<img src="/img/filterMInfluxData.png" width="400" height=auto>
+</p>
     
-        filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, RIMF);
-    
-    **Input**: 
-     - **minfluxRawDataPath** - System path of the MINFLUX .mat format raw data.
-     - **cfr_range** - the minimum and maximum values of **cfr** attribute that accepted by the filter
-     - **efo_range** - the minimum and maximum values of **efo** attribute that accepted by the filter
-     - **dcr_range** - the minimum and maximum values of **dcr** attribute that accepted by the filter
-     - **length_range** - the minimum and maximum number of localizations in a trace that accepted by the filter 
-     - **do_trace_mean** - boolean. whether to filter with trace-level mean value
-     - **RIMF** - refractive index mismatch factor. A value between 0 and 1, which should be measured experimentally for each dataset, and applied to the z-axis localization values before quantitative analysis.
+**Usage**:
+
+    filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, RIMF);
+
+**Input:** 
+ - **minfluxRawDataPath** - System path of the MINFLUX .mat format raw data.
+ - **cfr_range** - the minimum and maximum values of **cfr** attribute that accepted by the filter
+ - **efo_range** - the minimum and maximum values of **efo** attribute that accepted by the filter
+ - **dcr_range** - the minimum and maximum values of **dcr** attribute that accepted by the filter
+ - **length_range** - the minimum and maximum number of localizations in a trace that accepted by the filter 
+ - **do_trace_mean** - boolean. whether to filter with trace-level mean value
+ - **RIMF** - refractive index mismatch factor. A value between 0 and 1, which should be measured experimentally for each dataset, and applied to the z-axis localization values before quantitative analysis.
      
-     
-    
-    **Output**
-    - **filter_result** (structure array): – stores attribute(s) values from the filtered MINFLUX data:
-        - **trace_ID** : array of trace ID (**tid** attribute of the MINFLUX raw data)
-        - **time_stamp** : array of time stamp, in seconds
-        - **loc_nm** : array of the 3D localization coordinates, in nanometer
-        - **trace_txyz** : N by 4 array of filtered localization data with 4 columns:time, x, y, and z coordinates. This format can be used in diffusion behavior analysis, e.g.: [msdanalyzer](https://tinevez.github.io/msdanalyzer/)
-        - **data_array** : N by 5 array of filtered data with 5 columns: trace ID, time, x, y, and z coordinates. This is the type of data mainly used in our workflow. One can save it to a tabular format file onto disk, e.g.: tab-separated value as txt file 
 
-    Note: This program is modified so that upon successful execution it will also export the data_array to a text file that saved to folder where the input file residue. The name will be the same as the MATLAB format data file, but with .txt extension. It stores the trace ID, time stamp, x, y, and z coordinates in nm as 5 column tab-separated values. This text file can be used as input for program 2 (semi_automated_clustering.m). Or if the input is the cargo tracking data, it can be used in program 8 and 9, align and assign tracks to NPC.
+**Output:**
+- **filter_result** (structure array) – stores attribute(s) values from the filtered MINFLUX data:
+    - **trace_ID** : array of trace ID (**tid** attribute of the MINFLUX raw data)
+    - **time_stamp** : array of time stamp, in seconds
+    - **loc_nm** : array of the 3D localization coordinates, in nanometer
+    - **trace_txyz** : N by 4 array of filtered localization data with 4 columns: time stamp, x, y, and z coordinates. This format can be used in diffusion behavior analysis, e.g.: [msdanalyzer](https://tinevez.github.io/msdanalyzer/)
+    - **data_array** : N by 5 array of filtered data with 5 columns: trace ID, time stamp, x, y, and z coordinates. This is the same as [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt), which is the type of data mainly used in this workflow. For instance: It can be used as input for program 2 [semi_automated_clustering.m](#2). Or if the input is the cargo tracking data, it can be used in program 8 and 9, [align](#8) and [assign tracks to NPC](#9).
 
 ### Reconstruction of Nuclear Pore Localization Data
-2. **Program Name** : semi_automated_clustering.m
+
+#### 2. **Program Name** : semi_automated_clustering.m
 
     **What it does**: Spatial clustering of localization data. Upon running the program, a figure window with 2D scatter plot of the localizations will show. A initial User will need to draw a rectangular selection box around each cluster.  Once selected, double-clicking the rectangle will save the cluster. Repeat this process until all pore clusters are selected.  Once complete, save clusters and the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
     <p align="left">
