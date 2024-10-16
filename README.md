@@ -78,7 +78,8 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
     **Output(s)**: A struct type variable with name "cluster_data" in MATLAB base workspace. It contains the following fields:
 
 ### Fitting Nuclear Pore localizations
-3. **Program Name** : fit_cylinder_to_cluster.m
+
+#### 3. **Program Name** : fit_cylinder_to_cluster.m
    
 **What it does**: Double circle fitting of  two rings from individual cluster. Image attached.
     <p align="left">
@@ -92,7 +93,8 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 **Output(s)**:
 
 ### Fitting Nuclear Pore localizations
-4. **Program Name** : filter_NPC_cluster.m
+
+#### 4. **Program Name** : filter_NPC_cluster.m
    
 **What it does**: .
 
@@ -103,7 +105,8 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 
 
 ### Fitting Nuclear Pore localizations
-5. **Program Name** : fit_circle_to_cluster.m
+
+#### 5. **Program Name** : fit_circle_to_cluster.m
    
 **What it does**: .
     <p align="left">
@@ -119,7 +122,8 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 
 
 ### Fitting Nuclear Pore localizations
-6.  **Program Name** : rotate_cluster.m
+
+#### 6.  **Program Name** : rotate_cluster.m
    
 **What it does**: 
     <p align="left">
@@ -133,7 +137,8 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 
 
 ### Fitting Nuclear Pore localizations
-7. **Program Name** : merge_cluster.m
+
+#### 7. **Program Name** : merge_cluster.m
    
 **What it does**:
     <p align="left">
@@ -146,7 +151,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 **Output(s)**:	
 
 
- 8. **Program Name** : align_track_to_NPC.m
+#### 8. **Program Name** : align_track_to_NPC.m
    
 **What it does**: 
     <p align="left">
@@ -158,7 +163,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 
 **Output(s)**:	
 
-9. **Program Name** : assign_track_to_cluster.m
+#### 9. **Program Name** : assign_track_to_cluster.m
    
 **What it does**: 
 
@@ -166,7 +171,7 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
 
 **Output(s)**:	
 
-10. **Program Name** : NPC_trafficking_visualizationUI.m
+#### 10. **Program Name** : NPC_trafficking_visualizationUI.m
    
 **What it does**: 
     <p align="left">
