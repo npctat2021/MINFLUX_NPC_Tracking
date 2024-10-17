@@ -29,7 +29,7 @@ This workflow doesn't require high computation power or special hardwares. It sh
 The codes was developed with Windows 10 Pro 22H2 Version and tested on Windows 11 Home version 10.0.22631.
 
 ## Instructions for use
-Detailed explanations are provided at the top of each script and in the following README sections.
+Detailed instructions are provided at the top of each script and in the following README sections.
 
 <br>
 
@@ -37,9 +37,9 @@ Detailed explanations are provided at the top of each script and in the followin
 
 #### 1. Program: load_minflux_raw_data.m
 
-Load MINFLUX MATLAB (.mat) format raw data. Apply filters on localizations so that noise and low quality data can be removed. It requires the MATLAB format (.mat) of MINFLUX raw data file for pore scaffold or cargo, e.g.: [Nuclear Pore Model Data.mat](/data/Nuclear%20Pore%20Model%20Data.mat). The filtered result will be saved to MATLAB base workspace. And a tab-separated value format result stores trace ID, time stamp, x, y, and z coordinate in nanometer of the filtered data, will be saved to a text file on disk next to the input raw data, e.g.: [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt).
+Load MINFLUX MATLAB (.mat) format raw data. Apply filters on localizations so that noise and low quality data can be removed. It requires the MATLAB format (.mat) of MINFLUX raw data file for pore scaffold or cargo, e.g.: [Nuclear Pore Model Data.mat](/data/Nuclear%20Pore%20Model%20Data.mat). The filtered result will be saved to MATLAB base workspace. And a tab-separated value format result stores trace ID, time stamp, x, y, and z coordinate in nm of the filtered data, will be saved to a text file on disk next to the input raw data, e.g.: [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt).
     
-It requires the filtering criterion on several properties of the data: cfr, efo, dcr, trace length and whether to filter with trace-level mean value, and refractive index mismatch factor (RIMF). For more detailed explanation on these parameters, please refer to the manuscript, or the comment section in the script. If one or more input is not provided as function inputs, a dialog window will pop up, allowing the user to set up the filtering parameters on the run.
+It requires the filtering criterion on several properties of the data: **cfr, efo, dcr**, trace length, whether to filter with trace-level mean value, and refractive index mismatch factor (RIMF). For more detailed explanation on these parameters, please refer to the manuscript, or the comment section in the code. If one or more input is not provided as function inputs, a dialog window will pop up, allowing the user to set up the filtering parameters on the run.
 
 <p align="center">
 <img src="/img/filterMInfluxData.png" width="300" height=auto>
@@ -65,9 +65,9 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
     - **time_stamp** (N-by-1 numeric) - array of time stamp, in seconds
     - **loc_nm** (N-by-3 numeric) - X, Y, and Z values of the 3D localization coordinates, in unit nm
     - **trace_txyz** (N-by-4 numeric) array of filtered data with 4 columns: time stamp, x, y, and z coordinates. This format can be used in diffusion behavior analysis, e.g.: [msdanalyzer](https://tinevez.github.io/msdanalyzer/)
-    - **data_array** (N-by-5 numeric) array of filtered data with 5 columns: trace ID, time stamp, x, y, and z coordinates. This is the same as [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt), which is the format of data mainly used in this workflow. For instance: It can be used as input for program 2 [semi_automated_clustering.m](#2-program-semi_automated_clusteringm). Or if the input is the cargo tracking data, it can be used in program 8 and 9, [align](#8-program-align_track_to_npcm) and [assign tracks to NPC](#9-program-assign_track_to_clusterm).
+    - **data_array** (N-by-5 numeric) array of filtered data with 5 columns: trace ID, time stamp, x, y, and z coordinates. This is the same as [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt), which is the format of data mainly used in this workflow. For instance: It can be used as input for program 2 [clustering of NPC](#2-program-semi_automated_clusteringm). Or if the input is the cargo tracking data, it can be used in program 8 and 9, [align](#8-program-align_track_to_npcm) and [assign tracks to NPC](#9-program-assign_track_to_clusterm).
 
-
+<br>
 
 ### Selection of Nuclear Pore Localization Data
 
@@ -90,12 +90,14 @@ Automated and manual selection of NPCs from localization data. Upon running the 
  - **dbscan_minPts** (numeric) - minimum number of points in cluster 
 
 **Output:**
- - **cluster_data** (struct array) stores data of the resulted NPC clusters:
-    - **Rectangle** - 2D rectangle that defines the X-Y bounds of each cluster 
+ - **cluster_data** (struct array) stores data of the resulted NPC clusters, with following fields:
+    - **Rectangle** - 2D rectangle that defines the XY bounds of each cluster 
     - **Cluster_ID** - unique numeric ID of each cluster
-    - **loc_nm** (N-by-3 array) - x, y, and z coordinates of localizations, in nanometer, of each cluster
+    - **loc_nm** (N-by-3 array) - x, y, and z coordinates of localizations of each cluster, in nm
     - **tid** - trace ID associated with each localization
-    - **tim** - time stamp associated with each localization, in  second.
+    - **tim** - time stamp associated with each localization
+
+<br>
 
 ### Fitting Nuclear Pore localizations
 
@@ -112,15 +114,15 @@ Double circle fitting of  two rings from individual cluster.
     fit_cylinder_to_cluster (cluster_data, showFitting, save_mode);
     
 **Input:** 
- - **cluster_data** - 
+ - **cluster_data** (N by 5 numeric) - output of [program 2](#2-program-semi_automated_clusteringm)
  - **showFitting** (boolean) - whether to show the fitting result or not
  - **save_mode** (string):
-    - **overwrite:** overwrite on base workspace variable *cluster_data*
-    - **new:** create new variable *cluster_data_cylinderFitted*
+    - **overwrite:** overwrite on base workspace variable ***cluster_data***
+    - **new:** create new variable ***cluster_data_cylinderFitted***
 
 **Output:**
- - **cluster_data** appended field **center**, **diameter**, **height**, **fittingError**
-    - **center** - x,y,z center of the fitted cylinder
+ - **cluster_data** (or **cluster_data_cylinderFitted**) - appended field **center**, **diameter**, **height**, **fittingError**
+    - **center** - X, Y, Z center of the fitted cylinder
     - **diameter** - diameter of the fitted cylinder
     - **height** - height  of the fitted cylinder
     - **fittingError** - sum of XY and Z fitting error of all localizations in a cluster to the fitted double-ring model
