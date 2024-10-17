@@ -10,7 +10,7 @@ An example dataset can be found inside the data folder, and can be used for demo
  - Bead NPC.txt : beads coordinates from the NPC dataset, each row is a different bead, and columns are x, y, and z coordinates (in nm);
  - Bead Cargo.txt : beads coordinates from the Cargo dataset, each row is the same bead as corresponding row in the bead NPC.txt file;
 
-The time stamp is in the unit of second, and localizations are in the unit meter. This is how MINFLUX raw data is being recorded. After loading and arragement of data, this workflow will convert the localization data in the unit of nanometers, if not specified otherwise.
+The time stamp is value in second (s), and localizations are values in meters (m). This is how MINFLUX raw data is being recorded. After loading and arragement of the raw data, this workflow will convert the localization data to values in nanometers (nm), if not specified otherwise.
 
 The pore data must be analyzed first to obtain the pore centers and other relevant information. Second, the alignment transformation is calculated from the beads datasets and used to align the track data to the NPC data. The track data must then be analyzed to yield individual tracks with respect to the corresponding pore. Detailed explanations are provided in the respective README sections and in the comments of the code.
 
@@ -31,6 +31,8 @@ The codes was developed with Windows 10 Pro 22H2 Version and tested on Windows 1
 ## Instructions for use
 Detailed explanations are provided at the top of each script and in the following README sections.
 
+<br>
+
 ### Load and Pre-processing of MINFLUX data
 
 #### 1. Program: load_minflux_raw_data.m
@@ -48,30 +50,30 @@ It requires the filtering criterion on several properties of the data: cfr, efo,
     filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, RIMF);
 
 **Input:** 
- - **minfluxRawDataPath** - System path of the MINFLUX .mat format raw data.
- - **cfr_range** - the minimum and maximum values of **cfr** attribute that accepted by the filter
- - **efo_range** - the minimum and maximum values of **efo** attribute that accepted by the filter
- - **dcr_range** - the minimum and maximum values of **dcr** attribute that accepted by the filter
- - **length_range** - the minimum and maximum number of localizations in a trace that accepted by the filter 
- - **do_trace_mean** - boolean. whether to filter with trace-level mean value
- - **RIMF** - refractive index mismatch factor. A value between 0 and 1, which should be measured experimentally for each dataset, and applied to the z-axis localization values before quantitative analysis.
+ - **minfluxRawDataPath** (string) - System path of the MINFLUX .mat format raw data.
+ - **cfr_range** (1-by-2 numeric) - the minimum and maximum values of **cfr** attribute that accepted by the filter
+ - **efo_range** (1-by-2 numeric) - the minimum and maximum values of **efo** attribute that accepted by the filter
+ - **dcr_range** (1-by-2 numeric) - the minimum and maximum values of **dcr** attribute that accepted by the filter
+ - **length_range** (1-by-2 numeric) - the minimum and maximum number of localizations in a trace that accepted by the filter 
+ - **do_trace_mean** (boolean) - whether to filter with trace-level mean value
+ - **RIMF** (numeric) - refractive index mismatch factor. A value between 0 and 1, typically around 0.66 from our system. This value should ideally be measured experimentally for each dataset, and applied to the z-axis localization values to correct for refractive mismatch.
      
 
 **Output:**
  - **filter_result** (structure array) – stores attribute(s) values from the filtered MINFLUX data:
-    - **trace_ID** : array of trace ID (**tid** attribute of the MINFLUX raw data)
-    - **time_stamp** : array of time stamp, in seconds
-    - **loc_nm** : array of the 3D localization coordinates, in nanometer
-    - **trace_txyz** : N by 4 array of filtered localization data with 4 columns: time stamp, x, y, and z coordinates. This format can be used in diffusion behavior analysis, e.g.: [msdanalyzer](https://tinevez.github.io/msdanalyzer/)
-    - **data_array** : N-by-5 array of filtered data with 5 columns: trace ID, time stamp, x, y, and z coordinates. This is the same as [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt), which is the type of data mainly used in this workflow. For instance: It can be used as input for program 2 [semi_automated_clustering.m](#2-program-semi_automated_clusteringm). Or if the input is the cargo tracking data, it can be used in program 8 and 9, [align](#8-program-align_track_to_npcm) and [assign tracks to NPC](#9-program-assign_track_to_clusterm).
-<br>
-<br>
+    - **trace_ID** (N-by-1 numeric) - array of trace ID (**tid** attribute of the MINFLUX raw data)
+    - **time_stamp** (N-by-1 numeric) - array of time stamp, in seconds
+    - **loc_nm** (N-by-3 numeric) - X, Y, and Z values of the 3D localization coordinates, in unit nm
+    - **trace_txyz** (N-by-4 numeric) array of filtered data with 4 columns: time stamp, x, y, and z coordinates. This format can be used in diffusion behavior analysis, e.g.: [msdanalyzer](https://tinevez.github.io/msdanalyzer/)
+    - **data_array** (N-by-5 numeric) array of filtered data with 5 columns: trace ID, time stamp, x, y, and z coordinates. This is the same as [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt), which is the format of data mainly used in this workflow. For instance: It can be used as input for program 2 [semi_automated_clustering.m](#2-program-semi_automated_clusteringm). Or if the input is the cargo tracking data, it can be used in program 8 and 9, [align](#8-program-align_track_to_npcm) and [assign tracks to NPC](#9-program-assign_track_to_clusterm).
 
-### Reconstruction of Nuclear Pore Localization Data
+
+
+### Selection of Nuclear Pore Localization Data
 
 #### 2. Program: semi_automated_clustering.m
 
-Spatial clustering of localization data. Upon running the program, a figure window with 2D scatter plot of the localizations will show. A initial User will need to draw a rectangular selection box around each cluster.  Once selected, double-clicking the rectangle will save the cluster. Repeat this process until all pore clusters are selected.  Once complete, save clusters and the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
+Automated and manual selection of NPCs from localization data. Upon running the program, a 2D scatter plot of the XY view of the localizations will show. An initial spatial clustering will be performed with density-based scan (DBSCAN). The resulted clusters will be show with different colors of the scatter plot, and highlighted with rectangle boxes that surround each cluster. Based on this rough initial clustering, user can modify, add, or remove NPC selections. This is enabled through modify these rectangular selection boxes, or manual drawing of new boxes. Whenever certain progress made, user can click the **Save** button to save the current clustering result to a struct array ***cluster_data*** in the MATLAB base workspace.
 
 <p align="center">
 <img src="/img/semiAutomatedClustering.png" width="700" height=auto>
@@ -82,7 +84,7 @@ Spatial clustering of localization data. Upon running the program, a figure wind
     semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts);
     
 **Input:** 
- - **data** (N-by-5 data array) - *data_array* as output of [program 1](#1-program-load_minflux_raw_datam)
+ - **data** (N-by-5 numeric) - *data_array* as output of [program 1](#1-program-load_minflux_raw_datam)
  - **RIMF** (numeric) - refractive index mismatch factor
  - **dbscan_eps** (numeric) - neighborhood search radius  
  - **dbscan_minPts** (numeric) - minimum number of points in cluster 
