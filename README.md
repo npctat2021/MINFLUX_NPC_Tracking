@@ -220,7 +220,7 @@ Merges all the localizations from all clusters.
     merge_cluster (cluster_data, showResult, save_mode);
 
 **Input:**
- - **cluster_data** (structure array) - result from [rotate cluster](#6-program-rotate_clusterm)
+ - **cluster_data** (structure array) - output of [rotate cluster](#6-program-rotate_clusterm)
  - **showResult** (boolean) - whether to show the merged cluster or not
  - **save_mode** (string):
     - **overwrite:** overwrite on base workspace variable *cluster_data*
@@ -235,7 +235,7 @@ Merges all the localizations from all clusters.
 
 #### 8. Program: align_track_to_NPC.m
    
-Description:
+Calculate transformation from beads localization information, that belongs to NPC and Cargo data respectively. Then use this to transform the localization coordinates of Cargo data, to align to the NPC data.
 
 <p align="left">
 <img src="/img/beads_alignment.png" width="600" height=auto>
@@ -246,12 +246,15 @@ Description:
      result = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF);
      
 **Input:**
- - **file_track**
- - **beads_track**
- - **beads_npc**
- - **RIMF**
+ - **file_track** (string) - System path of the data file that exported from ***data_array*** of the Cargo MINFLUX data. e.g.: [Tracks Model Data.txt](/data/Tracks%20Model%20Data.txt)
+ - **beads_track** (string) - System path of the beads coordinates file of the Cargo data. It is also in tab-separated value format, and stores N-by-3 numeric values. The 3 columns are the X, Y, and Z coordinates of bead. And each row is a bead that well located in both NPC and Cargo dataset. e.g.: [Bead Track.txt
+](/data/Bead%20Track.txt)
+ - **beads_npc** (string) - System path of the beads coordinates file of the NPC data. e.g.: [Bead NPC.txt](/data/Bead%20NPC.txt)
+ - **RIMF** (numeric) - refractive index mismatch factor
 
 **Output:**
+ - **alignment figure** (figure) - A figure sh
+ - **track_data** (struct array)
 
 #### 9. Program: assign_track_to_cluster.m
  
