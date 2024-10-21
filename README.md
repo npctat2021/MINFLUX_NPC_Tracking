@@ -23,6 +23,7 @@ MATLAB 2021b and newer. with toolboxes:
 - Optimization
 - Image processing
 - Curve fitting
+- Computer Vision
 
 This workflow doesn't require high computation power or special hardwares. It should work even with a laptop PC with OKish CPU and RAM. It developed with Windows system, but should also work on other OS with MATLAB and toolboxes readily installed. 
 
@@ -33,7 +34,7 @@ Detailed instructions are provided at the top of each script and in the followin
 
 <br>
 
-### Load and Pre-processing of MINFLUX data
+### Load and Pre-processing of MINFLUX raw data
 
 #### 1. Program: load_minflux_raw_data.m
 
@@ -50,17 +51,17 @@ It requires the filtering criterion on several properties of the data: **cfr, ef
     filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, RIMF);
 
 **Input:** 
- - **minfluxRawDataPath** (string) - System path of the MINFLUX .mat format raw data.
+ - **minfluxRawDataPath** (string) - System path of the MINFLUX (.mat) data file.
  - **cfr_range** (1-by-2 numeric) - the minimum and maximum values of **cfr** attribute that accepted by the filter
  - **efo_range** (1-by-2 numeric) - the minimum and maximum values of **efo** attribute that accepted by the filter
  - **dcr_range** (1-by-2 numeric) - the minimum and maximum values of **dcr** attribute that accepted by the filter
  - **length_range** (1-by-2 numeric) - the minimum and maximum number of localizations in a trace that accepted by the filter 
  - **do_trace_mean** (boolean) - whether to filter with trace-level mean value
- - **RIMF** (numeric) - refractive index mismatch factor. A value between 0 and 1, typically around 0.66 from our system. This value should ideally be measured experimentally for each dataset, and applied to the z-axis localization values to correct for refractive mismatch.
+ - **RIMF** (numeric) - refractive index mismatch factor. A value between 0 and 1, to be applied to the z-axis localization values to correct for refractive mismatch. This value should ideally be measured from the imaging system, and for each experiment. It is typically around 0.66 from our measurments in this project.
      
 
 **Output:**
- - **filter_result** (structure array) – stores attribute(s) values from the filtered MINFLUX data:
+ - **filter_result** (structure array) – stores attribute(s) values from the filtered data:
     - **trace_ID** (N-by-1 numeric) - array of trace ID (**tid** attribute of the MINFLUX raw data)
     - **time_stamp** (N-by-1 numeric) - array of time stamp, in seconds
     - **loc_nm** (N-by-3 numeric) - X, Y, and Z values of the 3D localization coordinates, in unit nm
