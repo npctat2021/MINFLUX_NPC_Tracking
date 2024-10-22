@@ -5,15 +5,16 @@ This workflow reconstruct nuclear pore complex (NPC) and associated cargo transp
 
 An example dataset can be found inside the data folder, and can be used for demo purposes. it consist of the following files:
  - Nuclear Pore Model Data.mat : MINFLUX raw data of NPC in MATLAB data format;
- - Nuclear Pore Model Data.txt : filtered and converted NPC data with 5 columns: trace-ID, time stamp, x, y, and z coordinates;
+ - Nuclear Pore Model Data.txt : filtered and converted NPC data with 5 columns: trace-ID, time stamp, X, Y, and Z coordinates;
  - Tracks Model Data.txt : coverted MINFLUX data of cargo trajectories;
- - Bead NPC.txt : beads coordinates from the NPC dataset, each row is a different bead, and columns are x, y, and z coordinates (in nm);
+ - Bead NPC.txt : beads coordinates from the NPC dataset, each row is a different bead, and columns are X, Y, and Z coordinates (in nm);
  - Bead Cargo.txt : beads coordinates from the Cargo dataset, each row is the same bead as corresponding row in the bead NPC.txt file;
 
-(note: The time stamp is values with unit second, and localizations are values with unit meter. This is how MINFLUX raw data is being recorded, and kept the same in this workflow if not specified otherwise)
+The time stamp is value in second (s), and localizations are values in meters (m). This is how MINFLUX raw data is being recorded. After loading and arragement of the raw data, this workflow will convert the localization data to values in nanometers (nm), if not specified otherwise.
 
 The pore data must be analyzed first to obtain the pore centers and other relevant information. Second, the alignment transformation is calculated from the beads datasets and used to align the track data to the NPC data. The track data must then be analyzed to yield individual tracks with respect to the corresponding pore. Detailed explanations are provided in the respective README sections and in the comments of the code.
 
+##### Note: The "Nuclear Pore Model Data.txt/.mat" represents experimental measurements of Anti-GFP Nanobody HMSiR from a permeabilized cell. In contrast, "Tracks Model Data.txt" consists of example tracks derived from multiple experimental datasets, artificially aligned to the nuclear pore model for illustrative purposes, demonstrating the functionality of the fitting and alignment routine. "Bead loc_Red/NPC" provides synthetic coordinates from two channels, based on the average positional differences obtained in bead measurements. While efforts were made to preserve experimental resemblance during artificial alignment, these model tracks should not be used for drawing biological conclusions.
 
 ## System Requirements
 MATLAB 2021b and newer. with toolboxes:
@@ -22,159 +23,285 @@ MATLAB 2021b and newer. with toolboxes:
 - Optimization
 - Image processing
 - Curve fitting
+- Computer Vision
 
 This workflow doesn't require high computation power or special hardwares. It should work even with a laptop PC with OKish CPU and RAM. It developed with Windows system, but should also work on other OS with MATLAB and toolboxes readily installed. 
 
 The codes was developed with Windows 10 Pro 22H2 Version and tested on Windows 11 Home version 10.0.22631.
 
 ## Instructions for use
-Detailed explanations are provided at the top of each script and in the following README sections.
-### Load and Pre-processing of MINFLUX data
-1. **Program Name** : load_minflux_raw_data.m
+Detailed instructions are provided at the top of each script and in the following README sections.
 
-   **What it does**: Load MINFLUX MATLAB format raw data, and applying filters on EFO, CFR, DCR, and track length parameters to separate individual localizations or traces whose localizations meet the filtering criteria for EFO, CFR, and DCR. Prepare data as tab-separated values with 5 columns: track ID, timestamp, X, Y, and Z coordinates. The following window will pop up, allowing the user to select their filtering criteria.
-    <p align="left">
-    <img src="/img/filterMInfluxData.png" width="400" height=auto>
-    </p>
-    
-    **Input(s)**: It need the MATLAB format (.mat) of MINFLUX raw data file for pore scaffold and cargo. e.g.: model data "Nuclear Pore Model Data.mat". It will also ask for the filtering criterion on several properties of the data: cfr, efo, dcr, trace length and whether to filter with trace-level mean value, and refractive index mismatch factor (RIMF). For more detailed explanation on these parameters, please refer to the manuscript, or the comment section in the script. If one or more input is not yet defined during running, it will prompt a user input dialog to ask the user to provide them.
-    
-    **Output(s)**: A struct type variable with name "filterResult" in MATLAB base workspace. It contains the following fields:
-    - trace_ID : array of trace ID (tid attribute of MINFLUX raw data)
-    - time_stamp : array of time stamp, in seconds
-    - loc_nm : array of the 3D localization coordinates, in nanometers
-    - trace_txyz : N by 4 array of filtered localization data with 4 columns:time, x, y, and z coordinates, that can be used in other applications, e.g.: [msdanalyzer](https://tinevez.github.io/msdanalyzer/)
-    - data_array : N by 5 array of filtered data with 5 columns: trace ID, time, x, y, and z coordinates. This is the type of data mainly used in our workflow. One can save it to a tabular format file onto disk, e.g.: tab-separated value as txt file 
+<br>
 
-    Note: This program is modified so that upon successful execution it will also export the data_array to a text file that saved to folder where the input file residue. The name will be the same as the MATLAB format data file, but with .txt extension. It stores the trace ID, time stamp, x, y, and z coordinates in nm as 5 column tab-separated values. This text file can be used as input for program 2 (semi_automated_clustering.m). Or if the input is the cargo tracking data, it can be used in program 8 and 9, align and assign tracks to NPC.
+### Load and Pre-processing of MINFLUX raw data
 
-### Reconstruction of Nuclear Pore Localization Data
-2. **Program Name** : semi_automated_clustering.m
+#### 1. Program: load_minflux_raw_data.m
 
-    **What it does**: Spatial clustering of localization data. Upon running the program, a figure window with 2D scatter plot of the localizations will show. A initial User will need to draw a rectangular selection box around each cluster.  Once selected, double-clicking the rectangle will save the cluster. Repeat this process until all pore clusters are selected.  Once complete, save clusters and the figure can be closed. An error message will appear at the end, but it can be ignored. An image for cluster selection for the "Nuclear Pore Model Data" is attached.
-    <p align="left">
-    <img src="/img/semiAutomatedClustering.png" width="600" height=auto>
-    </p>
+Load MINFLUX MATLAB (.mat) format raw data. Apply filters on localizations so that noise and low quality data can be removed. It requires the MATLAB format (.mat) of MINFLUX raw data file for pore scaffold or cargo, e.g.: [Nuclear Pore Model Data.mat](/data/Nuclear%20Pore%20Model%20Data.mat). The filtered result will be saved to MATLAB base workspace. And a tab-separated value format result stores trace ID, time stamp, X, Y, and Z coordinate in nm of the filtered data, will be saved to a text file on disk next to the input raw data, e.g.: [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt).
     
-    **Input(s)**:
-    - data 
-    - RIMF
-    - dbscan_eps
-    - dbscan_minPts
+It requires the filtering criterion on several properties of the data: **cfr, efo, dcr**, trace length, whether to filter with trace-level mean value, and refractive index mismatch factor (RIMF). For more detailed explanation on these parameters, please refer to the manuscript, or the comment section in the code. If one or more input is not provided as function inputs, a dialog window will pop up, allowing the user to set up the filtering parameters on the run.
+
+<p align="center">
+<img src="/img/filterMInfluxData.png" width="300" height=auto>
+</p>
     
-    **Output(s)**:	
+**Usage:**
+
+    filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, RIMF);
+
+**Input:** 
+ - **minfluxRawDataPath** (string) - System path of the MINFLUX (.mat) data file.
+ - **cfr_range** (1-by-2 numeric) - the minimum and maximum values of **cfr** attribute that accepted by the filter
+ - **efo_range** (1-by-2 numeric) - the minimum and maximum values of **efo** attribute that accepted by the filter
+ - **dcr_range** (1-by-2 numeric) - the minimum and maximum values of **dcr** attribute that accepted by the filter
+ - **length_range** (1-by-2 numeric) - the minimum and maximum number of localizations in a trace that accepted by the filter 
+ - **do_trace_mean** (boolean) - whether to filter with trace-level mean value
+ - **RIMF** (numeric) - refractive index mismatch factor. A value between 0 and 1, to be applied to the z-axis localization values to correct for refractive mismatch. This value should ideally be measured from the imaging system, and for each experiment. It is typically around 0.66 from our measurments in this project.
+     
+
+**Output:**
+ - **filter_result** (structure array) – stores attribute(s) values from the filtered data:
+    - **trace_ID** (N-by-1 numeric) - array of trace ID (**tid** attribute of the MINFLUX raw data)
+    - **time_stamp** (N-by-1 numeric) - array of time stamp, in seconds
+    - **loc_nm** (N-by-3 numeric) - X, Y, and Z values of the 3D localization coordinates, in unit nm
+    - **trace_txyz** (N-by-4 numeric) array of filtered data with 4 columns: time stamp, X, Y, and Z coordinates. This format can be used in diffusion behavior analysis, e.g.: [msdanalyzer](https://tinevez.github.io/msdanalyzer/)
+    - **data_array** (N-by-5 numeric) array of filtered data with 5 columns: trace ID, time stamp, X, Y, and Z coordinates. This is the same as [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt), which is the format of data mainly used in this workflow. For instance: It can be used as input for program 2 [clustering of NPC](#2-program-semi_automated_clusteringm). Or if the input is the cargo tracking data, it can be used in program 8 and 9, [align](#8-program-align_track_to_npcm) and [assign tracks to NPC](#9-program-assign_track_to_clusterm).
+
+<br>
+
+### Selection of Nuclear Pore Localization Data
+
+#### 2. Program: semi_automated_clustering.m
+
+Automated and manual selection of NPCs from localization data. Upon running the program, a 2D scatter plot of the XY view of the localizations will show. An initial spatial clustering will be performed with density-based scan (DBSCAN). The resulted clusters will be show with different colors of the scatter plot, and highlighted with rectangle boxes that surround each cluster. Based on this rough initial clustering, user can modify, add, or remove NPC selections. This is enabled through modify these rectangular selection boxes, or manual drawing of new boxes. Whenever certain progress made, user can click the **Save** button to save the current clustering result to a struct array ***cluster_data*** in the MATLAB base workspace.
+
+<p align="center">
+<img src="/img/semiAutomatedClustering.png" width="700" height=auto>
+</p>
+
+**Usage:**
+    
+    semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts);
+    
+**Input:** 
+ - **data** (N-by-5 numeric) - *data_array* as output of [program 1](#1-program-load_minflux_raw_datam)
+ - **RIMF** (numeric) - refractive index mismatch factor (to calibrate the cargo data that could be potentially loaded at this stage)
+ - **dbscan_eps** (numeric) - neighborhood search radius  
+ - **dbscan_minPts** (numeric) - minimum number of points in cluster 
+
+**Output:**
+ - **cluster_data** (struct array) stores data of the resulted NPC clusters, with the following fields:
+    - **Rectangle** - 2D rectangle that defines the XY bounds of each cluster 
+    - **Cluster_ID** - unique numeric ID of each cluster
+    - **loc_nm** (N-by-3 array) - X, Y, and Z coordinates of localizations of each cluster, in nm
+    - **tid** - trace ID associated with each localization
+    - **tim** - time stamp associated with each localization
+
+<br>
 
 ### Fitting Nuclear Pore localizations
-3. **Program Name** : fit_cylinder_to_cluster.m
-   
-**What it does**: Double circle fitting of  two rings from individual cluster. Image attached.
-    <p align="left">
-    <img src="/img/doubleRingFitting.png" width="600" height=auto>
-    </p>
- <br />
 
+#### 3. Program: fit_cylinder_to_cluster.m
+
+Double circle (cylinder) fitting of two rings of NPC onto selected cluster.
+
+<p align="center">
+<img src="/img/doubleRingFitting.png" width="600" height=auto>
+</p>
+
+**Usage:**
+
+    fit_cylinder_to_cluster (cluster_data, showFitting, save_mode);
+    
+**Input:** 
+ - **cluster_data** (struct array) - output of [NPC selection](#2-program-semi_automated_clusteringm)
+ - **showFitting** (boolean) - whether to show the fitting result or not
+ - **save_mode** (string):
+    - **overwrite:** overwrite on base workspace variable ***cluster_data***
+    - **new:** create new variable ***cluster_data_cylinderFitted***
+
+**Output:**
+ - **cluster_data** (or **cluster_data_cylinderFitted**) - append new fields **center**, **diameter**, **height**, **fittingError**
+    - **center** - X, Y, Z center of the fitted cylinder
+    - **diameter** - diameter of the fitted cylinder
+    - **height** - height  of the fitted cylinder
+    - **fittingError** - sum of XY and Z fitting error of all localizations in a cluster to the fitted double-ring model
+
+
+#### 4. Program: filter_NPC_cluster.m
+
+Filter clusters based on the measurement and fitting reuslt so far. For instance, we can select those clusters having at least 20 localizations with a fit diameter. For example of diameter: 70-150 nm, height: 25-100 nm, and z-center: -300-100 nm. Users can change these parameters as per their interest.
+
+**Usage:**
+
+    filter_NPC_cluster (cluster_data, save_mode, Name, Value);
+    
+**Input:**
+ - **cluster_data** (struct array) - output of [double ring fitting](#3-program-fit_cylinder_to_clusterm)
+ - **save_mode** (string):
+    - **overwrite:** overwrite on base workspace variable *cluster_data*
+    - **new:** create new variable *cluster_data_filtered*
+ - **Name-Value Arguments:**
+    - 'heightMin', minimum inter-ring height, e.g.: 25
+    - 'heightMax', maximum inter-ring height, e.g.: 100
+    - 'diameterMin', minimum ring diameter, e.g.: 70
+    - 'diameterMax', maximum ring diameter, e.g.: 150
+    - 'zCenterMin', lowest z center location, e.g.: -300
+    - 'zCenterMax', highest z center location, e.g.: 100
+    - 'nLocMin', minimum data point in cluster, e.g.: 20
+
+**Output:**
+ - **cluster_data**  (struct array) - filtered
+
+
+#### 5. Program: fit_circle_to_cluster.m
+   
+Fits pore localizations to a circle projected into the XY-plane and eliminates localizations whose residual was more than two standard deviations away from the circle.
+
+<p align="left">
+<img src="/img/lsqCircleFitting.png" width="600" height=auto>
+</p>
+
+**Usage:**
+
+    fit_circle_to_cluster (cluster_data, showFitting, save_mode);
+
+**Input:**
+ - **cluster_data** (struct array) - output of [program 3](#3-program-fit_cylinder_to_clusterm) or [4](#4-program-filter_NPC_clusterm)
+ - **showFitting** (boolean) - whether to show the fitting result or not
+ - **save_mode** (string):
+    - **overwrite:** overwrite on base workspace variable *cluster_data*
+    - **new:** create new variable *cluster_data_circleFitted*
+
+**Output:**
+ - **cluster_data** - updated fields **loc_nm**, **tid**, **tim**, appended new field **loc_norm**
+    - further filter on data, so that localizations located 2 standard deviation away from the fitted circle are removed. loc_nm, tid, and tim are updated accordingly. 
+    - **loc_norm** (N-by-3 data array) <br> normalized localizations of each cluster, by translate the center of the fitted circle to coordinate origin.
+
+
+### Transform and merge clustered data to reconstruct NPC
+
+#### 6. Program: rotate_cluster.m
+   
+Calculate the polar angle of each localization and remapping to range between 0 and 45 to account for the 8-fold symmetry structure of NPC. It then fit a full cycle of sinusoidal function to the histogram of the 45 degree remapped polar angle of all localizations in a cluster. We obtain the phase angle, as the peak position from the fitted sinusoidal function. We then rotates every point in a cluster by the cluster's phase angle, to prepare for align and merge of multiple NPC clusters.
+
+<p align="left">
+<img src="/img/sinusoidalFit.png" width="600" height=auto>
+</p>
+
+
+**Usage:**
+
+    rotate_cluster (cluster_data, showFitting, save_mode);
+    
+**Input:**
+ - **cluster_data** (structure array) - output of [least square circle fit](#5-program-fit_circle_to_clusterm)
+ - **showFitting** (boolean) - whether to show the fitting result or not
+ - **save_mode** (string):
+    - **overwrite:** overwrite on base workspace variable *cluster_data*
+    - **new:** create new variable *cluster_data_rotated* 
  
-**Input(s)**: 
 
-**Output(s)**:
+**Output:**
+ - **cluster_data** (struct array) - append new field **rotation**
+    - **rotation** (numeric value between 0 and 45) <br> the phase angle (in degree) computed from the sinusoidal fit, as the rotation angle of the current cluster to the template.
 
-### Fitting Nuclear Pore localizations
-4. **Program Name** : filter_NPC_cluster.m
+
+#### 7. Program: merge_cluster.m
    
-**What it does**: .
+Merges all the localizations from all clusters.
 
+<p align="left">
+<img src="/img/mergedCluster.png" width="600" height=auto>
+</p>
+
+**Usage:**
+
+    merge_cluster (cluster_data, showResult, save_mode);
+
+**Input:**
+ - **cluster_data** (structure array) - output of [rotate cluster](#6-program-rotate_clusterm)
+ - **showResult** (boolean) - whether to show the merged cluster or not
+ - **save_mode** (string):
+    - **overwrite:** overwrite on base workspace variable *cluster_data*
+    - **new:** create new variable *cluster_data_merged*
+
+**Output:**
+ - **cluster_data** (struct array) - field **loc_norm** updated
+    - **loc_norm** - the normalized localizations are now rotated by the angle computed from [rotate cluster](#6-program-rotate_clusterm)
+ - **merged NPC** (N-by-5 data array) saved as tab-separated values to a text file ***pore_merged.txt*** in the root folder 
+
+### Align and assign cargo data to NPC data
+
+#### 8. Program: align_track_to_NPC.m
+   
+Calculate transformation from beads localization information, that belongs to NPC and Cargo data respectively. Then use this to transform the localization coordinates of Cargo data, to align to the NPC data.
+
+<p align="left">
+<img src="/img/beads_alignment.png" width="600" height=auto>
+</p>
+
+**Usage:**
+
+     result = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF);
+     
+**Input:**
+ - **file_track** (string) - System path of the data file that exported from ***data_array*** of the Cargo MINFLUX data. e.g.: [Tracks Model Data.txt](/data/Tracks%20Model%20Data.txt)
+ - **beads_track** (string) - System path of the beads coordinates file of the Cargo data. It is also in tab-separated value format, and stores N-by-3 numeric values. The 3 columns are the X, Y, and Z coordinates of bead. And each row is a bead that well located in both NPC and Cargo dataset. e.g.: [Bead Track.txt
+](/data/Bead%20Track.txt)
+ - **beads_npc** (string) - System path of the beads coordinates file of the NPC data. e.g.: [Bead NPC.txt](/data/Bead%20NPC.txt)
+ - **RIMF** (numeric) - refractive index mismatch factor
+
+**Output:**
+ - **alignment figure** (figure) - A figure sh
+ - **track_data** (struct array)
+
+#### 9. Program: assign_track_to_cluster.m
  
-**Input(s)**:
+Description: 
 
-**Output(s)**:
+**Usage:**
 
+    result = assign_track_to_cluster (track_data, npc_cluster_data);
+    
+**Input:**
+ - **track_data**
+ - **npc_cluster_data**
 
-### Fitting Nuclear Pore localizations
-5. **Program Name** : fit_circle_to_cluster.m
+**Output:**
+
+### Visualize NPC transport
+
+#### 10. Program: NPC_trafficking_visualizationUI.m
    
-**What it does**: .
-    <p align="left">
-    <img src="/img/lsqCircleFitting.png" width="600" height=auto>
-    </p>
- <br />
+Description:
 
- 
-**Input(s)**: 
+<p align="left">
+<img src="/img/visualizationUI.png" width="600" height=auto>
+</p>
 
-**Output(s)**:
+**Usage:**
 
+    NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_aligned);
+    
+**Input:**
+ - **npc_cluster_data_merged**
+ - **track_data_aligned**
 
-
-### Fitting Nuclear Pore localizations
-6.  **Program Name** : rotate_cluster.m
-   
-**What it does**: 
-    <p align="left">
-    <img src="/img/sinusoidalFit.png" width="600" height=auto>
-    </p>
- <br />
-
-**Input(s)**: 
-
-**Output(s)**:	
-
-
-### Fitting Nuclear Pore localizations
-7. **Program Name** : merge_cluster.m
-   
-**What it does**:
-    <p align="left">
-    <img src="/img/mergedCluster.png" width="600" height=auto>
-    </p>
- <br />
-
-**Input(s)**: 
-
-**Output(s)**:	
-
-
- 8. **Program Name** : align_track_to_NPC.m
-   
-**What it does**: 
-    <p align="left">
-    <img src="/img/beads_alignment.png" width="600" height=auto>
-    </p>
- <br />
-
-**Input(s)**: 
-
-**Output(s)**:	
-
-9. **Program Name** : assign_track_to_cluster.m
-   
-**What it does**: 
-
-**Input(s)**: 
-
-**Output(s)**:	
-
-10. **Program Name** : NPC_trafficking_visualizationUI.m
-   
-**What it does**: 
-    <p align="left">
-    <img src="/img/visualizationUI.png" width="600" height=auto>
-    </p>
- <br />
-
-**Input(s)**: 
-
-**Output(s)**:
+**Output:**
 
 
 ## Demo
-We made a script that demo the whole workflow with our uploaded sample data (in the data folder) and default parameters.
+We made a script that demo the whole workflow on the sample dataset (in the data folder) and with default parameters.
 
-**Program Name** : demo.m
-   
-**What it does**: 
+#### Program: demo.m
 
-**Input(s)**: 
+Description:
 
-**Output(s)**:
 
-Note: The "Nuclear Pore Model Data.txt/.mat" represents experimental measurements of Anti-GFP Nanobody HMSiR from a permeabilized cell. In contrast, "Tracks Model Data.txt" consists of example tracks derived from multiple experimental datasets, artificially aligned to the nuclear pore model for illustrative purposes, demonstrating the functionality of the fitting and alignment routine. "Bead loc_Red/NPC" provides synthetic coordinates from two channels, based on the average positional differences obtained in bead measurements. While efforts were made to preserve experimental resemblance during artificial alignment, these model tracks should not be used for drawing biological conclusions.
+**Input:**
+
+**Output:**
+
+
