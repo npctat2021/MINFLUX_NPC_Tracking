@@ -3,7 +3,7 @@ function densityMap = renderNPC2D (xy)
     x = xy(:,1);
     y = xy(:,2);
     pixelSize = 1;  % default pixel size: 1nm
-    marginRatio = 5;    % default margin ratio 5%
+    marginRatio = 10;    % default margin ratio 10%
 
 
 

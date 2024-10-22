@@ -22,7 +22,7 @@ function merge_cluster (cluster_data, showResult, save_mode)
         % translate origin to the center of this cluster
         loc_norm = loc_nm - cluster.center;
         % rotate around the center by the angle(+22.5°) computed from previous sinusoidal fitting steps
-        rot_rad = deg2rad( cluster.rotation + 22.5 );
+        rot_rad = deg2rad( cluster.rotation );
         rotation_matrix = [ cos(rot_rad), -sin(rot_rad) ;
                             sin(rot_rad),  cos(rot_rad) ];
         
@@ -66,17 +66,27 @@ function merge_cluster (cluster_data, showResult, save_mode)
 
         img_xy = imgaussfilt(densityMap_xy, 5);
         img_xz = imgaussfilt(densityMap_xz, 5);
-        max_xy = max(max(img_xy));
-        max_xz = max(max(img_xz));
+        
+        img_size = max([size(img_xy), size(img_xz)]);
+        pad_x = ceil( (img_size - size(img_xy, 1)) / 2 );
+        pad_y = ceil( (img_size - size(img_xy, 2)) / 2 );
+        pad_z = ceil( (img_size - size(img_xz, 2)) / 2 );
+        img_xy = padarray(img_xy, [pad_x, pad_y]);
+        img_xz = padarray(img_xz, [pad_x, pad_z]);
 
+        max_xy = mean(img_xy(:)) + 3*std(img_xy(:), 1);
+        max_xy = max( max_xy, max(img_xy(:)) );
+        max_xz = mean(img_xz(:)) + 3*std(img_xz(:), 1);
+        max_xz = max( max_xz, max(img_xz(:)) );
+        
         ax1 = subplot(1,2,1, 'Parent', fig);
-        imshow(img_xy, 'Parent', ax1);
+        imshow(flipud(img_xy'), 'Parent', ax1, 'InitialMagnification', 100);
         colormap(ax1, 'hot');
         clim(ax1, [0, max_xy]);
         title("X-Y view");
 
         ax2 = subplot(1,2,2, 'Parent', fig);
-        imshow(flipud(img_xz'), 'Parent', ax2);
+        imshow(flipud(img_xz'), 'Parent', ax2, 'InitialMagnification', 100);
         colormap(ax2, 'hot');
         clim(ax2, [0, max_xz]);
         title("X-Z view");

@@ -117,7 +117,7 @@ end
 
 %% compute 0-45 degree cluster rotation histogram, and align the clusters to same angle
 disp( "  - computing rotation phase angle of each cluster..." );
-rotate_cluster (cluster_data, true, save_mode)
+rotate_cluster (cluster_data, 5, 22.5, true, save_mode)
 if (saveResultofEachStep)
     cluster_data = cluster_data_rotated;
 end
