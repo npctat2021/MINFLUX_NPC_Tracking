@@ -142,7 +142,7 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
     end
     
     % combine ID, time, x, y, z into one data array
-    data_array(:, 1) = double (repelem(filter_result.track_ID, track_length));
+    data_array(:, 1) = double (repelem(filter_result.track_ID, trace_length));
     data_array(:, 2:5) = vertcat(filter_result.trace_txyz{:});
     filter_result.data_array = data_array;
     data_path_txt = minfluxRawDataPath(1:end-4) + ".txt";
