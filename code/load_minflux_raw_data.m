@@ -114,7 +114,7 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
     end
     
     trace_ID = trace_ID(TF_length & TF_trace)';
-    track_length = trace_length(TF_length & TF_trace);
+    trace_length = trace_length(TF_length & TF_trace);
     %vld = vld & vld_length & vld_trace;
     
     % prepare filtered result
