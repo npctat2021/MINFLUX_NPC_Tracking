@@ -26,6 +26,7 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
     if (range(data(:,5)) ) < 1  % check if the localization unit has already been converted to nanometer
         loc = loc * 1e9;
     end
+    loc(:, 3) = loc(:, 3) * RIMF;
     % get unique trace ID
     uid = unique(tid);
     trace_length = arrayfun(@(x) sum(tid==x), uid);

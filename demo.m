@@ -39,6 +39,7 @@ npcFilePath = fullfile( data_folder, file_npc );
 
 % referactive index mismatch factor, as measured experimentally
 RIMF = 0.668;
+
 % whether to save intermediate results or not
 saveResultofEachStep = true;
 %data_array = [];
@@ -55,18 +56,15 @@ if endsWith(npcFilePath, ".mat")
         [1e4, 1e7], ... % efo_range
         [0, 1], ...     % dcr_range
         [1, 350], ...   % trace length range
-        true,...        % filter with trace-wise mean value
-        RIMF );         % referactive index mismatch factor, to be applied on Z coordinates
-    data_array = filterResult.data_array;
+        true );        % filter with trace-wise mean value
+    data_array = filterResult.data_array; % not RIMF corrected
 else
-    % load 
-    data_array = load (npcFilePath);
-    % In case the data array loaded from txt file is not RIMF corrected
-    data_array(:, 5) = data_array(:, 5) * RIMF;
+    % load data array from txt file (converted with load_minflux_raw_data.m script)
+    data_array = load (npcFilePath); % not RIMF corrected
 end
 
 %% perform the semi-automated clustering on NPC localization data (2D)
-semi_automated_clustering (data_array, RIMF, 55); 
+semi_automated_clustering (data_array, RIMF, 55);  % RIMF correction applied here
 disp("   Use 'Save' button on 'Interactive Clustering...' figure to save clustering result");
 disp("   A variable with name 'cluster_data' should be saved to workspace for further processing");
 disp("   Once finished, click 'Enter' in the Command Window to continue.");
@@ -142,7 +140,7 @@ if ~track_data_exist || isempty(track_data)
     if ( ~isfile(file_track) || ~isfile(beads_track) || ~isfile(beads_npc))
         track_data_exist = false;
     else
-        track_data = align_track_to_NPC (file_track, beads_track, beads_npc, RIMF);
+        track_data = align_track_to_NPC (file_track, beads_track, beads_npc, RIMF); % RIMF correction applied here
     end
 end
 if track_data_exist

@@ -1,4 +1,4 @@
-function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, RIMF)
+function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean)
     % modified on 2024.07.12
     % <Ziqiang.Hunag@embl.de>
     % Select MINFLUX data and select EFO, CFR, DCR, and track length
@@ -45,7 +45,7 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
     [~, idx] = max(nansum(efo)); %#ok<NANSUM>
     efo = efo(:, idx);
 
-    %% create dialog to get user input: range of CFR, EFO, DCR, and track length, whether to compare using trace-wise mean value, and RIMF value
+    %% create dialog to get user input: range of CFR, EFO, DCR, and track length, whether to compare using trace-wise mean value
     if nargin <= 1
         prompt = {'cfr min:',...
             'cfr max:',...
@@ -55,16 +55,14 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
             'dcr max:',... 
             'trace length min:',... 
             'trace length max:',... 
-            'filter with trace-wise mean value:',...
-            'refractive index mismatch factor'};
+            'filter with trace-wise mean value:'};
         dlgtitle = 'Input';
         dims = [1, 55];
         definput = {num2str(min(cfr)), num2str(max(cfr)),...
             num2str(min(efo)), num2str(max(efo)),...
             num2str(min(dcr)), num2str(max(dcr)),...
             num2str(min(trace_length)), num2str(max(trace_length)),...
-            'yes',...
-            '0.668'};
+            'yes'};
         answer = inputdlg(prompt,dlgtitle,dims,definput);
         if isempty(answer)
             return;
@@ -75,7 +73,6 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
         dcr_range =   [str2double(answer{5}) str2double(answer{6})]; 
         length_range = [str2double(answer{7}) str2double(answer{8})];
         do_trace_mean =  ~isequal('n', lower(answer{9}(1))); % filter with track-wise average: if first letter input is n (or N), then No.
-        RIMF = str2double(answer{10}); % refractive index mismatch factor should be measured experimentally
     end
 
     %vld_cfr = cfr>=cfr_range(1) & cfr<=cfr_range(2);
@@ -133,7 +130,6 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
         %time = filter_result.time{i} - filter_result.time{i}(1);
         %time = time(2:end);
         loc_nm = loc(selected_data, :) * 1e9;
-        loc_nm(:, 3) = loc_nm(:, 3) * RIMF;
         filter_result.loc_nm{i} = loc_nm;
         %dS = vecnorm(diff(filter_result.coordinates{i}), 2, 2);
         %S = cumsum(dS, 1);
@@ -142,7 +138,7 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
     end
     
     % combine ID, time, x, y, z into one data array
-    data_array(:, 1) = double (repelem(filter_result.track_ID, track_length));
+    data_array(:, 1) = double (repelem(filter_result.trace_ID, track_length));
     data_array(:, 2:5) = vertcat(filter_result.trace_txyz{:});
     filter_result.data_array = data_array;
     data_path_txt = minfluxRawDataPath(1:end-4) + ".txt";

@@ -42,37 +42,38 @@ function result = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF)
     
     tid = data_array_track(:,1);
     tim = data_array_track(:,2);
-    loc = data_array_track(:, 3:5);
-    track_ID = unique(tid);
+    loc_nm = data_array_track(:, 3:5);
+    trace_ID = unique(tid);
 
     % prepare result
     result = struct();
-    result.track_ID = track_ID;
-    N_tracks = size(track_ID, 1);
-    track_length = arrayfun(@(x) sum(tid==x), track_ID);
-    result.time_stamp = cell(N_tracks, 1);
-    result.loc_nm = cell(N_tracks, 1);
-    result.track_txyz = cell(N_tracks, 1);
+    result.trace_ID = trace_ID;
+    N_traces = size(trace_ID, 1);
+    trace_length = arrayfun(@(x) sum(tid==x), trace_ID);
+    result.time_stamp = cell(N_traces, 1);
+    result.loc_nm = cell(N_traces, 1);
+    result.trace_txyz = cell(N_traces, 1);
     
-    for i = 1 : N_tracks
-        selected_data = tid==track_ID(i);
+    for i = 1 : N_traces
+        selected_data = tid==trace_ID(i);
         result.time_stamp{i} = tim(selected_data);
-        loc_nm = loc(selected_data, :) * 1e9;
-        loc_nm(:, 3) = loc_nm(:, 3) * RIMF;
+
+        loc_trace = loc_nm(selected_data, :);
+        loc_trace(:, 3) = loc_trace(:, 3) * RIMF;
         
-        x_calib = loc_nm(:,1).* px(1) + loc_nm(:,2).* px(2) + px(3);
-        y_calib = loc_nm(:,1).* py(1) + loc_nm(:,2).* py(2) + py(3);
-        z_calib = loc_nm(:,3) + pz;
+        x_calib = loc_trace(:,1).* px(1) + loc_trace(:,2).* px(2) + px(3);
+        y_calib = loc_trace(:,1).* py(1) + loc_trace(:,2).* py(2) + py(3);
+        z_calib = loc_trace(:,3) + pz;
         
         result.loc_nm{i} = horzcat(x_calib, y_calib, z_calib);
-        result.track_txyz{i} = [result.time_stamp{i} result.loc_nm{i}];
+        result.trace_txyz{i} = [result.time_stamp{i} result.loc_nm{i}];
     end
     
     
 
     % combine ID, time, x, y, z into one data array
-    data_array(:, 1) = double (repelem(result.track_ID, track_length));
-    data_array(:, 2:5) = vertcat(result.track_txyz{:});
+    data_array(:, 1) = double (repelem(result.trace_ID, trace_length));
+    data_array(:, 2:5) = vertcat(result.trace_txyz{:});
     result.data_array = data_array;
 
     assignin('base', 'track_data', result);
