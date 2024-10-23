@@ -4,15 +4,15 @@ Study of nuclear transport with two-color MINFLUX
 This workflow reconstruct nuclear pore complex (NPC) and associated cargo transport trajectories from two-color MINFLUX data. 
 
 An example dataset can be found inside the data folder, and can be used for demo purposes. it consist of the following files:
- - Nuclear Pore Model Data.mat : MINFLUX raw data of NPC in MATLAB data format;
- - Nuclear Pore Model Data.txt : filtered and converted NPC data with 5 columns: trace-ID, time stamp, X, Y, and Z coordinates;
- - Tracks Model Data.txt : coverted MINFLUX data of cargo trajectories;
- - Bead NPC.txt : beads coordinates from the NPC dataset, each row is a different bead, and columns are X, Y, and Z coordinates (in nm);
- - Bead Cargo.txt : beads coordinates from the Cargo dataset, each row is the same bead as corresponding row in the bead NPC.txt file;
+ - **Nuclear Pore Raw Data.mat** : MINFLUX raw data of NPC in MATLAB data format;
+ - **Nuclear Pore Model Data.txt** : filtered and converted NPC data with 5 columns: trace-ID, time stamp, X, Y, and Z coordinates;
+ - **Tracks Model Data.txt** : coverted MINFLUX data of cargo trajectories;
+ - **Bead NPC.txt** : beads coordinates from the NPC dataset, each row is a different bead, and columns are X, Y, and Z coordinates (in nm);
+ - **Bead Cargo.txt** : beads coordinates from the Cargo dataset, each row is the same bead as corresponding row in the bead NPC.txt file;
 
-The time stamp is value in second (s), and localizations are values in meters (m). This is how MINFLUX raw data is being recorded. After loading and arragement of the raw data, this workflow will convert the localization data to values in nanometers (nm), if not specified otherwise.
+The time stamp's value is in second (**s**), and localization's value is in meters (**m**). This is how MINFLUX raw data is being recorded. After loading and arragement of the raw data, this workflow will convert the localization data to values in milliseconds (**ms**) and nanometers (**nm**), if not specified otherwise.
 
-The pore data must be analyzed first to obtain the pore centers and other relevant information. Second, the alignment transformation is calculated from the beads datasets and used to align the track data to the NPC data. The track data must then be analyzed to yield individual tracks with respect to the corresponding pore. Detailed explanations are provided in the respective README sections and in the comments of the code.
+The pore data must be analyzed first to obtain the pore centers and other relevant information. Then, the alignment transformation is calculated from the beads datasets and used to align the track data to the NPC data. The track data must then be analyzed to yield individual tracks with respect to the corresponding pore. Detailed explanations are provided in the respective README sections and in the comments of the code.
 
 ##### Note: The "Nuclear Pore Model Data.txt/.mat" represents experimental measurements of Anti-GFP Nanobody HMSiR from a permeabilized cell. In contrast, "Tracks Model Data.txt" consists of example tracks derived from multiple experimental datasets, artificially aligned to the nuclear pore model for illustrative purposes, demonstrating the functionality of the fitting and alignment routine. "Bead loc_Red/NPC" provides synthetic coordinates from two channels, based on the average positional differences obtained in bead measurements. While efforts were made to preserve experimental resemblance during artificial alignment, these model tracks should not be used for drawing biological conclusions.
 
@@ -30,9 +30,6 @@ This workflow doesn't require high computation power or special hardwares. It sh
 The codes was developed with Windows 10 Pro 22H2 Version and tested on Windows 11 Home version 10.0.22631.
 
 ## Instructions for use
-Detailed instructions are provided at the top of each script and in the following README sections.
-
-<br>
 
 ### Load and Pre-processing of MINFLUX raw data
 
@@ -40,15 +37,15 @@ Detailed instructions are provided at the top of each script and in the followin
 
 Load MINFLUX MATLAB (.mat) format raw data. Apply filters on localizations so that noise and low quality data can be removed. It requires the MATLAB format (.mat) of MINFLUX raw data file for pore scaffold or cargo, e.g.: [Nuclear Pore Model Data.mat](/data/Nuclear%20Pore%20Model%20Data.mat). The filtered result will be saved to MATLAB base workspace. And a tab-separated value format result stores trace ID, time stamp, X, Y, and Z coordinate in nm of the filtered data, will be saved to a text file on disk next to the input raw data, e.g.: [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt).
     
-It requires the filtering criterion on several properties of the data: **cfr, efo, dcr**, trace length, whether to filter with trace-level mean value, and refractive index mismatch factor (RIMF). For more detailed explanation on these parameters, please refer to the manuscript, or the comment section in the code. If one or more input is not provided as function inputs, a dialog window will pop up, allowing the user to set up the filtering parameters on the run.
+It requires the filtering criterion on several properties of the data: **cfr, efo, dcr**, trace length, whether to filter with trace-level mean value. For more detailed explanation on these parameters, please refer to the manuscript, or the comment section in the code. If one or more input is not provided as function inputs, a dialog window will pop up, allowing the user to set up the filtering parameters on the run.
 
 <p align="center">
-<img src="/img/filterMInfluxData.png" width="300" height=auto>
+<img src="/img/filterMInfluxData.png" width="500" height=auto>
 </p>
     
 **Usage:**
 
-    filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, RIMF);
+    filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean);
 
 **Input:** 
  - **minfluxRawDataPath** (string) - System path of the MINFLUX (.mat) data file.
@@ -57,7 +54,6 @@ It requires the filtering criterion on several properties of the data: **cfr, ef
  - **dcr_range** (1-by-2 numeric) - the minimum and maximum values of **dcr** attribute that accepted by the filter
  - **length_range** (1-by-2 numeric) - the minimum and maximum number of localizations in a trace that accepted by the filter 
  - **do_trace_mean** (boolean) - whether to filter with trace-level mean value
- - **RIMF** (numeric) - refractive index mismatch factor. A value between 0 and 1, to be applied to the z-axis localization values to correct for refractive mismatch. This value should ideally be measured from the imaging system, and for each experiment. It is typically around 0.66 from our measurments in this project.
      
 
 **Output:**
@@ -87,6 +83,7 @@ Automated and manual selection of NPCs from localization data. Upon running the 
 **Input:** 
  - **data** (N-by-5 numeric) - *data_array* as output of [program 1](#1-program-load_minflux_raw_datam)
  - **RIMF** (numeric) - refractive index mismatch factor (to calibrate the cargo data that could be potentially loaded at this stage)
+ - **RIMF** (numeric) - refractive index mismatch factor. A value between 0 and 1, to be applied to the z-axis localization values to correct for refractive mismatch. This value should ideally be measured from the imaging system, and for each experiment. It is typically around 0.66 from our measurments in this project.
  - **dbscan_eps** (numeric) - neighborhood search radius  
  - **dbscan_minPts** (numeric) - minimum number of points in cluster 
 
@@ -295,8 +292,7 @@ Description:
 
 
 ## Demo
-We created a script that demonstrates the complete workflow using the sample dataset provided in the data folder, with default parameters.Run "demo.m". After selecting the clusters, use the 'Save' button in the 'Interactive Clustering...' window to save the clustering results. A variable named 'cluster_data' will be saved to the workspace for further processing. Next, load the model track data and model bead files for both channels from the Data folder by selecting the "Load track data" option in the Interactive Clustering window. Once this is done, press 'Enter' in the Command Window to proceed. 
-The clusters will be saved to the workspace as 'cluster_data'.
+We made a script that demo the whole workflow on the sample dataset (in the data folder) and with default parameters.
 
 #### Program: demo.m
 
