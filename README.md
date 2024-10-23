@@ -295,7 +295,8 @@ Description:
 
 
 ## Demo
-We made a script that demo the whole workflow on the sample dataset (in the data folder) and with default parameters.
+We created a script that demonstrates the complete workflow using the sample dataset provided in the data folder, with default parameters.Run "demo.m". After selecting the clusters, use the 'Save' button in the 'Interactive Clustering...' window to save the clustering results. A variable named 'cluster_data' will be saved to the workspace for further processing. Next, load the model track data and model bead files for both channels from the Data folder by selecting the "Load track data" option in the Interactive Clustering window. Once this is done, press 'Enter' in the Command Window to proceed. 
+The clusters will be saved to the workspace as 'cluster_data'.
 
 #### Program: demo.m
 
