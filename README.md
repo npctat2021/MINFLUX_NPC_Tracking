@@ -21,8 +21,8 @@ MATLAB 2021b and newer. with toolboxes:
 - Statistics and Machine Learning
 - Signal Processing
 - Optimization
-- Image processing
-- Curve fitting
+- Image Processing
+- Curve Fitting
 - Computer Vision
 
 This workflow doesn't require high computation power or special hardwares. It should work even with a laptop PC with OKish CPU and RAM. It developed with Windows system, but should also work on other OS with MATLAB and toolboxes readily installed. 
@@ -193,10 +193,12 @@ Calculate the polar angle of each localization and remapping to range between 0 
 
 **Usage:**
 
-    rotate_cluster (cluster_data, showFitting, save_mode);
+    rotate_cluster (cluster_data, angel_bin_size, angle_to_base, showFitting, save_mode);
     
 **Input:**
  - **cluster_data** (structure array) - output of [least square circle fit](#5-program-fit_circle_to_clusterm)
+ - **angel_bin_size** (numeric) - phase angle histogram bin size
+ - **angle_to_base** (numeric) - the angle of NPC scaffold to the cartesian axes. 0 means the subunits will lie onto the X and Y axis (and also on the 45 degree lines to account for all 8 subunits). We used 22.5 degree to favor the demo on X-Z view. This parameter won't change the result, as the tracks will be rotated with the same angle as the NPCs.
  - **showFitting** (boolean) - whether to show the fitting result or not
  - **save_mode** (string):
     - **overwrite:** overwrite on base workspace variable *cluster_data*
@@ -293,7 +295,8 @@ Description:
 
 
 ## Demo
-We made a script that demo the whole workflow on the sample dataset (in the data folder) and with default parameters.
+We created a script that demonstrates the complete workflow using the sample dataset provided in the data folder, with default parameters.Run "demo.m". After selecting the clusters, use the 'Save' button in the 'Interactive Clustering...' window to save the clustering results. A variable named 'cluster_data' will be saved to the workspace for further processing. Next, load the model track data and model bead files for both channels from the Data folder by selecting the "Load track data" option in the Interactive Clustering window. Once this is done, press 'Enter' in the Command Window to proceed. 
+The clusters will be saved to the workspace as 'cluster_data'.
 
 #### Program: demo.m
 
