@@ -156,7 +156,7 @@ Filter clusters based on the measurement and fitting reuslt so far. For instance
    
 Fits pore localizations to a circle projected into the XY-plane and eliminates localizations whose residual was more than two standard deviations away from the circle.
 
-<p align="left">
+<p align="center">
 <img src="/img/lsqCircleFitting.png" width="600" height=auto>
 </p>
 
@@ -183,7 +183,7 @@ Fits pore localizations to a circle projected into the XY-plane and eliminates l
    
 Calculate the polar angle of each localization and remapping to range between 0 and 45 to account for the 8-fold symmetry structure of NPC. It then fit a full cycle of sinusoidal function to the histogram of the 45 degree remapped polar angle of all localizations in a cluster. We obtain the phase angle, as the peak position from the fitted sinusoidal function. We then rotates every point in a cluster by the cluster's phase angle, to prepare for align and merge of multiple NPC clusters.
 
-<p align="left">
+<p align="center">
 <img src="/img/sinusoidalFit.png" width="600" height=auto>
 </p>
 
@@ -211,7 +211,7 @@ Calculate the polar angle of each localization and remapping to range between 0 
    
 Merges all the localizations from all clusters.
 
-<p align="left">
+<p align="center">
 <img src="/img/mergedCluster.png" width="600" height=auto>
 </p>
 
@@ -237,7 +237,7 @@ Merges all the localizations from all clusters.
    
 Calculate transformation from beads localization information, that belongs to NPC and Cargo data respectively. Then use this to transform the localization coordinates of Cargo data, to align to the NPC data.
 
-<p align="left">
+<p align="center">
 <img src="/img/beads_alignment.png" width="600" height=auto>
 </p>
 
@@ -276,7 +276,7 @@ Description:
    
 Description:
 
-<p align="left">
+<p align="center">
 <img src="/img/visualizationUI.png" width="600" height=auto>
 </p>
 
