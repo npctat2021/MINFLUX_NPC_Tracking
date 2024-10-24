@@ -125,7 +125,9 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
             end    
         end
         track_data = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF);
-        scatter3(ax, track_data.data_array(:, 3), track_data.data_array(:, 4), track_data.data_array(:, 5), 'r.');
+        loc_nm_track = track_data.data_array(:, 3:5) * 1e9;
+        loc_nm_track(:, 3) = loc_nm_track(:, 3) * RIMF;
+        scatter3(ax, loc_nm_track(:, 1), loc_nm_track(:, 2), loc_nm_track(:, 3), 'r.');
 
     end
 
