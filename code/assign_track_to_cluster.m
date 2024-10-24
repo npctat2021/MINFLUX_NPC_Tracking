@@ -11,11 +11,11 @@ function result = assign_track_to_cluster (track_data, npc_cluster_data)
     cluster_center = vertcat(npc_cluster_data.center);
     cluster_rotation = vertcat(npc_cluster_data.rotation);
     
-    track_ID = vertcat(track_data.track_ID);
+    track_ID = vertcat(track_data.trace_ID);
     track_center = cellfun(@(x) mean(x), track_data.loc_nm, 'UniformOutput', false);
     track_center = cell2mat(track_center);
     nTracks = size(track_center, 1);
-    track_length = cellfun(@(x) size(x, 1), track_data.track_txyz);
+    track_length = cellfun(@(x) size(x, 1), track_data.trace_txyz);
 
     dist2 = pdist2(cluster_center(:, 1:2), track_center(:, 1:2));
     [xyDiff, I] = min(dist2);

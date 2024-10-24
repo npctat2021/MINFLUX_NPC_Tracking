@@ -2,7 +2,7 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
     % Semi-automated clustering with interactive UI controls in MATLAB
     % 
     % Inputs:
-    %   data - Nx5 matrix of input localization data: ID, tim, x,y,z
+    %   data - Nx5 matrix of input localization data: trace ID, T, X, Y, Z
     %   RIMF - refractive index mismatch factor, as to scale Z axis value: z(physical) = z(data) * RIMF;
     %   dbscan_eps - maximum distance between points to be reconginzed as belonging to one cluster, for the DBSCAN clustering.
     %   dbscan_minPts - minimum number of points in a DBSCAN cluster
@@ -13,28 +13,28 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
         dbscan_minPts = 5; % by default expect at least 5 traces in a NPC
     end
     if nargin < 3
-        dbscan_eps = 110;   % by default expect NPC radius to be 55 nm
+        dbscan_eps = 110;   % by default expect NPC diameter to be 110 nm
     end
     if nargin < 2
-        RIMF = 0.668;
+        RIMF = 0.67;
     end
     
     %% get MINFLUX data properties
     tid = data(:, 1);
     tim = data(:, 2);
-    loc = data(:, 3:5);
+    loc_nm = data(:, 3:5);
     if (range(data(:,5)) ) < 1  % check if the localization unit has already been converted to nanometer
-        loc = loc * 1e9;
+        loc_nm = loc_nm * 1e9;
     end
-    loc(:, 3) = loc(:, 3) * RIMF;
+    loc_nm(:, 3) = loc_nm(:, 3) * RIMF;
     % get unique trace ID
     uid = unique(tid);
     trace_length = arrayfun(@(x) sum(tid==x), uid);
     % get centroid coordinates of each trace
     loc_trace = zeros(length(uid), 3);
-    loc_trace(:,1) = arrayfun(@(id) mean( loc(tid==id, 1) ), uid);
-    loc_trace(:,2) = arrayfun(@(id) mean( loc(tid==id, 2) ), uid);
-    loc_trace(:,3) = arrayfun(@(id) mean( loc(tid==id, 3) ), uid);
+    loc_trace(:,1) = arrayfun(@(id) mean( loc_nm(tid==id, 1) ), uid);
+    loc_trace(:,2) = arrayfun(@(id) mean( loc_nm(tid==id, 2) ), uid);
+    loc_trace(:,3) = arrayfun(@(id) mean( loc_nm(tid==id, 3) ), uid);
     %% perform an initial DBSCAN clustering on centroid of traces
     cid = dbscan(loc_trace(:, 1:2), dbscan_eps, dbscan_minPts);
     cid_all = repelem(cid, trace_length);
@@ -56,7 +56,7 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
     ax = gca;
     
     % Plot initial clustering
-    scatter3(ax, loc(:, 1), loc(:, 2), loc(:, 3), [], cid_all, '.');
+    scatter3(ax, loc_nm(:, 1), loc_nm(:, 2), loc_nm(:, 3), [], cid_all, '.');
     axis equal;
     view(2);    % display as X-Y view
     xlabel('X');
@@ -74,8 +74,8 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
         if (cluster_id == -1) 
             continue; % cluster ID = -1 for noise from dbscan
         end
-        loc_min = min( loc(cid_all==cluster_id, 1:2) );
-        loc_max = max( loc(cid_all==cluster_id, 1:2) );
+        loc_min = min( loc_nm(cid_all==cluster_id, 1:2) );
+        loc_max = max( loc_nm(cid_all==cluster_id, 1:2) );
         margin = 10; % create ROI with a 10 nm margin on all sides
         xmin = loc_min(1) - margin; ymin = loc_min(2) - margin;
         xmax = loc_max(1) + margin; ymax = loc_max(2) + margin;
@@ -94,7 +94,7 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
 
         cluster_data(end+1).ClusterID = newClusterID;   %#ok<AGROW>
         cluster_data(end).Rectangle = roi_auto; 
-        cluster_data(end).loc_nm = loc(cid_all==cluster_id, :);
+        cluster_data(end).loc_nm = loc_nm(cid_all==cluster_id, :);
         
     end
 
@@ -145,8 +145,8 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
         cluster_data(end+1).ClusterID = newClusterID; 
         cluster_data(end).Rectangle = roi_manual;
         % Append loc inside the drawn ROI to form a new cluster
-        tf = inROI( roi_manual, loc(:,1), loc(:,2) );
-        cluster_data(end).loc_nm = loc(tf, :);              
+        tf = inROI( roi_manual, loc_nm(:,1), loc_nm(:,2) );
+        cluster_data(end).loc_nm = loc_nm(tf, :);              
         % ignore tid and tim for now
     end
 
@@ -169,9 +169,9 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
                 empty_cluster(idx) = true;
                 continue;
             end            
-            tf = inROI( roi, loc(:,1), loc(:,2) );
-            tf = tf & loc(:,3)<=100;
-            cluster_data(idx).loc_nm = loc(tf, :);       
+            tf = inROI( roi, loc_nm(:,1), loc_nm(:,2) );
+            tf = tf & loc_nm(:,3)<=100;
+            cluster_data(idx).loc_nm = loc_nm(tf, :);       
             cluster_data(idx).tid = tid(tf, :);
             cluster_data(idx).tim = tim(tf, :);
         end

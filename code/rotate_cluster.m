@@ -7,7 +7,7 @@ function rotate_cluster (cluster_data, angel_bin_size, angle_to_base, showFittin
         showFitting = false;
     end
     if nargin < 3
-        angle_to_base = 0;
+        angle_to_base = 0;      % by default align subunits of NPC to cartesian axes like ✳
     end
     if nargin < 2
         angel_bin_size = 5;     % default phase angle bin size is 5 degree

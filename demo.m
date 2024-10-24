@@ -1,18 +1,10 @@
-% Script to load localization microscopy data from a .mat file
+% This script is designed to demo the workflow of 
+% MINFLUX Nuclear Pore transport data processing
 % 
-% This script is designed to load a .mat file containing localization 
-% microscopy data into a MATLAB workspace. The data is assumed to be in the 
-% form of an N by 5 array where:
-% - Column 1: Trace ID - An identifier for each trace that the localization 
-%   belongs to
-% - Column 2: Time Stamp - The time at which the localization event occurred,
-%   measured in seconds
-% - Columns 3, 4, and 5: Spatial Coordinates - The X, Y, and Z spatial
-%   coordinates of the localization event, measured in meters
-% 
-% The loaded data will be stored in a variable called "data" for further
-% analysis and processing.
+% <ziqiang.huang@embl.de>
+% date: 2024.10.24
 
+%% add sub-folder to MATLAB path, refresh MATLAB working environment 
 addpath(genpath(pwd));
 % Clear all variables from the workspace
 %clear;
@@ -21,14 +13,9 @@ addpath(genpath(pwd));
 % Clear the command window
 %clc;
 
-% Specify the path to the .csv file
-% csvFilePath = 'path_to_your_csv_file/your_file_name.csv';
-% Load the .csv file into the workspace
-%data = readmatrix(csvFilePath);
+%% Load MINFLUX NPC model data
 
-%% Load MINFLUX NPC data
-
-% load MINFLUX NPC sample data
+% load MINFLUX NPC sample data, could be .mat raw data or .txt model data
 %filePath = ".\data\Nuclear Pore Model Data.mat";
 [file_npc, data_folder] = uigetfile('*.*',...
     'select nuclear pore data, either MINFLUX raw data in mat format, or sorted data in txt format.');
@@ -37,34 +24,38 @@ if ( file_npc == 0 )
 end
 npcFilePath = fullfile( data_folder, file_npc );
 
-% referactive index mismatch factor, as measured experimentally
-RIMF = 0.668;
+% the referactive index mismatch factor, as measured experimentally
+% this value will be applied to Z-axis localization values prior to
+% 3d quantitative analysis
+RIMF = 0.67;    % assume to be 0.67 for demo, as of 2024.10.23
 
-% whether to save intermediate results or not
+% whether to show and save intermediate results or not
+showResultofEachStep = true;
 saveResultofEachStep = true;
-%data_array = [];
 
 % in case the loaded file is .mat format MINFLUX raw data, 
 if endsWith(npcFilePath, ".mat")
     % load MINFLUX raw data, filter by cfr, efo, dcr, and trace length
     % arrange data into N by 5 data array, store to MATLAB base workspace
-    % sort MINFLUX mat raw data into N by 5 data array
-    % columns are: trace ID, time stamp, X, Y, and Z coordinates in nanometer
+    % sort MINFLUX mat raw data into N by 5 data array:
+    %   trace ID, time stamp in second, X, Y, and Z coordinates in meter
     filterResult = load_minflux_raw_data ( ...
         npcFilePath,...
-        [0, 0.8], ...   % cfr_range
-        [1e4, 1e7], ... % efo_range
-        [0, 1], ...     % dcr_range
-        [1, 350], ...   % trace length range
-        true );        % filter with trace-wise mean value
+        [0, 0.8], ...   % cfr_range [0, 0.8]
+        [1e4, 1e7], ... % efo_range [1e4, 1e7]
+        [0, 1], ...     % dcr_range [0, 1]
+        [1, 350], ...   % trace length range [1, 350]
+        true, ...       % filter with trace-wise mean value
+        false );        % do not save data array to .txt data file for demo
     data_array = filterResult.data_array; % not RIMF corrected
 else
-    % load data array from txt file (converted with load_minflux_raw_data.m script)
+    % load data array from .txt file 
+    % that prevously converted with load_minflux_raw_data.m script
     data_array = load (npcFilePath); % not RIMF corrected
 end
 
 %% perform the semi-automated clustering on NPC localization data (2D)
-semi_automated_clustering (data_array, RIMF, 55);  % RIMF correction applied here
+semi_automated_clustering (data_array, RIMF, 55);  % RIMF correction of NPC model data applied here
 disp("   Use 'Save' button on 'Interactive Clustering...' figure to save clustering result");
 disp("   A variable with name 'cluster_data' should be saved to workspace for further processing");
 disp("   Once finished, click 'Enter' in the Command Window to continue.");
@@ -77,52 +68,51 @@ pause; % wait for user press 'Enter' to continue;
 % instead. The intermediate results will be named with the operation and save
 % to MATLAB base workspace next to "cluster_data"
 %%
-
 % parse save_mode for the following steps
 save_mode = 'overwrite';    %#ok<NASGU>
 if (saveResultofEachStep)
     save_mode = 'new';
 end
 
+
 %% fit double-ring model (cylinder) to each cluster
 disp( "  - fitting cylinder to cluster..." );
-fit_cylinder_to_cluster (cluster_data, true, save_mode);
+fit_cylinder_to_cluster (cluster_data, showResultofEachStep, save_mode);
 if (saveResultofEachStep)
     cluster_data = cluster_data_cylinderFitted;
 end
 
 %% filter clusters based on the cylinder fit results
 disp( "  - filtering cluster..." );
-filter_NPC_cluster (cluster_data,...
-    save_mode,...
+filter_NPC_cluster (cluster_data, save_mode,...
     'heightMin', 25,...     % minimum inter-ring height
     'heightMax', 100,...    % maximum inter-ring height
     'diameterMin',70,...    % minimum ring diameter
     'diameterMax', 150,...  % maximum ring diameter
-    'zCenterMin', -300,...  % z center location
-    'zCenterMax', 100,...   %
-    'nLocMin', 20);         % minimum data point in cluster
+    'zCenterMin', -300,...  % lower z center location
+    'zCenterMax', 100,...   % upper z center location
+    'nLocMin', 20);         % minimum number of localizations in cluster
 if (saveResultofEachStep)
     cluster_data = cluster_data_filtered;
 end
 
 %% fit circle to 2D projection of clusters
 disp( "  - fitting circle to cluster..." );
-fit_circle_to_cluster (cluster_data, true, save_mode);
+fit_circle_to_cluster (cluster_data, showResultofEachStep, save_mode);
 if (saveResultofEachStep)
     cluster_data = cluster_data_circleFitted;                              
 end
 
 %% compute 0-45 degree cluster rotation histogram, and align the clusters to same angle
 disp( "  - computing rotation phase angle of each cluster..." );
-rotate_cluster (cluster_data, 5, 22.5, true, save_mode)
+rotate_cluster (cluster_data, 5, 22.5, showResultofEachStep, save_mode);
 if (saveResultofEachStep)
     cluster_data = cluster_data_rotated;
 end
 
 %% merge the clusters together
 disp( "  - transform and merge clusters together..." );
-merge_cluster (cluster_data, true, save_mode);
+merge_cluster (cluster_data, showResultofEachStep, save_mode);
 if (saveResultofEachStep)
     cluster_data = cluster_data_merged;
 end
@@ -140,9 +130,14 @@ if ~track_data_exist || isempty(track_data)
     if ( ~isfile(file_track) || ~isfile(beads_track) || ~isfile(beads_npc))
         track_data_exist = false;
     else
-        track_data = align_track_to_NPC (file_track, beads_track, beads_npc, RIMF); % RIMF correction applied here
+        track_data = align_track_to_NPC (file_track, beads_track, beads_npc, RIMF); % RIMF correction for the Track data applied here
+        if ~isempty(track_data)
+            track_data_exist = true;
+        end
     end
 end
+
+
 if track_data_exist
     track_data = assign_track_to_cluster (track_data, cluster_data);
 else

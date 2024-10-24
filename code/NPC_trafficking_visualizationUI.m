@@ -3,10 +3,10 @@ function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_ali
     % debug mode to visualize only NPC cluster without tracks
     if ( nargin < 2 || isempty(track_data_aligned) )
         track_data_aligned = struct();
-        track_data_aligned.track_ID = 0;
-        track_data_aligned.time_stamp = {0};
+        track_data_aligned.trace_ID = 0;
+        track_data_aligned.tim_ms = {0};
         track_data_aligned.loc_nm = {[0, 0, 0]};
-        track_data_aligned.track_txyz = {[0, 0, 0, 0]};
+        track_data_aligned.trace_txyz = {[0, 0, 0, 0]};
         track_data_aligned.cluster_ID = -1;
     end
 
@@ -44,10 +44,10 @@ function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_ali
     
 
     % parse tracks
-    nTracks = length(track_data_aligned.track_ID);
+    nTracks = length(track_data_aligned.trace_ID);
     track_list = cell(nTracks, 1);
     for i = 1 : nTracks
-        track_list{i} = string( track_data_aligned.track_ID(i) );
+        track_list{i} = string( track_data_aligned.trace_ID(i) );
     end
 
 
@@ -89,8 +89,8 @@ function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_ali
         'Callback', @(src, evt) toggleNPCSurface(src));
 
     % Second row: dropdown, text field, toggle button, slider
-    uicontrol('Style', 'text', 'String', 'Track', 'FontWeight', 'bold',...
-        'Position', [60, 60, 100, 20], 'BackgroundColor', 'white');
+    uicontrol('Style', 'text', 'String', 'Track', 'FontSize', 12, 'FontWeight', 'bold',...
+        'Position', [70, 60, 100, 20], 'BackgroundColor', 'white');
     
     uicontrol('Style', 'popupmenu', 'String', track_list, ...
         'Position', [150, 60, 60, 20], 'Callback', @(src, evt) trackSelection(src));
@@ -147,7 +147,7 @@ function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_ali
         slider.Value = 0;
         
         if (track_data_aligned.cluster_ID(idx_trk) == -1)
-            disp( strcat('    selected track: ',  num2str(track_data_aligned.track_ID(idx_trk)), ', is not assigned to any NPC cluster!') );
+            disp( strcat('    selected track: ',  num2str(track_data_aligned.trace_ID(idx_trk)), ', is not assigned to any NPC cluster!') );
             return;
         end
 

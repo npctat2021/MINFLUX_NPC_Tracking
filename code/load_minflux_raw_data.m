@@ -1,4 +1,4 @@
-function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean)
+function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, save_to_file)
     % modified on 2024.07.12
     % <Ziqiang.Hunag@embl.de>
     % Select MINFLUX data and select EFO, CFR, DCR, and track length
@@ -8,7 +8,10 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
     % Get the 'Track_data_array' in the workspace to extract 'Track_ID, Time, Coordinates (x, y and z)' .
     
     filter_result = [];
-    %% load data file
+    %% parse input and load data file
+    if nargin < 7
+        save_to_file = false;
+    end
     if nargin < 1
         [filename, filepath] = uigetfile({'*.mat'}, 'MINFLUX raw data file');
         if isequal(filename, 0)
@@ -26,7 +29,8 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
     tim = data.tim(vld);
     trace_ID = unique(tid);
     trace_length = arrayfun(@(x) sum(tid==x), trace_ID);
-    if abberior_format
+    % in earlier version of MINFLUX raw data format, certain attributes are nested under itr
+    if abberior_format      
         loc = squeeze(data.itr.loc(vld, end, :));
         cfr = data.itr.cfr(vld, :);
         efo = data.itr.efo(vld, :);
@@ -119,30 +123,30 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
     filter_result.trace_ID = trace_ID;
     N_traces = size(trace_ID, 1);
     
-    filter_result.time_stamp = cell(N_traces, 1);
+    filter_result.tim_ms = cell(N_traces, 1);
     filter_result.loc_nm = cell(N_traces, 1);
     filter_result.trace_txyz = cell(N_traces, 1);
     
     for i = 1 : N_traces
-        selected_data = tid==trace_ID(i);
-        filter_result.time_stamp{i} = tim(selected_data)';
-        
-        %time = filter_result.time{i} - filter_result.time{i}(1);
-        %time = time(2:end);
-        loc_nm = loc(selected_data, :) * 1e9;
-        filter_result.loc_nm{i} = loc_nm;
-        %dS = vecnorm(diff(filter_result.coordinates{i}), 2, 2);
+        selected_data = tid==trace_ID(i);   % select data specific to the current trace (by tid)
+        tim_trace = tim(selected_data)';    % time stamp of the selected trace (in second)
+        loc_trace = loc(selected_data, :);  % localization coordinates of the selected trace (in meter)
+        filter_result.tim_ms{i} = tim_trace * 1e3; % convert time stamp to millisecond unit
+        filter_result.loc_nm{i} = loc_trace * 1e9; % convert localization coordinates to nanometer unit
+        %dS = vecnorm(diff(filter_result.loc_nm{i}), 2, 2);
         %S = cumsum(dS, 1);
-
-        filter_result.trace_txyz{i} = [filter_result.time_stamp{i} filter_result.loc_nm{i}];
+        filter_result.trace_txyz{i} = [tim_trace loc_trace];    % trace data: t, x, y, z
     end
     
     % combine ID, time, x, y, z into one data array
     data_array(:, 1) = double (repelem(filter_result.trace_ID, track_length));
     data_array(:, 2:5) = vertcat(filter_result.trace_txyz{:});
     filter_result.data_array = data_array;
-    data_path_txt = minfluxRawDataPath(1:end-4) + ".txt";
-    save(data_path_txt, '-ascii', '-TABS', 'data_array');
 
+    % save data array to tab-separated value text file
+    if save_to_file
+        data_path_txt = minfluxRawDataPath(1:end-4) + ".txt";
+        save(data_path_txt, '-ascii', '-TABS', 'data_array');
+    end
 end
 

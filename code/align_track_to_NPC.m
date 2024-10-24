@@ -2,7 +2,7 @@ function result = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF)
     
     % referactive index mismatch factor
     if nargin < 4
-        RIMF = 0.668;
+        RIMF = 0.67;
     end
     
 
@@ -42,7 +42,7 @@ function result = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF)
     
     tid = data_array_track(:,1);
     tim = data_array_track(:,2);
-    loc_nm = data_array_track(:, 3:5);
+    loc = data_array_track(:, 3:5);
     trace_ID = unique(tid);
 
     % prepare result
@@ -50,23 +50,25 @@ function result = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF)
     result.trace_ID = trace_ID;
     N_traces = size(trace_ID, 1);
     trace_length = arrayfun(@(x) sum(tid==x), trace_ID);
-    result.time_stamp = cell(N_traces, 1);
+    result.tim_ms = cell(N_traces, 1);
     result.loc_nm = cell(N_traces, 1);
     result.trace_txyz = cell(N_traces, 1);
     
     for i = 1 : N_traces
         selected_data = tid==trace_ID(i);
-        result.time_stamp{i} = tim(selected_data);
+        tim_trace = tim(selected_data);
+        loc_trace = loc(selected_data, :);
 
-        loc_trace = loc_nm(selected_data, :);
-        loc_trace(:, 3) = loc_trace(:, 3) * RIMF;
+        result.tim_ms{i} = tim_trace * 1e3;
+        loc_nm = loc_trace * 1e9;
+        loc_nm(:, 3) = loc_nm(:, 3) * RIMF;
         
-        x_calib = loc_trace(:,1).* px(1) + loc_trace(:,2).* px(2) + px(3);
-        y_calib = loc_trace(:,1).* py(1) + loc_trace(:,2).* py(2) + py(3);
-        z_calib = loc_trace(:,3) + pz;
+        x_calib = loc_nm(:,1).* px(1) + loc_nm(:,2).* px(2) + px(3);
+        y_calib = loc_nm(:,1).* py(1) + loc_nm(:,2).* py(2) + py(3);
+        z_calib = loc_nm(:,3) + pz;
         
         result.loc_nm{i} = horzcat(x_calib, y_calib, z_calib);
-        result.trace_txyz{i} = [result.time_stamp{i} result.loc_nm{i}];
+        result.trace_txyz{i} = [tim_trace result.loc_nm{i}/1e9];
     end
     
     
