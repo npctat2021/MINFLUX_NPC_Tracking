@@ -38,7 +38,7 @@ function result = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF)
     plot3(px(1)*bead_data_trk(:,1)+px(2)*bead_data_trk(:,2)+px(3), py(1)*bead_data_trk(:,1)+py(2)*bead_data_trk(:,2)+py(3), bead_data_trk(:,3)+pz, 'ro', 'DisplayName', 'beads Track channel aligned');
     hold off;
     legend;
-    saveas(gcf, [pwd, '/', 'track_to_NPC_alignment.fig']);
+    saveas( gcf, fullfile(pwd, 'track_to_NPC_alignment.fig') );
     
     tid = data_array_track(:,1);
     tim = data_array_track(:,2);
@@ -79,6 +79,6 @@ function result = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF)
     result.data_array = data_array;
 
     assignin('base', 'track_data', result);
-    %save([pwd, '/',  'tracks_aligned.txt'], '-ascii', '-TABS', 'data_array');
+    %save( fullfile(pwd,  'tracks_aligned.txt'), '-ascii', '-TABS', 'data_array');
 
 end

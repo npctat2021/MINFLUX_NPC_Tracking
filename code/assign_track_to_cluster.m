@@ -66,6 +66,6 @@ function result = assign_track_to_cluster (track_data, npc_cluster_data)
     result.data_array(exclude_array, :) = [];
     assignin('base', 'track_data', result);
     data_array = result.data_array;
-    save([pwd, '/',  'tracks_aligned_filtered.txt'], '-ascii', '-TABS', 'data_array');
+    save( fullfile(pwd, 'tracks_aligned_filtered.txt'), '-ascii', '-TABS', 'data_array');
 
 end

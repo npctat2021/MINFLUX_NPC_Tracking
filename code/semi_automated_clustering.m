@@ -23,7 +23,7 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
     tid = data(:, 1);
     tim = data(:, 2);
     loc_nm = data(:, 3:5);
-    if (range(data(:,5)) ) < 1  % check if the localization unit has already been converted to nanometer
+    if range(loc_nm(:,3)) < 1  % check if the localization unit has already been converted to nanometer
         loc_nm = loc_nm * 1e9;
     end
     loc_nm(:, 3) = loc_nm(:, 3) * RIMF;
@@ -125,7 +125,13 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
             end    
         end
         track_data = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF);
-        scatter3(ax, track_data.data_array(:, 3), track_data.data_array(:, 4), track_data.data_array(:, 5), 'r.');
+        
+        loc_nm_track = track_data.data_array(:, 3:5);
+        if range(loc_nm_track(:,3)) < 1  % check if the localization unit has already been converted to nanometer
+            loc_nm_track = loc_nm_track * 1e9;
+        end
+        loc_nm_track(:, 3) = loc_nm_track(:, 3) * RIMF;
+        scatter3(ax, loc_nm_track(:, 1), loc_nm_track(:, 2), loc_nm_track(:, 3), 'r.');
 
     end
 
@@ -154,7 +160,9 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
     function showClusters(~, ~)
         for k = 1:length(cluster_data)
             roi = cluster_data(k).Rectangle;
-            roi.Visible = ~roi.Visible;
+            if isgraphics(roi) && isvalid(roi)
+                roi.Visible = ~roi.Visible;
+            end
         end
     end
 

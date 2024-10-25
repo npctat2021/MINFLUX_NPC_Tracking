@@ -67,7 +67,7 @@ function fit_cylinder_to_cluster (cluster_data, showFitting, save_mode)
                 fig = findobj( 'Type', 'Figure', 'Number', 901);
             end
 
-            tab = uitab(tg, 'Title', ""+i);
+            tab = uitab(tg, 'Title', num2str(cluster_data(i).ClusterID));
             ax = axes('Parent', tab);
             scatter3(ax, x_noise, y_noise, z_noise,  '*');
             axis equal;

@@ -40,7 +40,7 @@ function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_ali
     uid( trace_length<=3, : ) = [];
     range_trace_npc = arrayfun(@(x) range(loc_npc(tid==x, 1:2)), uid, 'UniformOutput', false);
     range_trace_npc = cell2mat(range_trace_npc);
-    subunitSize = mean( mean(range_trace_npc) );           % NPC 8-fold symmetry sub-unit size
+    subunitSize = mean( mean(range_trace_npc) );           % NPC sub-unit size
     
 
     % parse tracks
@@ -67,24 +67,23 @@ function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_ali
     %diameter = 100;
     interRingDistance = mean(height);
     clusterSigma = subunitSize;
-    numPoints = 1e4;
 
     % Initial display of NPC as surface
-    plotNPC(ax, loc_npc, mean(diameter), interRingDistance, clusterSigma, numPoints); % create NPC rendering of: raw data, point cloud, and surface
+    plotNPC(ax, loc_npc, mean(diameter)/2, interRingDistance, clusterSigma); % create NPC rendering of: raw data, point cloud, and surface
     plotTrack(1);
     %plotTrack(ax, track_data_aligned, selected_track);
 
     % UI components
     % First row of checkboxes
-    uicontrol('Style', 'checkbox', 'String', 'Display NPC Raw Data', ...
+    uicontrol('Style', 'checkbox', 'String', 'NPC Raw Data', ...
         'Position', [220, 100, 140, 20], 'Value', 0, ...
         'Callback', @(src, evt) toggleNPCRawData(src));
 
-    uicontrol('Style', 'checkbox', 'String', 'Display as Point Cloud', ...
+    uicontrol('Style', 'checkbox', 'String', 'NPC Model as Point Cloud', ...
         'Position', [400, 100, 140, 20], 'Value', 0, ...
         'Callback', @(src, evt) toggleNPCPointCloud(src));
 
-    uicontrol('Style', 'checkbox', 'String', 'Display as Surface', ...
+    uicontrol('Style', 'checkbox', 'String', 'NPC Model as Surface', ...
         'Position', [580, 100, 140, 20], 'Value', 1, ...
         'Callback', @(src, evt) toggleNPCSurface(src));
 
@@ -107,9 +106,7 @@ function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_ali
 
     function toggleNPCRawData(checkbox)
         if checkbox.Value
-            if isempty(plotNPCRaw)
-                plotNPCRaw = plot(ax, rand(100, 1) * diameter, rand(100, 1) * diameter, 'ko'); % Example data
-            else
+            if ~isempty(plotNPCRaw)
                 set(plotNPCRaw, 'Visible', 'on');
             end
         else
@@ -230,7 +227,7 @@ function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_ali
     end
 
 
-    function plotNPC(ax, loc, diameter, interRingDistance, clusterSigma, numPoints)        
+    function plotNPC(ax, loc, radius, interRingDistance, clusterSigma)        
         % Plot the NPC as both point cloud and surface, controlling visibility via the UI
         plotNPCRaw = [];
         plotPtCloud = [];
@@ -246,15 +243,37 @@ function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_ali
 
         for n = 1 : numSubunitPerRing
             angleRad = deg2rad(angleIncrement * (n - 1) + 22.5);
-            clusterCenters(n, :) = [diameter / 2 * cos(angleRad), diameter / 2 * sin(angleRad), -interRingDistance/2];
+            clusterCenters(n, :) = [radius * cos(angleRad), radius * sin(angleRad), -interRingDistance/2];
             clusterCenters(n + numSubunitPerRing, :) = ...
-                [diameter / 2 * cos(angleRad), diameter / 2 * sin(angleRad), interRingDistance/2];
+                [radius * cos(angleRad), radius * sin(angleRad), interRingDistance/2];
         end
 
         % Plot point cloud
+        x = loc(:,1); y = loc(:,2); z = loc(:,3);
+        binSize = round(clusterSigma);
+        xedge = min(x) : binSize : max(x);
+        yedge = min(y) : binSize : max(y);
+        zedge = min(z) : binSize : max(z);
+        binCount3d = histcnd(x,y,z, xedge,yedge,zedge);
+        [~, ~, xbin] = histcounts(x, xedge);
+        [~, ~, ybin] = histcounts(y, yedge);
+        [~, ~, zbin] = histcounts(z, zedge);
+        counts = arrayfun(@(idx) binCount3d(1+xbin(idx), 1+ybin(idx), 1+zbin(idx)), 1:length(loc));
+        
+        %D = squareform( pdist(loc, 'minkowski') );
+        %numPoints = sum( D <= clusterSigma );
+        %D2 = squareform(D);
+        %idx2 = cumsum(length(loc)-1:-1:1, 2);
+        %idx1 = [1, idx2(1:end-1)+1];
+        %numPoints = arrayfun(@(x) sum( D(idx1(x):idx2(x)) <= clusterSigma ), 1:length(loc)-1);
+        %numPoints = sum( pdist2(loc, loc) <= clusterSigma);
+        
+        density = counts / max(counts);
+        numPoints = max(binCount3d(:));%counts * length(loc);
+
         allPoints = [];
         for m = 1:size(clusterCenters, 1)
-            points = generateGaussianPoints(clusterCenters(m, :), clusterSigma/2, numPoints);
+            points = generateGaussianPoints(clusterCenters(m, :), clusterSigma/2, round(numPoints));
             allPoints = [allPoints; points]; %#ok<AGROW>
         end
         NPCpointCloud = pointCloud(allPoints(:,1:3), 'Intensity', 1e2*allPoints(:,4));
@@ -263,7 +282,7 @@ function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_ali
         pcshow(NPCpointCloud, 'ColorSource', 'Intensity', 'MarkerSize', 0.55, 'BackgroundColor', [1 1 1]);
         plotPtCloud = findobj('Tag', 'pcviewer');
         plotPtCloud.Visible = 'off';
-        colormap(flipud(hot));
+        colormap(flipud(autumn));
         %colormap("hot");
         xlabel('X');
         ylabel('Y');
@@ -283,9 +302,19 @@ function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_ali
             plotSurface{k} = surf(ax, Xs, Ys, Zs, 'FaceColor', renderColor, ...
                 'EdgeColor', 'none', 'FaceAlpha', 0.5, 'Visible', 'on');
         end
+        
 
-        plotNPCRaw = scatter3 (ax, loc(:,1), loc(:,2), loc(:,3), 'ro',...
-            'SizeData', 5.5,'MarkerEdgeAlpha', 0.1, 'MarkerFaceColor', renderColor, 'MarkerFaceAlpha', 0.55);
+
+        cval = density * 10;
+        cval = normalize(cval);
+        cval(cval<0) = 0;
+
+        plotNPCRaw = scatter3 (ax, loc(:,1), loc(:,2), loc(:,3), 1, cval);
+        axis equal;
+        colormap(ax, flipud(autumn));
+        clim(ax, [-1, max(cval)]);
+        %plotNPCRaw = scatter3 (ax, loc(:,1), loc(:,2), loc(:,3), 'ro',...
+        %    'SizeData', 5.5,'MarkerEdgeAlpha', 0.1, 'MarkerFaceColor', renderColor, 'MarkerFaceAlpha', 0.55);
         plotNPCRaw.Visible = 'off';
         
         %dark red [.35, 0, 0]

@@ -82,7 +82,7 @@ function rotate_cluster (cluster_data, angel_bin_size, angle_to_base, showFittin
             else
                 fig = findobj( 'Type', 'Figure', 'Number', 903);
             end
-            tab = uitab(tg, 'title', ""+i);
+            tab = uitab(tg, 'title', num2str(cluster_data(i).ClusterID));
             ax = axes('Parent', tab);
             hold on;
             %histogram(rot_360, edges, 'Normalization', 'probability');

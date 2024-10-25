@@ -83,7 +83,7 @@ function fit_circle_to_cluster (cluster_data, showFitting, save_mode)
             else
                 fig = findobj( 'Type', 'Figure', 'Number', 902);
             end
-            tab = uitab(tg, 'title', ""+i);
+            tab = uitab(tg, 'title', num2str(cluster_data(i).ClusterID));
             ax = axes('Parent', tab);
             plot(ax, x2, y2, '*')
             axis equal;
