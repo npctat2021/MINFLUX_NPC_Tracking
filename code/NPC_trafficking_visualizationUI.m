@@ -217,7 +217,7 @@ function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_ali
 
         if isempty(plotTrackHead)
             plotTrackHead = plot3(ax, loc_norm(idx, 1), loc_norm(idx, 2), loc_norm(idx, 3),...
-                'Marker', 'pentagram', 'MarkerSize', 18, 'MarkerEdgeColor', 'yellow', 'MarkerFaceColor', 'yellow');
+                'Marker', 'pentagram', 'MarkerSize', 18, 'MarkerEdgeColor', 'magenta', 'MarkerFaceColor', 'magenta');
         else
             plotTrackHead.Visible = 'on';
             plotTrackHead.XData = loc_norm(idx, 1);
