@@ -76,6 +76,8 @@ function result = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF)
     % combine ID, time, x, y, z into one data array
     data_array(:, 1) = double (repelem(result.trace_ID, trace_length));
     data_array(:, 2:5) = vertcat(result.trace_txyz{:});
+    data_array(:, 2) = data_array(:, 2) * 1e3; % convert to millisecond
+    data_array(:, 3:5) = data_array(:, 3:5) * 1e9;  % convert to nanometer
     result.data_array = data_array;
 
     assignin('base', 'track_data', result);

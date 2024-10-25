@@ -48,7 +48,7 @@ function merge_cluster (cluster_data, showResult, save_mode)
     tid = vertcat(cluster_data.tid);
     tim = vertcat(cluster_data.tim);
     loc_norm = vertcat(cluster_data.loc_norm);
-    pore_merged = [tid tim loc_norm];
+    pore_merged = [tid tim*1e3 loc_norm]; % time in millisecond, loc in nanometer
 
     if (showResult)
         if ~ishandle(904)
