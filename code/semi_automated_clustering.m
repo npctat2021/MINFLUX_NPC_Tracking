@@ -13,7 +13,7 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
         dbscan_minPts = 5; % by default expect at least 5 traces in a NPC
     end
     if nargin < 3
-        dbscan_eps = 110;   % by default expect NPC diameter to be 110 nm
+        dbscan_eps = 55;   % by default expect NPC radius to be 55 nm
     end
     if nargin < 2
         RIMF = 0.67;
