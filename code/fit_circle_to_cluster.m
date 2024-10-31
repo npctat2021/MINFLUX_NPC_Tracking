@@ -1,8 +1,5 @@
 function fit_circle_to_cluster (cluster_data, showFitting, save_mode)
     
-    %fold_name='C:\Users\zhuang\Workspace\MINFLUX\TAMU_tracking\MINFLUX_NPC_Tracking-main\';
-    %file_name='pore';
-    %num_pore=4; % Mention the number of qualified pores from the clusters
     if nargin < 3
         save_mode = 'overwrite';
     end

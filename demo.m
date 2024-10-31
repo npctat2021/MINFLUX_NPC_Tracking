@@ -1,6 +1,10 @@
 % This script is designed to demo the workflow of 
 % MINFLUX Nuclear Pore transport data processing
-% 
+%
+% It sets several parameters with the default value, that specific to the 
+% MINFLUX NPC transport project and data:
+% e.g.: refractive index mismatch factor, RIMF; and the data filtering criterions
+
 % <ziqiang.huang@embl.de>
 % date: 2024.10.24
     
@@ -38,7 +42,9 @@
         % load MINFLUX raw data, filter by cfr, efo, dcr, and trace length
         % arrange data into N by 5 data array, store to MATLAB base workspace
         % sort MINFLUX mat raw data into N by 5 data array:
-        %   trace ID, time stamp in second, X, Y, and Z coordinates in meter
+        % trace ID, time stamp, X, Y, and Z coordinates
+        % this function doesn't change parameter unit and values: i.e:
+        % time will be in second, and coordinates will be in meters
         filterResult = load_minflux_raw_data ( ...
             npcFilePath,...
             [0, 0.8], ...   % cfr_range [0, 0.8]
@@ -47,31 +53,32 @@
             [1, 350], ...   % trace length range [1, 350]
             true, ...       % filter with trace-wise mean value
             false );        % do not save data array to .txt data file for demo
-        data_array = filterResult.data_array; % not RIMF corrected
+        data_array = filterResult.data_array; % RIMF not applied
     else
         % load data array from .txt file 
-        % that prevously converted with load_minflux_raw_data.m script
-        data_array = load (npcFilePath); % not RIMF corrected
+        % that prevously converted already with load_minflux_raw_data.m script
+        data_array = load (npcFilePath); % RIMF not applied
     end
     
     %% perform the semi-automated clustering on NPC localization data (2D)
-    semi_automated_clustering (data_array, RIMF, 55);  % RIMF correction of NPC model data applied here
+    semi_automated_clustering (data_array, RIMF, 55);  % RIMF correction applied here, for the NPC model data
     disp("   Use 'Save' button on 'Interactive Clustering...' figure to save clustering result");
     disp("   A variable with name 'cluster_data' should be saved to workspace for further processing");
     disp("   Once finished, click 'Enter' in the Command Window to continue.");
     pause; % wait for user press 'Enter' to continue;
     
     %%
-    % from this point on, the cluster data should be stored in MATLAB base workspace
-    % each step will modify the result variable "cluster_data",
-    % if saveResultofEachStep is true, then a new result variable will be created
+    % From this point on, the cluster data should be stored in MATLAB base workspace.
+    % Each step will then modify the result data stored in variable "cluster_data",
+    % if 'saveResultofEachStep' is set to true, then a new result variable will be created
     % instead. The intermediate results will be named with the operation and save
     % to MATLAB base workspace next to "cluster_data"
     %%
+
     % parse save_mode for the following steps
     save_mode = 'overwrite';    %#ok<NASGU>
     if (saveResultofEachStep)
-        save_mode = 'new';
+        save_mode = 'new';      % keep the intermediate results in base workspace
     end
     
     
@@ -118,9 +125,10 @@
     end
     
     %% align and assign track to NPC with beads calibration data
-    %  the alignment can also be done with semi-automated clustering step,
-    %  with button function 'Load track data', as a result, a variable
-    %  'track_data' would have been saved to MATLAB base Workspace.
+    %  the alignment can also be done before with semi-automated 
+    %  clustering step, with button function 'Load track data'.
+    %  As a result, a variable with name 'track_data' would have been 
+    %  saved to MATLAB base Workspace.
     %  In this case, the demo script will directly go to assignemnt step.
     track_data_exist = evalin( 'base', 'exist(''track_data'',''var'') == 1' );
     if ~track_data_exist || isempty(track_data)
@@ -137,14 +145,19 @@
         end
     end
     
-    
+    % assign the tracks to recognized NPC clusters
+    % a track would be only recongnized if it located onto / next to a previsouly
+    % segmented and processed NPC, so that the center of rotation angle of
+    % the NPC can be extracted, and apply onto the localizations of the
+    % track data
     if track_data_exist
         track_data = assign_track_to_cluster (track_data, cluster_data);
     else
         track_data = [];
     end
     
-    %% A visualziation UI which facilitate qualitative check on the result
+    %% Display reconstructed NPC and reconginzed tracks 
+    %  with the visualziation UI that facilitate qualitative check on the result
     disp( "  - display the final merged NPC cluster with NPC visualization GUI..." );
     fprintf('\n');
     NPC_trafficking_visualizationUI(cluster_data, track_data);

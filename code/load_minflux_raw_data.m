@@ -1,12 +1,17 @@
 function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, save_to_file)
-    % modified on 2024.07.12
-    % <Ziqiang.Hunag@embl.de>
-    % Select MINFLUX data and select EFO, CFR, DCR, and track length
+    % Load and filter on MINFLUX raw data and select EFO, CFR, DCR, and track length
     % Write "Yes" or "Y" in the 'filter with tracke-wise mean value' 
     % yield the Track_data_array, Track_ID, Time, Coordinates.
-    % Enter this command  in command window [length = cellfun(@(x) size(x, 1), ans.tracks); track_data_array = double (repelem(ans.track_ID, length));track_data_array(:, 2:5) = vertcat(ans.tracks{:});]
-    % Get the 'Track_data_array' in the workspace to extract 'Track_ID, Time, Coordinates (x, y and z)' .
-    
+    % 
+    % The description of trace (as identified by 'tid'), efo, cfr, and dcr attribute of MINFLUX raw data are:
+    % tid: Trace ID (each burst or molecule track gets allocated a unique ID)
+    % efo: Effective frequency offset (emission frequency of the fluorophore while accumulating signal on the outer EOD pattern positions, background corrected)
+    % cfr: Center frequency ratio (the ratio of the emission frequency at the center position over that on the outer EOD pattern positions)
+    % dcr: Detector channel ratio (the ratio of the amount of photons detected on detector Cy5 near over that detected on Cy5 far)
+    %
+    % <ziqiang.hunag@embl.de>
+    % date: 2024.07.12
+
     filter_result = [];
     %% parse input and load data file
     if nargin < 7
