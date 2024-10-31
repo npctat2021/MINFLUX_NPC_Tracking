@@ -60,10 +60,10 @@ It requires the filtering criterion on several properties of the data: **cfr, ef
 **Output:**
  - **filter_result** (structure array) – stores attribute(s) values from the filtered data:
     - **trace_ID** (N-by-1 numeric) - array of trace ID (**tid** attribute of the MINFLUX raw data)
-    - **time_stamp** (N-by-1 numeric) - array of time stamp, in seconds
-    - **loc_nm** (N-by-3 numeric) - X, Y, and Z values of the 3D localization coordinates, in unit nm
-    - **trace_txyz** (N-by-4 numeric) array of filtered data with 4 columns: time stamp, X, Y, and Z coordinates. This format can be used in diffusion behavior analysis, e.g.: [msdanalyzer](https://tinevez.github.io/msdanalyzer/)
-    - **data_array** (N-by-5 numeric) array of filtered data with 5 columns: trace ID, time stamp, X, Y, and Z coordinates. This is the same as [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt), which is the format of data mainly used in this workflow. For instance: It can be used as input for program 2 [clustering of NPC](#2-program-semi_automated_clusteringm). Or if the input is the cargo tracking data, it can be used in program 8 and 9, [align](#8-program-align_track_to_npcm) and [assign tracks to NPC](#9-program-assign_track_to_clusterm).
+    - **tim_ms** (N-by-1 numeric) - array of time stamp, in milliseconds
+    - **loc_nm** (N-by-3 numeric) - X, Y, and Z values of the 3D localization coordinates, in nanometer
+    - **trace_txyz** (N-by-4 numeric) array of filtered data with 4 columns: time stamp, X, Y, and Z coordinates. The units are the same as raw data, i.e.: seconds and meters. This format can be used in diffusion behavior analysis, e.g.: [msdanalyzer](https://tinevez.github.io/msdanalyzer/)
+    - **data_array** (N-by-5 numeric) array of filtered data with 5 columns: trace ID, time stamp, X, Y, and Z coordinates. The units are the same as raw data, i.e.: seconds and meters. This is the same as [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt), which is the format of data mainly used in this workflow. For instance: It can be used as input for program 2 [clustering of NPC](#2-program-semi_automated_clusteringm). Or if the input is the cargo tracking data, it can be used in program 8 and 9, [align](#8-program-align_track_to_npcm) and [assign tracks to NPC](#9-program-assign_track_to_clusterm).
 
 <br>
 
@@ -83,10 +83,9 @@ Automated and manual selection of NPCs from localization data. Upon running the 
     
 **Input:** 
  - **data** (N-by-5 numeric) - *data_array* as output of [program 1](#1-program-load_minflux_raw_datam)
- - **RIMF** (numeric) - refractive index mismatch factor (to calibrate the cargo data that could be potentially loaded at this stage)
- - **RIMF** (numeric) - refractive index mismatch factor. A value between 0 and 1, to be applied to the z-axis localization values to correct for refractive mismatch. This value should ideally be measured from the imaging system, and for each experiment. It is typically around 0.66 from our measurments in this project.
- - **dbscan_eps** (numeric) - neighborhood search radius  
- - **dbscan_minPts** (numeric) - minimum number of points in cluster 
+ - **RIMF** (numeric) - refractive index mismatch factor. A value between 0 and 1, to be applied to the z-axis localization values to correct for refractive mismatch. This value should ideally be measured from the imaging system, and for each experiment. It is typically around 0.66 from our measurments in this project. Here in this program, it will be used to calibrate the cargo data that could be potentially loaded at this stage.
+ - **dbscan_eps** (numeric) - neighborhood search radius of density-based scan, use estimated radius of the NPC to start with. 
+ - **dbscan_minPts** (numeric) - minimum number of points in cluster, of the density-based scan. 
 
 **Output:**
  - **cluster_data** (struct array) stores data of the resulted NPC clusters, with the following fields:
@@ -116,8 +115,8 @@ Double circle (cylinder) fitting of two rings of NPC onto selected cluster.
  - **cluster_data** (struct array) - output of [NPC selection](#2-program-semi_automated_clusteringm)
  - **showFitting** (boolean) - whether to show the fitting result or not
  - **save_mode** (string):
-    - **overwrite:** overwrite on base workspace variable ***cluster_data***
-    - **new:** create new variable ***cluster_data_cylinderFitted***
+    - **'overwrite'**: overwrite on base workspace variable ***cluster_data***
+    - **'new'**: create new variable ***cluster_data_cylinderFitted***
 
 **Output:**
  - **cluster_data** (or **cluster_data_cylinderFitted**) - append new fields **center**, **diameter**, **height**, **fittingError**
@@ -138,8 +137,8 @@ Filter clusters based on the measurement and fitting reuslt so far. For instance
 **Input:**
  - **cluster_data** (struct array) - output of [double ring fitting](#3-program-fit_cylinder_to_clusterm)
  - **save_mode** (string):
-    - **overwrite:** overwrite on base workspace variable *cluster_data*
-    - **new:** create new variable *cluster_data_filtered*
+    - **'overwrite'**: overwrite on base workspace variable *cluster_data*
+    - **'new'**: create new variable *cluster_data_filtered*
  - **Name-Value Arguments:**
     - 'heightMin', minimum inter-ring height, e.g.: 25
     - 'heightMax', maximum inter-ring height, e.g.: 100
@@ -169,8 +168,8 @@ Fits pore localizations to a circle projected into the XY-plane and eliminates l
  - **cluster_data** (struct array) - output of [program 3](#3-program-fit_cylinder_to_clusterm) or [4](#4-program-filter_NPC_clusterm)
  - **showFitting** (boolean) - whether to show the fitting result or not
  - **save_mode** (string):
-    - **overwrite:** overwrite on base workspace variable *cluster_data*
-    - **new:** create new variable *cluster_data_circleFitted*
+    - **'overwrite'**: overwrite on base workspace variable *cluster_data*
+    - **'new'**: create new variable *cluster_data_circleFitted*
 
 **Output:**
  - **cluster_data** - updated fields **loc_nm**, **tid**, **tim**, appended new field **loc_norm**
@@ -181,8 +180,8 @@ Fits pore localizations to a circle projected into the XY-plane and eliminates l
 ### Transform and merge clustered data to reconstruct NPC
 
 #### 6. Program: rotate_cluster.m
-   
-Calculate the polar angle of each localization and remapping to range between 0 and 45 to account for the 8-fold symmetry structure of NPC. It then fit a full cycle of sinusoidal function to the histogram of the 45 degree remapped polar angle of all localizations in a cluster. We obtain the phase angle, as the peak position from the fitted sinusoidal function. We then rotates every point in a cluster by the cluster's phase angle, to prepare for align and merge of multiple NPC clusters.
+
+Compute rotation angle in XY plane in the range between [-180°, 180°] of each localization. Then remaps the angles into range between [0°, 45°], to account for the 8-fold symmetry structure of NPC. It then fit a full cycle of sinusoidal function to the histogram of the remapped polar angles, that from localizations belonging to a cluster. We obtain the phase angle, as the peak position from the fitted sinusoidal function. We then rotates every point in a cluster by the cluster's phase angle, to prepare for align and merge of multiple NPC clusters.
 
 <p align="left">
 <img src="/img/sinusoidalFit.png" width="600" height=auto>
@@ -199,8 +198,8 @@ Calculate the polar angle of each localization and remapping to range between 0 
  - **angle_to_base** (numeric) - the angle of NPC scaffold to the cartesian axes. 0 means the subunits will lie onto the X and Y axis (and also on the 45 degree lines to account for all 8 subunits). We used 22.5 degree to favor the demo on X-Z view. This parameter won't change the result, as the tracks will be rotated with the same angle as the NPCs.
  - **showFitting** (boolean) - whether to show the fitting result or not
  - **save_mode** (string):
-    - **overwrite:** overwrite on base workspace variable *cluster_data*
-    - **new:** create new variable *cluster_data_rotated* 
+    - **'overwrite'**: overwrite on base workspace variable *cluster_data*
+    - **'new'**: create new variable *cluster_data_rotated* 
  
 
 **Output:**
@@ -222,10 +221,10 @@ Merges all the localizations from all clusters.
 
 **Input:**
  - **cluster_data** (structure array) - output of [rotate cluster](#6-program-rotate_clusterm)
- - **showResult** (boolean) - whether to show the merged cluster or not
+ - **showResult** (boolean) - whether to show the XY and XZ view of the merged cluster (as rendered 2D density map), or not
  - **save_mode** (string):
-    - **overwrite:** overwrite on base workspace variable *cluster_data*
-    - **new:** create new variable *cluster_data_merged*
+    - **'overwrite'**: overwrite on base workspace variable *cluster_data*
+    - **'new'**: create new variable *cluster_data_merged*
 
 **Output:**
  - **cluster_data** (struct array) - field **loc_norm** updated
@@ -251,31 +250,33 @@ Calculate transformation from beads localization information, that belongs to NP
  - **beads_track** (string) - System path of the beads coordinates file of the Cargo data. It is also in tab-separated value format, and stores N-by-3 numeric values. The 3 columns are the X, Y, and Z coordinates of bead. And each row is a bead that well located in both NPC and Cargo dataset. e.g.: [Bead Track.txt
 ](/data/Bead%20Track.txt)
  - **beads_npc** (string) - System path of the beads coordinates file of the NPC data. e.g.: [Bead NPC.txt](/data/Bead%20NPC.txt)
- - **RIMF** (numeric) - refractive index mismatch factor
+ - **RIMF** (numeric) - refractive index mismatch factor, need to be the save as the paired NPC data to scale correctly the z axis values of the Cargo data.
 
 **Output:**
- - **alignment figure** (figure) - A figure sh
- - **track_data** (struct array)
+ - **alignment figure** (figure) - A figure showing the location of the detected beads in both channel, and also the transformed beads location of the Cargo data.
+ - **track_data** (struct array) – stores attribute(s) values from the filtered Cargo data. It is formatted the same as **'filter_result'** of the [filtered NPC data](#1-program-load_minflux_raw_datam).
 
 #### 9. Program: assign_track_to_cluster.m
- 
-Description: 
+
+Locate the NPC that associated with the Cargo (track) data, and apply the NPC specified rotation transformation to its associated Cargo (track) data coordinates.
 
 **Usage:**
 
     result = assign_track_to_cluster (track_data, npc_cluster_data);
     
 **Input:**
- - **track_data**
- - **npc_cluster_data**
+ - **track_data** - output of [aligned track result](#8-program-align_track_to_NPCm)
+ - **npc_cluster_data** - output of [merged NPC cluster result](#7-program-merge_clusterm)
 
 **Output:**
+ - **track_data** (struct array) – same as [program 8](#8-program-align_track_to_NPCm), removed data that not associated with any NPC cluster, and appended new field **cluster_ID**
+    - **cluster_ID** - the numeric ID of the associated NPC cluster, from the [NPC data clustering result](#2-program-semi_automated_clusteringm).
 
-### Visualize NPC transport
+### Visualize Reconstructed NPC and Cargo data
 
 #### 10. Program: NPC_trafficking_visualizationUI.m
    
-Description:
+Display an interactive visualziation UI that shows the recontructed and merged NPC cluster, and overlay the associated Cargo data onto it. The merged NPC raw data are plotted as 3D scatter points, but colored by the local density, to give similar look to the 2D histogram rendering. With the fitted NPC parameter, the ring diameter, inter-ring distance and so on, the NPC can be also displayed as geometry model: either as point cloud, or as sphere surfaces. The point cloud will be colored the same way as the raw data, and the surface will be simply displayed as light pink color. The Cargo data will be plotted as connected line, and the movement can be shown by a playable star head in magenta color, that mimic the displacement of the Cargo (track) over time. Different tracks are selectable with a menu entry, that denote by the Cargo data's trace ID.
 
 <p align="left">
 <img src="/img/visualizationUI.png" width="800" height=auto>
@@ -286,22 +287,28 @@ Description:
     NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_aligned);
     
 **Input:**
- - **npc_cluster_data_merged**
- - **track_data_aligned**
+ - **npc_cluster_data_merged** - output of [program 7](#7-program-merge_clusterm)
+ - **track_data_aligned** - output of [program 9](#9-program-assign_track_to_clusterm)
 
-**Output:**
 
 
 ## Demo
 We made a script that demo the whole workflow on the sample dataset (in the data folder) and with default parameters.
 
-#### Program: demo.m
+**Usage:** In MATLAB, change the working directory to root directory of this repository, and run the demo.m script, or alternatively type 'demo.m' and enter to run the demo script.
 
-Description:
+**Description:**
+    
+The demo will first ask user for the input NPC model data file, or the NPC MINFLUX raw data file. In case the user provided the MATLAB (.mat) format raw data type, the demo will call [the load function](#1-program-load_minflux_raw_datam) to load and pre-process the data. This load and filtering will run silently and use the following criterions: cfr_range [0, 0.8], efo_range [1e4, 1e7], dcr_range [0, 1], trace length range [1, 350], and filter with trace-wise mean value.
+
+The demo will then call up the [clustering program](#2-program-semi_automated_clusteringm) and display the interactive clustering figure, for user to verify and modify the NPC clusters. Some message will prompt up in MATLAB console winodw to facilitate the user. Upon an acceptable cluster selections in the figure, the user is expected to click on the '**Save**' button. and hit **Enter** in the console window to continue the demo workflow. As also supported by the clustering program, the user can load, align and assign the Cargo data at this stage, by clicking onto the '**Load track data**' button. A multiple file selection window will prompt up, and the user are expected to multi-select (by holding down the **SHIFT** key while clicking onto the files) 3 files: as the 3 inputs of [program 8](#8-program-align_track_to_NPCm): [Tracks Model Data.txt](/data/Tracks%20Model%20Data.txt), [Bead Track.txt
+](/data/Bead%20Track.txt), and [Bead NPC.txt](/data/Bead%20NPC.txt).
+
+The demo will by default save and display all the intermediate step and results. And also reporting the status and progress to MATLAB consoles. More information of the default parameters taken for each program can be found in the comment section in the demo script. Upon completion, the demo will display the final reconstructed NPC and recognized Cargo tracks with the [visualization UI](#10-program-NPC_trafficking_visualizationUIm). If the Cargo (track) data is not loaded or not available, the UI will still display the reconstructed NPC, but showing an empty Track selection menu. If a certain track is loaded but no NPC cluster can be assigned to it, it will still appear in the menu. But there will be no Cargo plot when selecting it, and a error message will report to MATLAB console.
 
 
-**Input:**
 
-**Output:**
+
+
 
 
