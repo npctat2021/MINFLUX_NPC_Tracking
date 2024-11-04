@@ -1,5 +1,33 @@
 function rotate_cluster (cluster_data, angel_bin_size, angle_to_base, showFitting, save_mode)
-    
+    % rotate_cluster compute the rotational angle of the specified cluster localization data based on given parameters.
+    %
+    % Inputs:
+    %   cluster_data (struct array) - Structure array containing cluster data that has been double-ring fitted,
+    %                                   (optional) filtered, (optional) bi-square ring fitted.
+    %   angle_bin_size (numeric) - The size of the phase angle bins to be used in the angle histogram.
+    %                               The histogram will be used to fit a sinusoidal function to determine the cluster phase angle.
+    %   angle_to_base (numeric) - The angle (in degrees) by which the clusters should be 
+    %                             rotated to align with a specified base orientation.
+    %   showFitting (logical) - Flag to indicate whether to display the fitted result 
+    %                           visually in a plot (true) or not (false).
+    %   save_mode (string) - Specifies how to save the results; options include:
+    %     'over_write' - Overwrites existing variable with the same name 'cluster_data'.
+    %     'new' - Saves fitting results to a new varaible with name 'cluster_data_rotated' to avoid overwriting.
+    %
+    % Outputs: depending on the save_mode
+    %   cluster_data (struct array) - same as input, append the following field from sinusoidal fitting result:
+    %       - rotation: fitted phase angle in degree between [0, 45] degree for the given cluster
+    %
+    % Note:
+    %   The rotation angle is only computed with this function, the real rotational transformation to localizations is not applied here.
+    %   The rotation transoformation will be applied in a later step with merge_cluster function.
+    %
+    % Example:
+    %   rotate_cluster(cluster_data, 5, 22.5, true, 'new');
+    %
+    % Ziqiang Huang: <ziqiang.huang@embl.de>
+    % Last update: 2024.11.04
+
     if nargin < 5
         save_mode = 'overwrite';
     end
@@ -82,7 +110,7 @@ function rotate_cluster (cluster_data, angel_bin_size, angle_to_base, showFittin
             else
                 fig = findobj( 'Type', 'Figure', 'Number', 903);
             end
-            tab = uitab(tg, 'title', num2str(cluster_data(i).ClusterID));
+            tab = uitab(tg, 'title', num2str(cluster_data(i).cluster_ID));
             ax = axes('Parent', tab);
             hold on;
             %histogram(rot_360, edges, 'Normalization', 'probability');

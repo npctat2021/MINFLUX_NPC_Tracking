@@ -1,12 +1,12 @@
-% This script is designed to demo the workflow of 
-% MINFLUX Nuclear Pore transport data processing
-%
-% It sets several parameters with the default value, that specific to the 
-% MINFLUX NPC transport project and data:
-% e.g.: refractive index mismatch factor, RIMF; and the data filtering criterions
-
-% <ziqiang.huang@embl.de>
-% date: 2024.10.24
+    % This script is designed to demo the workflow of 
+    % MINFLUX Nuclear Pore transport data processing
+    %
+    % It sets several parameters with the default value, that specific to the 
+    % MINFLUX NPC transport project and data:
+    % e.g.: refractive index mismatch factor, RIMF; and the data filtering criterions
+    %
+    % Ziqiang Huang: <ziqiang.huang@embl.de>
+    % Last update: 2024.11.04
     
     %% add sub-folder to MATLAB path, refresh MATLAB working environment 
     addpath(genpath(pwd));
@@ -16,9 +16,9 @@
     %close all;
     % Clear the command window
     %clc;
-    
+
     %% Load MINFLUX NPC model data
-    
+
     % load MINFLUX NPC sample data, could be .mat raw data or .txt model data
     %filePath = ".\data\Nuclear Pore Model Data.mat";
     [file_npc, data_folder] = uigetfile('*.*',...
@@ -27,16 +27,16 @@
         return;
     end
     npcFilePath = fullfile( data_folder, file_npc );
-    
+
     % the referactive index mismatch factor, as measured experimentally
     % this value will be applied to Z-axis localization values prior to
     % 3d quantitative analysis
     RIMF = 0.67;    % assume to be 0.67 for demo, as of 2024.10.23
-    
+
     % whether to show and save intermediate results or not
     showResultofEachStep = true;
     saveResultofEachStep = true;
-    
+
     % in case the loaded file is .mat format MINFLUX raw data, 
     if endsWith(npcFilePath, ".mat")
         % load MINFLUX raw data, filter by cfr, efo, dcr, and trace length
@@ -61,7 +61,7 @@
     end
     
     %% perform the semi-automated clustering on NPC localization data (2D)
-    semi_automated_clustering (data_array, RIMF, 55);  % RIMF correction applied here, for the NPC model data
+    semi_automated_clustering (data_array, RIMF, 65);  % RIMF correction applied here, for the NPC model data
     disp("   Use 'Save' button on 'Interactive Clustering...' figure to save clustering result");
     disp("   A variable with name 'cluster_data' should be saved to workspace for further processing");
     disp("   Once finished, click 'Enter' in the Command Window to continue.");
@@ -112,7 +112,7 @@
     
     %% compute 0-45 degree cluster rotation histogram, and align the clusters to same angle
     disp( "  - computing rotation phase angle of each cluster..." );
-    rotate_cluster (cluster_data, 5, 22.5, showResultofEachStep, save_mode);
+    rotate_cluster (cluster_data, 5, 0, showResultofEachStep, save_mode);
     if (saveResultofEachStep)
         cluster_data = cluster_data_rotated;
     end

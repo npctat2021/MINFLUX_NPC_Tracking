@@ -1,16 +1,46 @@
 function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, save_to_file)
-    % Load and filter on MINFLUX raw data and select EFO, CFR, DCR, and track length
-    % Write "Yes" or "Y" in the 'filter with tracke-wise mean value' 
-    % yield the Track_data_array, Track_ID, Time, Coordinates.
-    % 
-    % The description of trace (as identified by 'tid'), efo, cfr, and dcr attribute of MINFLUX raw data are:
-    % tid: Trace ID (each burst or molecule track gets allocated a unique ID)
-    % efo: Effective frequency offset (emission frequency of the fluorophore while accumulating signal on the outer EOD pattern positions, background corrected)
-    % cfr: Center frequency ratio (the ratio of the emission frequency at the center position over that on the outer EOD pattern positions)
-    % dcr: Detector channel ratio (the ratio of the amount of photons detected on detector Cy5 near over that detected on Cy5 far)
+    % load_minflux_raw_data Loads, filters, and optionally arranges MINFLUX raw data
     %
-    % <ziqiang.hunag@embl.de>
-    % date: 2024.07.12
+    % Inputs:
+    %   minfluxRawDataPath - The path to the MINFLUX .mat format raw data file
+    %   cfr_range (1x2 array) - Range for filtering data by cfr [min, max]
+    %   efo_range (1x2 array) - Range for filtering data by efo [min, max]
+    %   dcr_range (1x2 array) - Range for filtering data by dcr [min, max]
+    %   length_range (1x2 array) - Range for filtering data by length of trace [min, max]
+    %   do_trace_mean (logical) - Flag to determine whether to filter data with trace-wise mean value
+    %   save_to_file (logical) - Flag to determine whether to save the data array to a tab separated value text file
+    %
+    % Output:
+    %   filter_result (struct) - Struct containing the filtered result data, with the following fields:
+    %       trace_ID (N-by-1 array) - array of trace ID ('tid' attribute of the MINFLUX raw data, see below Note)
+    %       tim_ms (N-by-1 array) - array of time stamp, in milliseconds
+    %       loc_nm (N-by-3 array) - X, Y, and Z values of the 3D localization coordinates, in nanometer
+    %       trace_txyz (N-by-4 array) - array of filtered data with 4 columns: time stamp, X, Y, and Z coordinates. The units are the same as raw data, i.e.: seconds and meters.
+    %       data_array (N-by-5 array) - array of filtered data with 5 columns: trace ID, time stamp, X, Y, and Z coordinates. The units are the same as raw data, i.e.: seconds and meters.
+    %
+    % Example:
+    %    filter_result = load_minflux_raw_data ( ...
+    %           ".\data\MINFLUX Nuclear Pore Raw Data.mat",...  % MATLAB format MINFLUX raw data path
+    %           [0, 0.8], ...   % cfr_range [0, 0.8]
+    %           [1e4, 1e7], ... % efo_range [1e4, 1e7]
+    %           [0, 1], ...     % dcr_range [0, 1]
+    %           [1, 350], ...   % trace length range [1, 350]
+    %           true, ...       % filter with trace-wise mean value
+    %           true );         % save data array to .txt data file
+    % Note:
+    %   Write "Yes" or "Y" in the dialog field: 'filter with tracke-wise mean
+    %   or, write "No" or "N" (all not case-sensitive) to filter on each
+    %   localization level. Beware that filter on single localization level
+    %   will result in missing values of a given trace in filtered result.
+    % 
+    %   The description of trace (as identified by 'tid'), efo, cfr, and dcr attribute of MINFLUX raw data are:
+    %   - tid: Trace ID (each burst or molecule track gets allocated a unique ID)
+    %   - efo: Effective frequency offset (emission frequency of the fluorophore while accumulating signal on the outer EOD pattern positions, background corrected)
+    %   - cfr: Center frequency ratio (the ratio of the emission frequency at the center position over that on the outer EOD pattern positions)
+    %   - dcr: Detector channel ratio (the ratio of the amount of photons detected on detector Cy5 near over that detected on Cy5 far)
+    %
+    % Ziqiang Huang: <ziqiang.huang@embl.de>
+    % Last update: 2024.11.04
 
     filter_result = [];
     %% parse input and load data file
@@ -153,5 +183,6 @@ function filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, e
         data_path_txt = minfluxRawDataPath(1:end-4) + ".txt";
         save(data_path_txt, '-ascii', '-TABS', 'data_array');
     end
+
 end
 

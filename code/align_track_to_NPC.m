@@ -1,5 +1,38 @@
-function result = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF)
-    
+function result = align_track_to_NPC (file_track, beads_track, beads_npc, RIMF)
+    % align_track_to_NPC aligns Cargo data to the nuclear pore complex (NPC) structure.
+    %
+    % Inputs:
+    %   file_track (string) - System path to the converted MINFLUX data 
+    %                           (with load_minflux_raw_data.m) containing the Cargo data.
+    %
+    %   beads_track (Nx3 matrix) - System path of the beads coordinates file of the Cargo data.
+    %                           It is also in tab-separated value format, and stores N-by-3 numeric values.
+    %                           The 3 columns are the X, Y, and Z coordinates of bead. 
+    %                           And each row is a bead that well located in both NPC and Cargo dataset.
+    %   beads_npc (Nx3 matrix) - System path of the beads coordinates file of the NPC data.
+    %
+    %   RIMF (numeric) - refractive index mismatch factor, need to be the save as the paired NPC data 
+    %                       to scale correctly the z axis values of the Cargo data.
+    %
+    % Outputs:
+    %   result (struct array) - Struct containing the filtered result data, with the following fields:
+    %       trace_ID (N-by-1 array) - array of trace ID ('tid' attribute of the MINFLUX raw data, see below Note)
+    %       tim_ms (N-by-1 array) - array of time stamp, in milliseconds
+    %       loc_nm (N-by-3 array) - X, Y, and Z values of the 3D localization coordinates, in nanometer
+    %       trace_txyz (N-by-4 array) - array of filtered data with 4 columns: time stamp, X, Y, and Z coordinates. The units are the same as raw data, i.e.: seconds and meters.
+    %       data_array (N-by-5 array) - array of filtered data with 5 columns: trace ID, time stamp, X, Y, and Z coordinates. The units are the same as raw data, i.e.: seconds and meters.
+    %
+    % Example:
+    %   track_data = align_track_to_NPC ( ...   
+    %       ".\data\Tracks Model Data.txt",...  % path to the Cargo model data
+    %       ".\data\Bead Track.txt",...         % path to the Cargo beads data
+    %       ".\data\Bead NPC.txt",...           % path to the NPC beads data
+    %       0.67);                              % referactive index mismatch factor
+    %
+    % Ziqiang Huang: <ziqiang.huang@embl.de>
+    % Last update: 2024.11.04
+
+
     % referactive index mismatch factor
     if nargin < 4
         RIMF = 0.67;
@@ -19,7 +52,7 @@ function result = align_track_to_NPC (file_track , beads_track, beads_npc, RIMF)
     % compute translational transform of X, and Y axis
     fit_arg_x = polyfit(input_points(:,1), base_points(:,1), 1); % 1st order polynomial fit (y=a1*x+a2) of top channel x-pixels (x) & bottom channel x-pixels (y), output is [a1, a2]
     fit_arg_y = polyfit(input_points(:,2), base_points(:,2), 1); % 1st order polynomial fit (y=b1*x+b2) of top channel y-pixels (x) & bottom channel y-pixels (y), output is [b1, b2]
-    map_func = inline('fit_arg(1)*xdata(:,1)+fit_arg(2)*xdata(:,2)+fit_arg(3)','fit_arg','xdata'); % defining a 1st order polynomial function
+    map_func = inline('fit_arg(1)*xdata(:,1)+fit_arg(2)*xdata(:,2)+fit_arg(3)','fit_arg','xdata'); %#ok<DINLN> % defining a 1st order polynomial function
     xdata=input_points;
     fit_arg=[fit_arg_x(1) 0 fit_arg_x(2)]; % fit_arg_x(1) is a1, fit_arg_x(2) is b1
     options=optimset('lsqcurvefit');

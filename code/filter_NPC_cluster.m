@@ -1,29 +1,34 @@
 function filter_NPC_cluster (cluster_data, save_mode, varargin)
-% templateFunction - A template function demonstrating fixed and optional inputs
-%
-% Syntax:
-%   output = templateFunction(fixedInput1, fixedInput2, 'Name', Value, ...)
-%
-% Inputs:
-%   fixedInput1 - Description of the first fixed input
-%   fixedInput2 - Description of the second fixed input
-%   Name-Value Pairs:
-%     'Parameter1'  - Description of parameter 1 (default: defaultValue1)
-%     'Parameter2'  - Description of parameter 2 (default: defaultValue2)
-%     ...           - Additional parameters as needed
-%
-% Output:
-%   output - Description of the output
+    % filter_NPC_cluster filters NPC cluster data based on specified criteria.
+    %
+    % Inputs:
+    %   cluster_data (struct array) - Structure array containing cluster data that has been double-ring fitted, to be filtered.
+    %
+    %   save_mode (string) - Specifies how to save the results; can be either:
+    %     'over_write' - Overwrites existing variable with the same name 'cluster_data'.
+    %     'new' - Saves filtered results to a new varaible with name 'cluster_data_filtered' to avoid overwriting.
+    %
+    %   Optional Name-Value Pairs (varargin):
+    %       'heightMin' (numeric) - Minimum inter-ring height, e.g., 25.
+    %       'heightMax' (numeric) - Maximum inter-ring height, e.g., 100.
+    %       'diameterMin' (numeric) - Minimum ring diameter, e.g., 70.
+    %       'diameterMax' (numeric) - Maximum ring diameter, e.g., 150.
+    %       'zCenterMin' (numeric) - Lowest z-center location, e.g., -300.
+    %       'zCenterMax' (numeric) - Highest z-center location, e.g., 100.
+    %       'nLocMin' (numeric) - Minimum number of data points in cluster, e.g., 20.
+    %
+    % Outputs: depending on the save_mode
+    %   cluster_data (struct array) - same as input, with clusters that not pass filter removed
+    %
+    % Example:
+    %   result = filter_NPC_cluster(myClusterData, 'new', 'heightMin', 25, 'heightMax', 100, ...
+    %                                 'diameterMin', 70, 'diameterMax', 150, ...
+    %                                 'zCenterMin', -300, 'zCenterMax', 100, ...
+    %                                 'nLocMin', 20);
+    %
+    % Ziqiang Huang: <ziqiang.huang@embl.de>
+    % Last update: 2024.11.04
 
-
-% Semi-automated clustering with interactive UI controls in MATLAB
-% 
-% Inputs:
-%   loc - Nx3 matrix of 3D loc [x, y, z].
-%   dbscan_eps - Epsilon parameter for the DBSCAN clustering.
-%   dbscan_minPts - Minimum loc parameter for the DBSCAN clustering.
-%   tid - Trace IDs corresponding to the loc.
-%   timestamps - Time stamps corresponding to the loc.
     
     % default saving mode is to overwrite cluster_data in base workspace
     default_save_mode = 'overwrite';

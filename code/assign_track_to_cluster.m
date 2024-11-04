@@ -1,5 +1,23 @@
 function result = assign_track_to_cluster (track_data, npc_cluster_data)
-    
+    % assign_track_to_cluster Assigns tracking data to specified NPC clusters.
+    %
+    % Inputs:
+    %   track_data (struct array) - Structure array containing tracking information, 
+    %                                including coordinates and timestamps of tracked entities.
+    %   npc_cluster_data (struct array) - Structure array containing NPC cluster data, 
+    %                                      which includes fields such as cluster coordinates 
+    %                                      and identifiers for association with tracking data.
+    %
+    % Outputs:
+    %   result (struct array) - same as input track_data, append the following field from alignment:
+    %       - cluster_ID: the cluster ID of the associated NPC cluster to the Cargo data
+    %       - loc_norm: transformed localizations of the Cargo according to its identified NPC cluster
+    %
+    % Example:
+    %   track_data = assign_track_to_cluster (track_data, cluster_data);
+    %
+    % Ziqiang Huang: <ziqiang.huang@embl.de>
+    % Last update: 2024.11.04    
     
     result = track_data;
 
@@ -7,7 +25,7 @@ function result = assign_track_to_cluster (track_data, npc_cluster_data)
         return;
     end
 
-    cluster_ID = vertcat(npc_cluster_data.ClusterID);
+    cluster_ID = vertcat(npc_cluster_data.cluster_ID);
     cluster_center = vertcat(npc_cluster_data.center);
     cluster_rotation = vertcat(npc_cluster_data.rotation);
     

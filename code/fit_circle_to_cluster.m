@@ -1,5 +1,26 @@
 function fit_circle_to_cluster (cluster_data, showFitting, save_mode)
-    
+    % fit_circle_to_cluster bi-square fits a circle in the XY plane to the given cluster data.
+    %
+    % Inputs:
+    %   cluster_data (struct array) - Structure array containing cluster data that has been double-ring fitted.
+    %                      
+    %   showFitting (logical) - Flag to determine whether to display the fitting result
+    %                           visually in a plot (true) or not (false).
+    %   save_mode (string) - Specifies how to save the results; can be either:
+    %     'over_write' - Overwrites existing variable with the same name 'cluster_data'.
+    %     'new' - Saves fitting results to a new varaible with name 'cluster_data_circleFitted' to avoid overwriting.
+    %
+    % Outputs: depending on the save_mode
+    %   cluster_data (struct array) - same as input, within each clusters
+    %       localization located 2 standard deviation away from the fitted
+    %       circle will be removed.
+    %
+    % Example:
+    %   fit_circle_to_cluster(cluster_data, true, 'new');
+    %
+    % Ziqiang Huang: <ziqiang.huang@embl.de>
+    % Last update: 2024.11.04
+
     if nargin < 3
         save_mode = 'overwrite';
     end
@@ -7,7 +28,7 @@ function fit_circle_to_cluster (cluster_data, showFitting, save_mode)
         showFitting = false;
     end
     
-    global fig tg;
+    global fig tg; %#ok<*GVMIS>
 
     theta=0:0.01:2*pi;
     %pixel_size=1.0; %nm, not used for MINFLUX analysis.
@@ -80,7 +101,7 @@ function fit_circle_to_cluster (cluster_data, showFitting, save_mode)
             else
                 fig = findobj( 'Type', 'Figure', 'Number', 902);
             end
-            tab = uitab(tg, 'title', num2str(cluster_data(i).ClusterID));
+            tab = uitab(tg, 'title', num2str(cluster_data(i).cluster_ID));
             ax = axes('Parent', tab);
             plot(ax, x2, y2, '*')
             axis equal;

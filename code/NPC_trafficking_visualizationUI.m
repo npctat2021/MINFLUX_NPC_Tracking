@@ -1,5 +1,24 @@
 function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_aligned)
-    
+    % NPC_trafficking_visualizationUI display the reconstructed NPC
+    % scaffold in together with the aligned Cargo data for a quick quality
+    % check on the NPC reconstruction and Cargo tranportation
+    %
+    % Inputs:
+    %   npc_cluster_data_merged (struct array) - Structure array containing merged cluster data
+    %                                            of the nuclear pore complexes, which need to include
+    %                                            fields: loc_norm
+    %   track_data_aligned (struct array) - Structure array containing aligned tracking data of 
+    %                                        NPC localizations, including time and spatial information.
+    %
+    % Outputs:
+    %   This function does not return any outputs; it creates a graphical user interface for visualization.
+    %
+    % Example:
+    %   NPC_trafficking_visualizationUI(cluster_data_merged, track_data);
+    %
+    % Ziqiang Huang: <ziqiang.huang@embl.de>
+    % Last update: 2024.11.04
+
     % debug mode to visualize only NPC cluster without tracks
     if ( nargin < 2 || isempty(track_data_aligned) )
         track_data_aligned = struct();
@@ -217,7 +236,8 @@ function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_ali
         xedge = min(xnm) : binSize : max(xnm);
         yedge = min(ynm) : binSize : max(ynm);
         zedge = min(znm) : binSize : max(znm);
-        binCount3d = histcnd(xnm,ynm,znm, xedge,yedge,zedge);
+        %binCount3d = histcnd(xnm,ynm,znm, xedge,yedge,zedge);
+        binCount3d = histcounts3 (xnm, ynm, znm, binSize);
         density_map_smoothed = imgaussfilt3(binCount3d, 1);
         [~, ~, xbin] = histcounts(xnm, xedge);
         [~, ~, ybin] = histcounts(ynm, yedge);
@@ -286,6 +306,42 @@ function NPC_trafficking_visualizationUI(npc_cluster_data_merged, track_data_ali
 end
 
 
+function N = histcounts3 (x, y, z, binSize)
+    loc = [x, y, z];
+    size_map = [1 1 1];
+    num_pixel_dimension = 1;
+    bin_count_1d = 1;
+    % loop through dimensions: X, Y, Z
+    for dim = 1 : 3
+        data = loc(:, dim); % localization data along current dimension
+        if range(data) < 1 
+            data = data * 1e9; % in case the input localization is with unit meter
+        end
+        % compute histogram edge
+        edge = min(data) : binSize : max(data);   % edge of the current localization data
+        % update size of the final rendered histogram map
+        size_map(dim) = length(edge);
+        % generate 1D array of (M) edges and (N) data, and also M '1' and N
+        % '0' array, to compute the histogram bin counts, and the bin index
+        % of input localization data
+        cd = zeros(numel(data), 1);     % N by 1 data with 0
+        ce = ones(size_map(dim), 1);     % M by 1 edge with 1
+        ed = [ edge(:); data];          % edge and data vertically combined
+        [~, edi] = sort(ed);            % sort combined edge, return index of sorted array corresponding to unsorted 'ed'
+        ced=[ce; cd];                   % M times '1', and N times '0' vertically combined
+        csum = cumsum(ced(edi));        % computing bin counts
+        csum(edi) = csum;               % bin counts of the unsorted 'ed'
+        bin_index_data = csum(ced==0);  % bin index of original coordinate data, identified by '0' value in ced
+        %XI(XI<1) = nan;                % data cannot be assigned to any bin
+        % update bin counts 1D array with the current axis bin counts
+        bin_count_1d = bin_count_1d + (bin_index_data-1) * num_pixel_dimension;
+        % update bin counts offset, as the total number of pixels in previous dimension
+        num_pixel_dimension = num_pixel_dimension * size_map(dim);
+    end
+    bin_count_nd = histcounts( bin_count_1d, 1 : prod(size_map) ); % generate histogram counts for all bins of all dimensions
+    N = [bin_count_nd, 0];
+    N = reshape(N, size_map); % reshape the final bin counts into the N-D histogram
+end
 
 function points = generateGaussianPoints(center, sigma, numPoints)
     % Generate Gaussian-distributed points around the cluster center

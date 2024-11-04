@@ -1,5 +1,29 @@
 function fit_cylinder_to_cluster (cluster_data, showFitting, save_mode)
-    
+    % fit_cylinder_to_cluster Fits a double-ring (cylinder) geometry model to clustered localization data.
+    %
+    % Inputs:
+    %   cluster_data (struct array) - Structure array containing cluster information,
+    %                                  which should include fields loc_nm as coordinates 
+    %                                   in nanometer, and cluster_ID.
+    %   showFitting (logical) - Flag to determine whether to visually display the 
+    %                           fitting result in a plot (true) or not (false).
+    %   save_mode (string) - Flag specifies how to save the fitting result, can be either:
+    %     'over_write' - Overwrites existing variable with the same name 'cluster_data'.
+    %     'new' - Saves fitting results to a new varaible with name 'cluster_data_cylinderFitted' to avoid overwriting.
+    %
+    % Outputs: depending on the save_mode
+    %   cluster_data (struct array) - same as input, append the following fields from fitting result:
+    %       - center: fitted center of the double-ring structure
+    %       - diameter: fitted ring diameter of the double-ring structure
+    %       - height: fitted inter-ring distance of the double-ring structure
+    %       - fittingError: sum of XY and Z fitting error of all localizations in cluster
+    %
+    % Example:
+    %   fit_cylinder_to_cluster(cluster_data, true, 'overwrite');
+    %
+    % Ziqiang Huang: <ziqiang.huang@embl.de>
+    % Last update: 2024.11.04
+
     if nargin < 3
         save_mode = 'overwrite';
     end
@@ -7,7 +31,7 @@ function fit_cylinder_to_cluster (cluster_data, showFitting, save_mode)
         showFitting = false;
     end
     
-    global fig tg;
+    global fig tg; %#ok<*GVMIS>
     num_pore = length(cluster_data);
 
     %theta=0:0.01:2*pi;
@@ -15,7 +39,9 @@ function fit_cylinder_to_cluster (cluster_data, showFitting, save_mode)
     
     %result = struct;
     try
-        close(901);  
+        close(901);
+    catch
+        % no previous double-circle fitting figure, no action
     end
     
     progress = 0;
@@ -25,20 +51,20 @@ function fit_cylinder_to_cluster (cluster_data, showFitting, save_mode)
         progress = ( 100*(i/num_pore) );
         fprintf(1,'\b\b\b\b%3.0f%%', progress); % Deleting 4 characters (The three digits and the % symbol)
 
-        cluster = cluster_data(i);
-        if isempty(cluster.loc_nm)
+        if isempty(cluster_data(i).loc_nm)
             continue;
         end
-        P = cluster.loc_nm;
+        P = cluster_data(i).loc_nm;
     
-        global x_noise y_noise z_noise;
+        global x_noise y_noise z_noise; %#ok<*TLEV>
         x_noise = P(:,1)';
         y_noise = P(:,2)';
         z_noise = P(:,3)';
         
         
-        %Initial guess of the parameters [x_c, y_c, z_c, r, cylinder_height]
-        initialGuess = [mean(x_noise), mean(y_noise), mean(z_noise), ...
+        %Initial guess of the parameters [x_c, y_c, z_c, r, cylinder_radius, cylinder_height]
+        initialGuess = [
+            mean(x_noise), mean(y_noise), mean(z_noise), ...
             (max(x_noise) - min(x_noise) + max(y_noise) - min(y_noise)) / 2, ...
             max(z_noise) - min(z_noise)];
         
@@ -67,7 +93,7 @@ function fit_cylinder_to_cluster (cluster_data, showFitting, save_mode)
                 fig = findobj( 'Type', 'Figure', 'Number', 901);
             end
 
-            tab = uitab(tg, 'Title', num2str(cluster_data(i).ClusterID));
+            tab = uitab(tg, 'Title', num2str(cluster_data(i).cluster_ID));
             ax = axes('Parent', tab);
             scatter3(ax, x_noise, y_noise, z_noise,  '*');
             axis equal;
@@ -108,7 +134,7 @@ end
 
 %Error function that is minimized
 function err = calculateError(theta)
-  
+
   global x_noise y_noise z_noise;
   
   x_center = theta(1);
@@ -127,15 +153,3 @@ function err = calculateError(theta)
 
 end
 
-
-% Function to compute the squared distance to a circle in 3D given a point and the circle's parameters
-function d_sq = distanceToRing(point, center, radius)
-    % Project the point onto the XY plane of the ring
-    projectedPoint = [point(1), point(2), center(3)];
-    % Compute the distance to the center of the circle
-    distToCenter = norm(projectedPoint - center);
-    % Compute the radial distance to the circle's edge in the XY plane
-    radialDist = max(distToCenter - radius, 0);
-    % Squared distance is the sum of the squared radial distance and the squared Z-axis difference
-    d_sq = radialDist^2 + (point(3) - center(3))^2;
-end

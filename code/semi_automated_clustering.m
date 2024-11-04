@@ -1,13 +1,37 @@
 function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
-    % Semi-automated clustering with interactive UI controls in MATLAB
+    % semi_automated_clustering Performs semi-automated clustering 
+    % on MINFLUX localization data with interactive UI controls in MATLAB
     % 
     % Inputs:
-    %   data - Nx5 matrix of input localization data: trace ID, T, X, Y, Z
-    %   RIMF - refractive index mismatch factor, as to scale Z axis value: z(physical) = z(data) * RIMF;
-    %   dbscan_eps - maximum distance between points to be reconginzed as belonging to one cluster, for the DBSCAN clustering.
-    %   dbscan_minPts - minimum number of points in a DBSCAN cluster
+    %   data (Nx5 array) - An N by 5 numeric array of localization data, where
+    %                       each row corresponds to a localization event with
+    %                       the following columns: [ID, Time, X, Y, Z].
+    %   RIMF (numeric) - refractive index mismatch factor, which will be used 
+    %                     to scale Z axis value: z(physical) = z(data) * RIMF;
+    %   dbscan_eps (numeric) - The epsilon parameter for density-based scanning,
+    %                           which is the maximum distance between points to 
+    %                           be reconginzed as belonging to one cluster, 
+    %                           for the DBSCAN clustering.
+    %   dbscan_minPts (numeric) - The minimum number of points required to form 
+    %                               a cluster, for the DBSCAN clustering.
+    %
+    % Outputs:  not as function return argument, instead it is saved directly to 
+    %           MATLAB base workspace with UI 'Save' button action.
+    %           This is to adapt to the interactive UI design.
+    %   cluster_data (struct array) - A structure array containing clustering 
+    %                                   results with the following fields:
+    %       - ROI: Coordinates defining the 2D rectangular ROI for the cluster.
+    %       - cluster_ID: unique numeric identifier for the cluster.
+    %       - loc_nm: Localization data in nanometers.
+    %       - tid: Trace ID corresponding to the localizations.
+    %       - tim: Time stamp associated with the localizations.
+    %
+    % Example:
+    %       semi_automated_clustering (data_array, 0.67, 55, 5);
+    %
+    % Ziqiang Huang: <ziqiang.huang@embl.de>
+    % Last update: 2024.11.04
 
-    
     %% input argument control
     if nargin < 4
         dbscan_minPts = 5; % by default expect at least 5 traces in a NPC
@@ -39,8 +63,8 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
     cid = dbscan(loc_trace(:, 1:2), dbscan_eps, dbscan_minPts);
     cid_all = repelem(cid, trace_length);
     % get unique cluster ID
-    unique_ids = unique(cid);
- 
+    unique_cid = unique(cid);
+    cluster_length = arrayfun(@(x) sum(cid_all==x), unique_cid);
     %% Create figure to visualize and enable interactive ROI selection
     if ~ishandle(900)
         fig = figure(900);
@@ -66,12 +90,12 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
     hold on;
     
     % Initialize cluster data
-    cluster_data = struct('Rectangle', {}, 'ClusterID', {}, 'loc_nm', {});
+    cluster_data = struct('ROI', {}, 'cluster_ID', {}, 'loc_nm', {});
 
     % plot rectangle ROI around dbscan generated clusters
-    for i = 1: length(unique_ids) 
-        cluster_id = unique_ids(i);
-        if (cluster_id == -1) 
+    for i = 1 : length(unique_cid) 
+        cluster_id = unique_cid(i);
+        if (cluster_id == -1 || cluster_length(i) <= 5 ) 
             continue; % cluster ID = -1 for noise from dbscan
         end
         loc_min = min( loc_nm(cid_all==cluster_id, 1:2) );
@@ -87,13 +111,13 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
             'Label', ""+cluster_id, 'LabelTextColor', 'r');
 
         if isempty(cluster_data)
-            newClusterID = 1;
+            new_cluster_ID = 1;
         else
-            newClusterID = max([cluster_data.ClusterID]) + 1;
+            new_cluster_ID = max([cluster_data.cluster_ID]) + 1;
         end
 
-        cluster_data(end+1).ClusterID = newClusterID;   %#ok<AGROW>
-        cluster_data(end).Rectangle = roi_auto; 
+        cluster_data(end+1).cluster_ID = new_cluster_ID;   %#ok<AGROW>
+        cluster_data(end).ROI = roi_auto; 
         cluster_data(end).loc_nm = loc_nm(cid_all==cluster_id, :);
         
     end
@@ -139,17 +163,17 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
     function drawRectangle(~, ~)
         % get current cluster count
         if isempty(cluster_data)
-            newClusterID = 1;
+            new_cluster_ID = 1;
         else
-            newClusterID = max([cluster_data.ClusterID]) + 1;
+            new_cluster_ID = max([cluster_data.cluster_ID]) + 1;
         end
         roi_manual = drawrectangle(ax,...
             'LineWidth', 1, 'MarkerSize', 5, ...
             'edgecolor','g', 'StripeColor','g', 'FaceAlpha', 0.1,...
-            'Label', ""+newClusterID, 'LabelTextColor', 'r');
+            'Label', ""+new_cluster_ID, 'LabelTextColor', 'r');
         % Append new cluster data
-        cluster_data(end+1).ClusterID = newClusterID; 
-        cluster_data(end).Rectangle = roi_manual;
+        cluster_data(end+1).cluster_ID = new_cluster_ID; 
+        cluster_data(end).ROI = roi_manual;
         % Append loc inside the drawn ROI to form a new cluster
         tf = inROI( roi_manual, loc_nm(:,1), loc_nm(:,2) );
         cluster_data(end).loc_nm = loc_nm(tf, :);              
@@ -159,7 +183,7 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
     % Callback function to toggle show/hide cluster rectangles
     function showClusters(~, ~)
         for k = 1:length(cluster_data)
-            roi = cluster_data(k).Rectangle;
+            roi = cluster_data(k).ROI;
             if isgraphics(roi) && isvalid(roi)
                 roi.Visible = ~roi.Visible;
             end
@@ -172,7 +196,7 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
         empty_cluster = false(num_clusters, 1);
 
         for idx = 1:num_clusters
-            roi = cluster_data(idx).Rectangle;
+            roi = cluster_data(idx).ROI;
             if ~isgraphics(roi)
                 empty_cluster(idx) = true;
                 continue;
