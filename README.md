@@ -297,7 +297,7 @@ Display an interactive visualziation UI that shows the recontructed and merged N
 ## Demo
 We made a script that demo the whole workflow on the sample dataset (in the data folder) and with default parameters.
 
-**Usage:** In MATLAB, change the working directory to root directory of this repository, and run the demo.m script, or alternatively type 'demo.m' and enter to run the demo script.Expected run time for demo on a "normal" desktop computer is 10-20 minutes.
+**Usage:** In MATLAB, change the working directory to root directory of this repository, and run the demo.m script, or alternatively type 'demo.m' and enter to run the demo script. Expected run time for demo on a "normal" desktop computer is 10-20 minutes.
 
 **Description:**
     
