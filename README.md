@@ -1,11 +1,11 @@
 # MINFLUX_NPC_Tracking
-Study of nuclear transport with two-color MINFLUX
+Study of cargo transport through nuclear pore with two-color MINFLUX
 
 This workflow reconstruct nuclear pore complex (NPC) and associated cargo transport trajectories from two-color MINFLUX data. 
 
 An example dataset can be found inside the data folder, and can be used for demo purposes. it consist of the following files:
  - **Nuclear Pore Raw Data.mat** : MINFLUX raw data of NPC in MATLAB data format;
- - **Nuclear Pore Model Data.txt** : filtered and converted NPC data with 5 columns: trace-ID, time stamp, X, Y, and Z coordinates;
+ - **Nuclear Pore Model Data.txt** : filtered and converted NPC data with 5 columns: trace ID, time stamp, X, Y, and Z coordinates;
  - **Tracks Model Data.txt** : coverted MINFLUX data of cargo trajectories;
  - **Bead NPC.txt** : beads coordinates from the NPC dataset, each row is a different bead, and columns are X, Y, and Z coordinates (in nm);
  - **Bead Cargo.txt** : beads coordinates from the Cargo dataset, each row is the same bead as corresponding row in the bead NPC.txt file;
@@ -37,7 +37,7 @@ The codes was developed with Windows 10 Pro 22H2 Version and tested on Windows 1
 
 Load MINFLUX MATLAB (.mat) format raw data. Apply filters on localizations so that noise and low quality data can be removed. It requires the MATLAB format (.mat) of MINFLUX raw data file for pore scaffold or cargo, e.g.: [Nuclear Pore Model Data.mat](/data/Nuclear%20Pore%20Model%20Data.mat). The filtered result will be saved to MATLAB base workspace. And a tab-separated value format result stores trace ID, time stamp, X, Y, and Z coordinate in nm of the filtered data, will be saved to a text file on disk next to the input raw data, e.g.: [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt).
     
-It requires the filtering criterion on several properties of the data: **cfr, efo, dcr**, trace length, whether to filter with trace-level mean value. For more detailed explanation on these parameters, please refer to the manuscript, or the comment section in the code. If one or more input is not provided as function inputs, a dialog window will pop up, allowing the user to set up the filtering parameters on the run.
+It requires the filtering criterion on several properties of the data: the center frequency ratio (**cfr**), the effective frequency at offset (**efo**), the detector channel ratio (**dcr**), the localization count (**trace length**), and whether to filter with trace-level mean value or on each localization level. For more detailed explanation on these parameters, please refer to the manuscript, or the comment section in the code. If one or more input is not provided as function inputs, a dialog window will pop up, allowing the user to set up the filtering parameters on the run.
 
 <p align="center">
 <img src="/img/filterMInfluxData.png" width="500" height=auto>
@@ -58,7 +58,7 @@ It requires the filtering criterion on several properties of the data: **cfr, ef
      
 
 **Output:**
- - **filter_result** (structure array) – stores attribute(s) values from the filtered data:
+ - **filter_result** (struct) – stores attribute(s) values from the filtered data:
     - **trace_ID** (N-by-1 numeric) - array of trace ID (**tid** attribute of the MINFLUX raw data)
     - **tim_ms** (N-by-1 numeric) - array of time stamp, in milliseconds
     - **loc_nm** (N-by-3 numeric) - X, Y, and Z values of the 3D localization coordinates, in nanometer
@@ -89,7 +89,7 @@ Automated and manual selection of NPCs from localization data. Upon running the 
 
 **Output:**
  - **cluster_data** (struct array) stores data of the resulted NPC clusters, with the following fields:
-    - **Rectangle** - 2D rectangle that defines the XY bounds of each cluster 
+    - **ROI** - 2D rectangle that defines the XY bounds of each cluster 
     - **Cluster_ID** - unique numeric ID of each cluster
     - **loc_nm** (N-by-3 array) - X, Y, and Z coordinates of localizations of each cluster, in nm
     - **tid** - trace ID associated with each localization
@@ -269,8 +269,10 @@ Locate the NPC that associated with the Cargo (track) data, and apply the NPC sp
  - **npc_cluster_data** - output of [merged NPC cluster result](#7-program-merge_clusterm)
 
 **Output:**
- - **track_data** (struct array) – same as [program 8](#8-program-align_track_to_NPCm), removed data that not associated with any NPC cluster, and appended new field **cluster_ID**
+ - **track_data** (struct array) – same as [program 8](#8-program-align_track_to_NPCm), removed data that not associated with any NPC cluster, and appended new field **cluster_ID**, and **loc_norm**:
     - **cluster_ID** - the numeric ID of the associated NPC cluster, from the [NPC data clustering result](#2-program-semi_automated_clusteringm).
+    - **loc_norm** - transformed localizations of the Cargo data, according to its associated NPC cluster's center and rotation phase angle.
+
 
 ### Visualize Reconstructed NPC and Cargo data
 
