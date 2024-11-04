@@ -17,7 +17,7 @@ The pore data must be analyzed first to obtain the pore centers and other releva
 ##### Note: The "Nuclear Pore Model Data.txt/.mat" represents experimental measurements of Anti-GFP Nanobody HMSiR from a permeabilized cell. In contrast, "Tracks Model Data.txt" consists of example tracks derived from multiple experimental datasets, artificially aligned to the nuclear pore model for illustrative purposes, demonstrating the functionality of the fitting and alignment routine. "Bead Cargo/NPC" provides synthetic coordinates from two channels, based on the average positional differences obtained in bead measurements. While efforts were made to preserve experimental resemblance during artificial alignment, these model tracks should not be used for drawing biological conclusions.
 
 ## System Requirements
-MATLAB 2021b and newer. with toolboxes:
+MATLAB 2022a and newer. with toolboxes:
 - Statistics and Machine Learning
 - Signal Processing
 - Optimization
@@ -25,7 +25,7 @@ MATLAB 2021b and newer. with toolboxes:
 - Curve Fitting
 - Computer Vision
 
-This workflow doesn't require high computation power or special hardwares. It should work even with a laptop PC with OKish CPU and RAM. It developed with Windows system, but should also work on other OS with MATLAB and toolboxes readily installed. 
+This workflow doesn't require high computation power or special hardwares. It should work even with a laptop PC with OKish CPU and RAM. It developed with Windows system, but should also work on other OS with MATLAB and toolboxes readily installed. Typical install time on a "normal" desktop computer 30-45 minutes.
 
 The codes was developed with Windows 10 Pro 22H2 Version and tested on Windows 11 Home version 10.0.22631.
 
@@ -297,7 +297,7 @@ Display an interactive visualziation UI that shows the recontructed and merged N
 ## Demo
 We made a script that demo the whole workflow on the sample dataset (in the data folder) and with default parameters.
 
-**Usage:** In MATLAB, change the working directory to root directory of this repository, and run the demo.m script, or alternatively type 'demo.m' and enter to run the demo script.
+**Usage:** In MATLAB, change the working directory to root directory of this repository, and run the demo.m script, or alternatively type 'demo.m' and enter to run the demo script.Expected run time for demo on a "normal" desktop computer is 10-20 minutes.
 
 **Description:**
     
