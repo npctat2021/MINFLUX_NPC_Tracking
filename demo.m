@@ -133,7 +133,7 @@
     track_data_exist = evalin( 'base', 'exist(''track_data'',''var'') == 1' );
     if ~track_data_exist || isempty(track_data)
         file_track =    fullfile(data_folder, "Tracks Model Data.txt");
-        beads_track =   fullfile(data_folder, "Bead Track.txt");
+        beads_track =   fullfile(data_folder, "Bead Cargo.txt");
         beads_npc =     fullfile(data_folder, "Bead NPC.txt");
         if ( ~isfile(file_track) || ~isfile(beads_track) || ~isfile(beads_npc))
             track_data_exist = false;
