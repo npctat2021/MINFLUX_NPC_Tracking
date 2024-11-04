@@ -25,7 +25,7 @@ function result = align_track_to_NPC (file_track, beads_track, beads_npc, RIMF)
     % Example:
     %   track_data = align_track_to_NPC ( ...   
     %       ".\data\Tracks Model Data.txt",...  % path to the Cargo model data
-    %       ".\data\Bead Track.txt",...         % path to the Cargo beads data
+    %       ".\data\Bead Cargo.txt",...         % path to the Cargo beads data
     %       ".\data\Bead NPC.txt",...           % path to the NPC beads data
     %       0.67);                              % referactive index mismatch factor
     %
