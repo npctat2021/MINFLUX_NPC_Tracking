@@ -142,7 +142,7 @@ function semi_automated_clustering(data, RIMF, dbscan_eps, dbscan_minPts)
             switch filename
                 case "Tracks Model Data.txt"
                     file_track = fullfile(dir, filename);
-                case "Bead Track.txt"
+                case "Bead Cargo.txt"
                     beads_track = fullfile(dir, filename);
                 case "Bead NPC.txt"
                     beads_npc = fullfile(dir, filename);
