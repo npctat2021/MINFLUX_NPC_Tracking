@@ -48,7 +48,7 @@ It requires the filtering criterion on several properties of the data: the cente
     filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, save_to_file);
 
 **Input:** 
- - **minfluxRawDataPath** (string) - System path of the MINFLUX (.mat) data file.
+ - **minfluxRawDataPath** (string) - System path of the [MINFLUX (.mat) data file](/data/Nuclear%20Pore%20Model%20Data.mat).
  - **cfr_range** (1-by-2 numeric) - the minimum and maximum values of **cfr** attribute that accepted by the filter
  - **efo_range** (1-by-2 numeric) - the minimum and maximum values of **efo** attribute that accepted by the filter
  - **dcr_range** (1-by-2 numeric) - the minimum and maximum values of **dcr** attribute that accepted by the filter
