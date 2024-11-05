@@ -35,7 +35,7 @@ The codes was developed with Windows 10 Pro 22H2 Version and tested on Windows 1
 
 #### 1. Program: load_minflux_raw_data.m
 
-Load MINFLUX MATLAB (.mat) format raw data. Apply filters on localizations so that noise and low quality data can be removed. It requires the MATLAB format (.mat) of MINFLUX raw data file for pore scaffold or cargo, e.g.: [Nuclear Pore Model Data.mat](/data/Nuclear%20Pore%20Model%20Data.mat). The filtered result will be saved to MATLAB base workspace. And a tab-separated value format result stores trace ID, time stamp, X, Y, and Z coordinate in nm of the filtered data, will be saved to a text file on disk next to the input raw data, e.g.: [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt).
+Load MINFLUX MATLAB (.mat) format raw data. Apply filters on localizations so that noise and low quality data can be removed. It requires the MATLAB format (.mat) of MINFLUX raw data file for pore scaffold or cargo, e.g.: [Nuclear Pore Model Data.mat](/data/MINFLUX%20Nuclear%20Pore%20Raw%20Data.mat). The filtered result will be saved to MATLAB base workspace. And a tab-separated value format result stores trace ID, time stamp, X, Y, and Z coordinate in nm of the filtered data, will be saved to a text file on disk next to the input raw data, e.g.: [Nuclear Pore Model Data.txt](/data/Nuclear%20Pore%20Model%20Data.txt).
     
 It requires the filtering criterion on several properties of the data: the center frequency ratio (**cfr**), the effective frequency at offset (**efo**), the detector channel ratio (**dcr**), the localization count (**trace length**), and whether to filter with trace-level mean value or on each localization level. For more detailed explanation on these parameters, please refer to the manuscript, or the comment section in the code. If one or more input is not provided as function inputs, a dialog window will pop up, allowing the user to set up the filtering parameters on the run.
 
@@ -47,8 +47,8 @@ It requires the filtering criterion on several properties of the data: the cente
 
     filter_result = load_minflux_raw_data (minfluxRawDataPath, cfr_range, efo_range, dcr_range, length_range, do_trace_mean, save_to_file);
 
-**Input:** 
- - **minfluxRawDataPath** (string) - System path of the [MINFLUX (.mat) data file](/data/Nuclear%20Pore%20Model%20Data.mat).
+**Input:**
+ - **minfluxRawDataPath** (string) - System path of the [MINFLUX (.mat) data file](/data/MINFLUX%20Nuclear%20Pore%20Raw%20Data.mat).
  - **cfr_range** (1-by-2 numeric) - the minimum and maximum values of **cfr** attribute that accepted by the filter
  - **efo_range** (1-by-2 numeric) - the minimum and maximum values of **efo** attribute that accepted by the filter
  - **dcr_range** (1-by-2 numeric) - the minimum and maximum values of **dcr** attribute that accepted by the filter
