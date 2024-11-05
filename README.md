@@ -112,7 +112,7 @@ Double circle (cylinder) fitting of two rings of NPC onto selected cluster.
     fit_cylinder_to_cluster (cluster_data, showFitting, save_mode);
     
 **Input:** 
- - **cluster_data** (struct array) - output of [NPC selection](#2-program-semi_automated_clusteringm)
+ - **cluster_data** (struct array) - output of [NPC clustering result](#2-program-semi_automated_clusteringm)
  - **showFitting** (boolean) - whether to show the fitting result or not
  - **save_mode** (string):
     - **'overwrite'**: overwrite on base workspace variable ***cluster_data***
@@ -176,6 +176,7 @@ Fits pore localizations to a circle projected into the XY-plane and eliminates l
     - further filter on data, so that localizations located 2 standard deviation away from the fitted circle are removed. loc_nm, tid, and tim are updated accordingly. 
     - **loc_norm** (N-by-3 data array) <br> normalized localizations of each cluster, by translate the center of the fitted circle to coordinate origin.
 
+<br>
 
 ### Transform and merge clustered data to reconstruct NPC
 
@@ -231,6 +232,8 @@ Merges all the localizations from all clusters.
     - **loc_norm** - the normalized localizations are now rotated by the angle computed from [rotate cluster](#6-program-rotate_clusterm)
  - **merged NPC** (N-by-5 data array) saved as tab-separated values to a text file ***pore_merged.txt*** in the root folder 
 
+<br>
+
 ### Align and assign cargo data to NPC data
 
 #### 8. Program: align_track_to_NPC.m
@@ -273,6 +276,7 @@ Locate the NPC that associated with the Cargo (track) data, and apply the NPC sp
     - **cluster_ID** - the numeric ID of the associated NPC cluster, from the [NPC data clustering result](#2-program-semi_automated_clusteringm).
     - **loc_norm** - transformed localizations of the Cargo data, according to its associated NPC cluster's center and rotation phase angle.
 
+<br>
 
 ### Visualize Reconstructed NPC and Cargo data
 
@@ -292,7 +296,7 @@ Display an interactive visualziation UI that shows the recontructed and merged N
  - **npc_cluster_data_merged** - output of [program 7](#7-program-merge_clusterm)
  - **track_data_aligned** - output of [program 9](#9-program-assign_track_to_clusterm)
 
-
+<br>
 
 ## Demo
 We made a script that demo the whole workflow on the sample dataset (in the data folder) and with default parameters.
